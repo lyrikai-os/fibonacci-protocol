@@ -462,7 +462,10 @@
   "configError": true
  },
  "s-ovr4": {
-  "result": "fail"
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
  },
  "s-snapnosrc": {
   "result": "fail",
@@ -513,7 +516,10 @@
   ]
  },
  "sn-big": {
-  "result": "pass"
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
  },
  "sn-calc": {
   "result": "fail",
@@ -528,10 +534,16 @@
   ]
  },
  "sn-localvar": {
-  "result": "pass"
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
  },
  "sn-ok": {
-  "result": "pass"
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
  },
  "sn-radius": {
   "result": "fail",

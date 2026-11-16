@@ -77,7 +77,7 @@ test('M7 and E1: Snap tests calc(), relative units and radii; a token kept off t
   assert.equal(by(snap('.a{padding:1.3em}'), 'space.on-ladder')[0].result, 'not-run');
   assert.equal(by(snap('.a{border-radius:30%}'), 'radius.set').length, 1);
   const used = snap(':root{--radius-2xl:32px} .a{border-radius:var(--radius-2xl)}');
-  assert.deepEqual(used.findings.map((f) => [f.check, f.result]), [['snap.unsnappable', 'fail'], ['radius.set', 'fail']]);
+  assert.deepEqual(used.findings.map((f) => [f.check, f.result]).sort(), [['radius.set', 'fail'], ['snap.unsnappable', 'fail']]);
   const excepted = snap(':root{--radius-2xl:32px} .a{border-radius:var(--radius-2xl)}', { exceptions: [{ value: '32px', where: '--radius-2xl', reason: 'snap-drift', rule: 'FP-SNAP-03', status: 'accepted' }] });
   assert.equal(excepted.result, 'pass');
 });
@@ -126,4 +126,23 @@ test('minors: --expect with an empty file proves nothing; animation:none is not 
   const ex = (rule) => run({ 'a.css': '.a{padding:14px}' }, { exceptions: [{ value: '14px', where: '.a', reason: 'content', rule, status: 'accepted' }] });
   assert.equal(ex('FP-SPACE-01').result, 'pass');
   assert.equal(ex('FP-TYPE-01').result, 'fail');
+});
+
+test('Snap: a literal or local property still off the ladder fails FP-SPACE-01 where used, and is listed with its mapping', () => {
+  const snap = (css, over = {}) => run({ 'a.css': css }, { mode: 'snap', snap: { source: ['a.css'] }, ...over });
+  const lit = snap('.a{padding:16px}');
+  assert.equal(lit.result, 'fail');
+  assert.deepEqual(lit.findings.map((f) => [f.rule, f.value]), [['FP-SPACE-01', '16px']]);
+  assert.deepEqual(lit.literals.map((l) => [l.original, l.snapped]), [[16, 13]]);
+  const local = run({ 'a.css': '.a{--local:14px; padding:var(--local)}', 't.css': ':root{--s:13px}' }, { mode: 'snap', source: ['*.css'], scope: ['a.css'], snap: { source: ['t.css'] } });
+  assert.deepEqual(local.findings.map((f) => f.rule), ['FP-SPACE-01']);
+  assert.equal(local.literals.length, 1);
+  // on the ladder: passes and is still listed
+  assert.equal(snap('.a{padding:13px}').result, 'pass');
+  // cannot be snapped at all: FP-SNAP-10 only, once
+  const stuck = snap('.a{border-radius:32px}');
+  assert.deepEqual(stuck.findings.map((f) => f.rule), ['FP-SNAP-10']);
+  // a snapped token whose value is still off the ladder fails where used
+  assert.equal(snap(':root{--s:16px} .a{padding:var(--s)}').result, 'fail');
+  assert.equal(snap(':root{--s:13px} .a{padding:var(--s)}').result, 'pass');
 });

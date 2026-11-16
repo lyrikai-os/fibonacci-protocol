@@ -4,8 +4,6 @@
 //
 // Probes the checker deliberately does NOT turn into a fail (spec reasons):
 //   l-media     `--fp-layout: phi-split` and `grid-template-columns` are in different rules; FP-LAYOUT-01 says "in the same CSS rule".
-//   sn-localvar in Snap a local custom property is a bare literal: it is mapped (14 -> 13) and listed under "literals" (FP-SNAP-02,
-//               FP-SNAP-10); it fails only when it cannot be snapped.
 //   s-color5    `#12345` is allowed by the schema's colour pattern (3 to 8 hex digits); the checker reports the pair `not-run`.
 //   th-ld       `light-dark()` colours are not resolved; the pair is `not-run`, not a pass.
 import test from 'node:test';

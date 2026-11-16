@@ -365,12 +365,14 @@ export function runCheck({ dir, configPath, specDir } = {}) {
         if (c.kind === 'var') r = { status: 'not-run', message: `cannot resolve ${f.unresolved.join(', ')} within the source` };
         else if (exempt) r = { status: 'pass', message: 'exempt by role' };
         else if (rs.has('target') && c.kind === 'length' && c.px >= ladderTarget(u, pointer)) r = { status: 'pass', message: 'target token' };
-        else if (mode === 'snap' && (key === 'layout' || key === 'radius') && c.kind === 'length') {
-          // Snap maps tokens and bare literals; a token Snap maps is checked where used once the mapping is known
-          const mapped = f.chain.length > 0 && f.chain.every((n) => snapNames.has(n) || n.startsWith('--fp-'));
-          if (mapped) { if (k === 0) snapUses.push({ file, rule, decl, written: written[f.origin], whole: f.whole, chain: f.chain, key }); r = { status: 'pass' }; }
-          else { if (k === 0) literalDecls.push({ file, rule, decl, f, key, px: c.px, written: written[f.origin] }); r = { status: 'pass' }; }
-        } else r = key === 'layout' ? layoutTest(f.text, written[f.origin]) : fineTest(key, f.text);
+        else {
+          const mappedToken = mode === 'snap' && (key === 'layout' || key === 'radius') && c.kind === 'length' && f.chain.length > 0 && f.chain.every((n) => snapNames.has(n) || n.startsWith('--fp-'));
+          // Snap: bare literals (and values through a local property Snap does not map) are listed with their mapping
+          if (mode === 'snap' && (key === 'layout' || key === 'radius') && c.kind === 'length' && !mappedToken && k === 0) literalDecls.push({ file, rule, decl, f, key, px: c.px, written: written[f.origin] });
+          // a length still off the ladder after Snap fails where it is used; one Snap cannot move is FP-SNAP-10's finding alone
+          const cannotSnap = mode === 'snap' && !mappedToken && (key === 'layout' || key === 'radius') && c.kind === 'length' && mapLength(Math.abs(c.px), key === 'radius' ? 'radius' : 'space', u).snapped === null;
+          r = cannotSnap ? { status: 'pass' } : key === 'layout' ? layoutTest(f.text, written[f.origin]) : fineTest(key, f.text);
+        }
         const cur = per.get(f.origin) || { status: 'pass', also: [], whole: f.whole, chain: f.chain };
         if (RESULT_ORDER.indexOf(r.status) < RESULT_ORDER.indexOf(cur.status)) { cur.status = r.status; cur.message = r.message; cur.whole = f.whole; cur.chain = f.chain; }
         if (r.also) cur.also.push(...r.also);
@@ -386,7 +388,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     for (const [origin, r] of per) {
       let result = r.status; let exc = null;
       if (result === 'fail' || result === 'not-run') {
-        exc = exceptions.find({ values: [written[origin], r.whole], selector: rule.selector, tokens: r.chain, file, line: decl.line, rules: [ruleId, ...(/^calc|^min|^max|^clamp/i.test(written[origin]) ? ['FP-SPACE-04'] : [])] });
+        exc = exceptions.find({ values: [written[origin], r.whole], selector: rule.selector, tokens: r.chain, file, line: decl.line, rules: [ruleId, ...(/^calc|^min|^max|^clamp/i.test(written[origin]) ? ['FP-SPACE-04'] : []), ...(mode === 'snap' ? ['FP-SNAP-03', 'FP-SNAP-10'] : [])] });
         if (exc) result = exc.status === 'accepted' ? 'exception' : 'pending';
       }
       if (result === 'pass') { mark(check, 'pass'); continue; }
@@ -697,16 +699,6 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     }
     mark('snap.unsnappable', 'pass');
     report.findings.push(...snapFindings);
-    // a length still off the ladder after Snap fails FP-SPACE-01 where it is used
-    for (const use of snapUses) {
-      const bad = use.chain.filter((n) => unsnappable.has(n));
-      if (!bad.length) continue;
-      const worstRes = bad.map((n) => unsnappable.get(n).result).sort((x, y) => RESULT_ORDER.indexOf(x) - RESULT_ORDER.indexOf(y))[0];
-      const result = worstRes === 'exception' ? 'exception' : worstRes;
-      const check = use.key === 'radius' ? 'radius.set' : 'space.on-ladder';
-      mark(check, result, 'a token Snap kept off the ladder is used here');
-      if (result !== 'exception') report.findings.push({ file: use.file, selector: use.rule.selector, property: use.decl.prop, value: use.written, resolved: use.whole, check, rule: CHECKS[use.key].rule, result, line: use.decl.line, message: `${bad.join(', ')} is still off the ladder after Snap` });
-    }
     mark('snap.exempt-by-role', 'pass'); mark('snap.nearest', 'pass'); mark('snap.drift', 'pass'); mark('snap.target-up', 'pass'); mark('snap.level-cap', 'pass');
     for (const o of overrides) mark('snap.override', o.result, o.message);
     mark('snap.override', 'pass');
