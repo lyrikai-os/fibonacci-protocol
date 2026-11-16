@@ -95,7 +95,7 @@ It runs the machine tests locally, with no network, and prints one result per ru
 
 ```text
 MACHINE TESTS: PASS
-CANDIDATE (not a claim): candidate · FP-1 · Native · u=1 · web · spec 1.0.0-rc.5 · self-assessed · open 21
+CANDIDATE (not a claim): candidate · FP-1 · Native · u=1 · web · spec 1.0.0-rc.5 · self-assessed · open 22
 ```
 
 **5. Answer the self-report items.** Some rules only people can decide (target sizes, reflow, colour-only states and the like). The run lists the ones that apply. Write your answers in `fp-evidence.json`, beside `fp.config.json` ([schema](spec/fp-evidence.schema.json)):
