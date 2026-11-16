@@ -1,12 +1,18 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { runCheck } from '../lib/check.mjs';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+/** The specification version, read from spec/rules.json so the tests follow a revision. */
+export const SPEC = JSON.parse(fs.readFileSync(path.resolve(here, '../../../spec/rules.json'), 'utf8')).version;
+export const SPEC_RE = SPEC.replace(/\./g, '\\.');
 
 export const HAS_NONE = { motion: false, timeLimits: false, controls: false, charts: false, generatedArt: false, states: false };
 
 export function baseConfig(over = {}) {
-  return { fp: '1.0.0-rc.2', mode: 'native', level: 'FP-1', platform: 'web', unit: 1, has: HAS_NONE, source: ['*.css'], pairs: [{ fg: '#1a1a1a', bg: '#ffffff', kind: 'text' }], ...over };
+  return { fp: SPEC, mode: 'native', level: 'FP-1', platform: 'web', unit: 1, has: HAS_NONE, source: ['*.css'], pairs: [{ fg: '#1a1a1a', bg: '#ffffff', kind: 'text' }], ...over };
 }
 
 /** Write files (name -> text) plus fp.config.json into a fresh temp folder and run the checker. */

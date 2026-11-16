@@ -1,0 +1,1 @@
+:root{--g:13px} @media (min-width:600px){:root{--g:17px}} .a{padding:var(--g)}

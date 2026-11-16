@@ -72,6 +72,7 @@ function walk(schema, data, p, errors, root) {
   }
   if (Array.isArray(data)) {
     if (schema.minItems !== undefined && data.length < schema.minItems) errors.push({ path: at, message: `must have at least ${schema.minItems} item(s)` });
+    if (schema.uniqueItems && new Set(data.map((x) => JSON.stringify(x))).size !== data.length) errors.push({ path: at, message: 'must not contain duplicate items' });
     if (schema.items !== undefined) data.forEach((x, i) => walk(schema.items, x, `${p}/${i}`, errors, root));
   }
   if (isType(data, 'object')) {

@@ -18,8 +18,11 @@ test('nearest rung: ties go up, and the 25% drift limit is exact (FP-SNAP-02, FP
   assert.equal(mapLength(32, 'radius', 1).snapped, null);
   assert.equal(mapLength(12, 'radius', 4).snapped, 13);
   // beyond 1.25 x the top rung is never snapped
-  assert.equal(mapLength(2100, 'space', 1).snapped, null);
-  assert.equal(mapLength(1900, 'space', 1).snapped, 1597);
+  // drift above 25% of the value is the only bound; the top rung is 1597 at u=1 and u=4 and 3016 at u=8
+  assert.equal(mapLength(2200, 'space', 1).snapped, null);
+  assert.equal(mapLength(2100, 'space', 1).snapped, 1597);
+  assert.equal(mapLength(3600, 'space', 8).snapped, 3016);
+  assert.equal(mapLength(4100, 'space', 8).snapped, null);
   assert.equal(driftPct(16, 21), 31.3);
   assert.equal(driftPct(24, 34), 41.7);
 });

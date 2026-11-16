@@ -2,7 +2,6 @@
 import { ladder, RADIUS_SET, roundHalfUp } from './util.mjs';
 
 export const EXEMPT_ROLES = new Set(['icon', 'type', 'breakpoint', 'drawn', 'micro']);
-export const TOP_RUNG = 1597;
 
 /** Ladder target (FP-CTRL-01 table): coarse or unknown pointer vs fine, by u. */
 export function ladderTarget(u, pointer) {
@@ -30,7 +29,8 @@ export function mapLength(v, group, u) {
   }
   const candidates = group === 'radius' ? RADIUS_SET : ladder(u);
   const n = nearest(v, candidates);
-  const over = Math.abs(n - v) * 4 > v || (group !== 'radius' && v > 1.25 * TOP_RUNG);
+  // drift above 25% of the value is the only bound (FP-SNAP-03); a value above the top rung has the top rung as nearest
+  const over = Math.abs(n - v) * 4 > v;
   if (over) return { snapped: null, nearest: n, drift: driftPct(v, n), note: 'drift over 25%: kept unchanged as an exception (snap-drift)' };
   return { snapped: n, drift: driftPct(v, n) };
 }

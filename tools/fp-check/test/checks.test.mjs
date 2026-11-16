@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { run, by, HAS_NONE } from './helpers.mjs';
+import { run, by, HAS_NONE, SPEC } from './helpers.mjs';
 
 const fails = (r) => r.findings.filter((f) => f.result === 'fail');
 
@@ -70,7 +70,7 @@ test('exceptions: by token, by selector, by file:line, by file; pending; value m
   const res = Object.fromEntries(r.findings.map((f) => [f.selector, f.result]));
   assert.deepEqual(res, { '.a': 'exception', '.b': 'exception', '.c': 'pending', '.d': 'fail' });
   assert.equal(r.result, 'fail');
-  const ok = run({ 'a.css': css }, { exceptions: [ex('20px', '--x'), ex('10px', '.b'), ex('6px', 'a.css'), ex('7px', '.d')] });
+  const ok = run({ 'a.css': css }, { exceptions: [ex('20px', '--x'), ex('10px', '.b'), ex('6px', 'a.css:4'), ex('7px', '.d')] });
   assert.equal(ok.result, 'pass');
   const pend = run({ 'a.css': '.c{padding:6px}' }, { exceptions: [ex('6px', '.c', 'pending')] });
   assert.equal(pend.result, 'pending');
@@ -107,7 +107,7 @@ test('scope narrows what is tested; Overlay coverage counts both (FP-MODE-05)', 
   const r = run({ 'a.css': '.a{padding:21px}', 'b.css': '.b{padding:20px}' }, { mode: 'overlay', scope: ['a.css'] });
   assert.equal(r.result, 'pass');
   assert.deepEqual(r.coverage, { inScope: 4, inSource: 8, percent: 50 });
-  assert.match(r.claim, /^FP-1 · Overlay · u=1 · web · scope a\.css · coverage 50% · exceptions 0 · spec 1\.0\.0-rc\.2 · self-assessed$/);
+  assert.equal(r.claim, `FP-1 · Overlay · u=1 · web · scope a.css · coverage 50% · exceptions 0 · spec ${SPEC} · self-assessed`);
   const rounded = run({ 'a.css': '.a{width:1px}', 'b.css': '.b{width:1px;height:1px}' }, { mode: 'overlay', scope: ['a.css'] });
   assert.equal(rounded.coverage.percent, 33);
   const half = run({ 'a.css': '.a{width:1px;height:1px;top:1px}', 'b.css': '.b{width:1px;height:1px;top:1px;left:1px;right:1px}' }, { mode: 'overlay', scope: ['a.css'] });
@@ -121,8 +121,8 @@ test('Overlay: a scope with no checked declarations is not claimed', () => {
 });
 
 test('claim string: Native and Snap forms', () => {
-  assert.equal(run({ 'a.css': '.a{gap:8px}' }).claim, 'FP-1 · Native · u=1 · web · spec 1.0.0-rc.2 · self-assessed');
-  assert.equal(run({ 'a.css': '.a{gap:8px}' }, { unit: 4 }).claim, 'FP-1 · Native · u=4 · web · spec 1.0.0-rc.2 · self-assessed');
+  assert.equal(run({ 'a.css': '.a{gap:8px}' }).claim, `FP-1 · Native · u=1 · web · spec ${SPEC} · self-assessed`);
+  assert.equal(run({ 'a.css': '.a{gap:8px}' }, { unit: 4 }).claim, `FP-1 · Native · u=4 · web · spec ${SPEC} · self-assessed`);
 });
 
 test('has.motion and has.controls: contradictions fail; true is not contradicted; other has values are not read', () => {
@@ -188,5 +188,5 @@ test('rules table: n/a with a reason, self-report listed, informative and later 
   assert.equal(get('FP-CONF-01').result, 'n/a');
   assert.equal(get('FP-PLAT-05').result, 'n/a');
   assert.ok(r.rules.every((x) => ['pass', 'fail', 'n/a', 'not-run', 'self-report', 'pending'].includes(x.result)));
-  assert.equal(r.rules.length, 185);
+  assert.equal(r.rules.length, 186);
 });

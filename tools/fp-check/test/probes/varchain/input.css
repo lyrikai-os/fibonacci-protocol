@@ -1,0 +1,1 @@
+:root{--a:var(--b); --b:var(--c,14px)} .a{padding:var(--a)}

@@ -2,11 +2,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { collapse, posix, PHI, ladder, isRung, CONTAINERS, FIB, RADIUS_SET, FIXED_DETAIL_SET, roundHalfUp } from './util.mjs';
+import { lineAt, collapse, posix, PHI, ladder, isRung, CONTAINERS, FIB, RADIUS_SET, FIXED_DETAIL_SET, roundHalfUp } from './util.mjs';
 import { walk, expandGlobs, matchesAny, globToRegExp } from './glob.mjs';
 import { validate } from './schema.mjs';
 import { parseCss, extractStyleBlocks, splitSelectors } from './css.mjs';
-import { splitValue, splitArgs, matchParen, VarTable, resolveVars, classifyToken, expandAtoms, propertyFamily, fineKind, CONTAINER_BOX, CONTAINER_TOKEN } from './values.mjs';
+import { splitValue, splitArgs, matchParen, VarTable, resolveVars, resolveAll, classifyToken, expandAtoms, propertyFamily, fineKind, CONTAINER_BOX, CONTAINER_TOKEN } from './values.mjs';
 import { parseColor, testPair } from './contrast.mjs';
 import { findStep, stepSize, allowedLeading, sameRatio, MICRO_PX } from './type.mjs';
 import { flatten, resolveAlias, dimensionPx, checkTokenDoc } from './dtcg.mjs';
@@ -54,28 +54,28 @@ function valuesEqual(a, b) {
 
 class Exceptions {
   constructor(list) { this.list = list || []; this.used = new Set(); }
-  /** ctx: { values: [..], selector, tokens: [..], file, line, reason? } -> the matching exception or null. */
+  /** ctx: { values: [..], selector, tokens: [..], file, line, reason?, rules? } -> the matching exception or null.
+   *  An exception matches by value, by `where` (a selector, a token address, or file:line) and by the rule it departs from. */
   find(ctx) {
-    let pend = null;
+    let pick = null;
     this.list.forEach((e, i) => {
       if (ctx.reason && e.reason !== ctx.reason) return;
+      if (ctx.rules && !ctx.rules.includes(e.rule)) return;
       if (!ctx.values.some((v) => valuesEqual(e.value, v))) return;
       if (!this.whereMatches(e.where, ctx)) return;
       this.used.add(i);
-      if (e.status === 'accepted') pend = pend && pend.status === 'accepted' ? pend : e;
-      else if (!pend) pend = e;
+      if (e.status === 'accepted') pick = pick && pick.status === 'accepted' ? pick : e;
+      else if (!pick) pick = e;
     });
-    return pend;
+    return pick;
   }
   whereMatches(where, ctx) {
     const w = collapse(where);
     const sels = [collapse(ctx.selector || ''), ...splitSelectors(ctx.selector || '').map(collapse)];
     if (sels.includes(w)) return true;
-    if (ctx.tokens?.some((t) => t === w || (w.includes('*') && new RegExp('^' + w.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$').test(t)))) return true;
+    if (ctx.tokens?.includes(w)) return true; // a token address covers every use of that token
     const m = /^(.*):(\d+)$/.exec(w);
-    if (m && ctx.file && (ctx.file === m[1] || ctx.file.endsWith('/' + m[1])) && Number(m[2]) === ctx.line) return true;
-    if (ctx.file && (ctx.file === w || ctx.file.endsWith('/' + w))) return true;
-    return false;
+    return Boolean(m && ctx.file && (ctx.file === m[1] || ctx.file.endsWith('/' + m[1])) && Number(m[2]) === ctx.line);
   }
 }
 
@@ -150,7 +150,9 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     else if (ext === '.html' || ext === '.htm') {
       const merged = { rules: [], customProps: [], atRules: [] };
       const html = text();
-      if (/\sstyle\s*=\s*["']/i.test(html)) note(`${f}: inline style attributes are not read (FP-CONF-08)`);
+      for (const m of html.matchAll(/\sstyle\s*=\s*(?:"([^"]*)"|'([^']*)')/gi)) {
+        (report.inlineStyles ||= []).push({ file: f, line: lineAt(html, m.index), declarations: collapse(m[1] ?? m[2]) });
+      }
       for (const b of extractStyleBlocks(html)) {
         const p = parseCss(b.css, { file: f, lineOffset: b.lineOffset });
         merged.rules.push(...p.rules); merged.customProps.push(...p.customProps); merged.atRules.push(...p.atRules);
@@ -168,12 +170,28 @@ export function runCheck({ dir, configPath, specDir } = {}) {
   // ---- variables and tokens -------------------------------------------------------------------------
   const vars = new VarTable();
   for (const [f, p] of parsed) for (const c of p.customProps) vars.add(c);
-  // The protocol's own properties resolve to their published values when the source does not define them.
-  const proto = (name, value) => { if (!vars.has(name)) vars.add({ name, value, selector: ':root' }); };
-  for (const n of FIB) proto(`--fp-space-${n}`, `${n * u}px`);
-  for (const n of CONTAINERS) proto(`--fp-container-${n}`, `${n}px`);
-  for (const n of [2, 3, 5, 8, 13, 21]) proto(`--fp-radius-${n}`, `${n}px`);
-  proto('--fp-radius-pill', '9999px'); proto('--fp-radius-round', '50%');
+  // The protocol's own properties resolve to their published values when the source does not define them
+  // and the var() has no fallback (FP-PLAT-02 table).
+  const typeRem = (k) => `${stepSize(k, bodyPx, align) / 16}rem`;
+  const PROTO_FIXED = { 'line-hairline': '1px', 'line-stroke-2': '2px', 'line-stroke-3': '3px', 'focus-gap': '2px', 'focus-ring': '3px', 'target-floor-coarse': '44px', 'target-floor-fine': '24px',
+    'type-micro': '0.6875rem', 'leading-body': '1.618', 'leading-dense': '1.5', 'leading-small': '1.382', 'leading-heading': '1.236', 'leading-display': '1.146',
+    'split-major': '1.618fr', 'split-minor': '1fr', 'layer-base': '1', 'layer-raised': '2', 'layer-overlay': '3', 'layer-popover': '13', 'layer-toast': '21',
+    'radius-pill': '9999px', 'radius-round': '50%' };
+  const protoDefault = (name) => {
+    const m = /^--fp-(.+)$/.exec(name);
+    if (!m) return undefined;
+    const n = m[1];
+    if (n in PROTO_FIXED) return PROTO_FIXED[n];
+    let x;
+    if ((x = /^space-(\d+)$/.exec(n)) && FIB.includes(+x[1])) return `${+x[1] * u}px`;
+    if ((x = /^container-(\d+)$/.exec(n)) && CONTAINERS.includes(+x[1])) return `${x[1]}px`;
+    if ((x = /^radius-(\d+)$/.exec(n)) && [2, 3, 5, 8, 13, 21].includes(+x[1])) return `${x[1]}px`;
+    if ((x = /^duration-(\d+)$/.exec(n)) && [89, 144, 233, 377].includes(+x[1])) return `${x[1]}ms`;
+    if (n === 'target') return `${ladderTarget(u, pointer)}px`;
+    if (n === 'target-coarse') return `${ladderTarget(u, 'both')}px`;
+    if ((x = /^type-(n1|[0-8])$/.exec(n))) return typeRem(x[1] === 'n1' ? -1 : +x[1]);
+    return undefined;
+  };
   const tokenByPath = new Map(); // DTCG dotted path -> { token, type, file }
   for (const [f, doc] of jsonDocs) for (const l of flatten(doc)) tokenByPath.set(l.path, { ...l, file: f });
   const protocolTokenFiles = [...jsonDocs.keys()].filter((f) => jsonDocs.get(f)?.$extensions?.['com.lyrikai.fp'] || /\.tokens\.json$/.test(f));
@@ -249,11 +267,15 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     return { status: 'fail', message: 'calc() is not one of the two derived patterns, or it chains operations (FP-SPACE-04)' };
   }
 
+  const relativeNotRun = (text) => ({ status: 'not-run', message: `${text} depends on a font size the checker does not compute` });
+
   function layoutTest(text, written) {
     const c = classifyToken(text);
     switch (c.kind) {
       case 'length': return rungTest(c.px);
       case 'calc': { const d = derivedTest(written); return d.status === 'fail' ? { ...d, also: ['space.derived'] } : d; }
+      case 'relative': return relativeNotRun(text);
+      case 'unknown': return c.n !== undefined ? { status: 'fail', message: `${text} is a number without a unit, not a length` } : { status: 'pass' };
       case 'minmax': {
         const inner = text.slice(text.indexOf('(') + 1, text.length - 1);
         let res = { status: 'pass' };
@@ -262,6 +284,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
           let r = { status: 'pass' };
           if (ca.kind === 'length') r = rungTest(ca.px);
           else if (ca.kind === 'calc') { r = derivedTest(a); if (r.status === 'fail') r.also = ['space.derived']; }
+          else if (ca.kind === 'relative') r = relativeNotRun(a);
           if (r.status !== 'pass') { res = r; break; }
         }
         return res;
@@ -277,13 +300,19 @@ export function runCheck({ dir, configPath, specDir } = {}) {
       if (Math.abs(v - Math.round(v)) > 1e-6) return { status: 'fail', message: `${fmt(v)}px is a fraction of a platform unit`, also: ['math.zero-negative', 'math.rounding'] };
       if (kind === 'radius') {
         if (RADIUS_SET.includes(v) || v === 9999) return { status: 'pass' };
-        return { status: 'fail', message: `${fmt(v)} is not in the radius set 0, 2, 3, 5, 8, 13, 21, pill or round` };
+        return { status: 'fail', message: `${fmt(v)} is not in the radius set 0, 2, 3, 5, 8, 13, 21, pill (9999px) or round (50%)` };
       }
       return FIXED_DETAIL_SET.includes(Math.abs(v)) ? { status: 'pass' } : { status: 'fail', message: `${fmt(v)} is not 0, 1, 2 or 3` };
     }
     if (c.kind === 'calc' || c.kind === 'minmax') {
       if (/^calc\(\s*infinity\b/i.test(text)) return { status: 'pass' };
       return { status: 'fail', message: 'calc() is only accepted in the two derived patterns for layout lengths (FP-CONF-08)' };
+    }
+    if (c.kind === 'relative') return { status: 'fail', message: `${text} is not a platform unit: ${kind === 'radius' ? 'a radius is a set member, 50% or 9999px' : 'a stroke is 0, 1, 2 or 3'}` };
+    if (c.kind === 'unknown' && c.n !== undefined) return { status: 'fail', message: `${text} is a number without a unit, not a length` };
+    if (c.kind === 'intrinsic' && kind === 'radius') {
+      if (c.unit === '%' && c.n === 50) return { status: 'pass' };
+      if (c.unit) return { status: 'fail', message: `${text} is not in the radius set: round is 50% and pill is 9999px` };
     }
     return { status: 'pass' };
   }
@@ -297,205 +326,242 @@ export function runCheck({ dir, configPath, specDir } = {}) {
 
   function addFinding(f) { report.findings.push(f); }
 
+  const snapNames = new Set(); // host token names that Snap maps (filled below, before the declaration pass)
+  const snapUses = []; // declarations that use a token Snap maps, checked after the mapping is known (FP-SPACE-01 where used)
+
   function processDecl(file, rule, decl, inScope) {
     const prop = decl.prop;
     const fam = propertyFamily(prop);
     if (!fam) return;
     const written = splitValue(decl.value);
-    const flat = [];
-    written.forEach((w, i) => {
-      if (/var\(/i.test(w)) {
-        const r = resolveVars(w, vars);
-        const subs = splitValue(r.text);
-        for (const s of subs.length ? subs : [r.text]) flat.push({ text: s, origin: i, chain: r.chain, unresolved: r.unresolved });
-      } else flat.push({ text: w, origin: i, chain: [], unresolved: [] });
-    });
-    const atoms = expandAtoms(prop, flat.map((f) => f.text));
+    // every definition of every variable in the source is tested (local, @media and :root alike)
+    const altsByTok = written.map((w) => (/var\(/i.test(w) ? resolveAll(w, vars, protoDefault) : [{ text: w, chain: [], unresolved: [] }]));
+    const K = Math.min(64, Math.max(1, ...altsByTok.map((a) => a.length)));
     const key = fam === 'layout' ? 'layout' : fineKind(prop);
-    const per = new Map(); // origin -> { status, message, tests, also }
+    const per = new Map(); // origin -> { status, message, whole, chain, also }
     let counted = 0;
-    for (const atom of atoms) {
-      const f = flat[atom.index];
-      if (!f) continue;
-      let c = classifyToken(f.text);
-      if (f.unresolved.length) c = { kind: 'var' };
-      if (c.kind === 'var' && atom.maybe) continue;
-      if (atom.maybe && c.kind !== 'length' && c.kind !== 'zero') continue;
-      const isCountable = c.kind === 'length' || c.kind === 'calc' || (c.kind === 'minmax' && splitArgs(f.text.slice(f.text.indexOf('(') + 1, f.text.length - 1)).some((a) => ['length', 'calc'].includes(classifyToken(a).kind)));
-      if (isCountable) counted += atom.mult;
-      if (c.kind === 'relative') note(`${file}:${decl.line} ${prop}: ${f.text} is relative to a font size and is not resolved by the checker`);
-      for (const n of f.chain) if (fam === 'radius') radiusTokensUsed.add(n);
-      if (!inScope) continue;
-      let r;
-      if (mode === 'snap' && (key === 'layout' || key === 'radius')) {
-        // Snap maps tokens and bare literals alike; the resolved value is not ladder-tested here (FP-SNAP-02).
-        if (c.kind === 'length' && !f.chain.length) literalDecls.push({ file, rule, decl, f, key, px: c.px, written: written[f.origin] });
-        r = { status: 'pass' };
-      } else if (c.kind === 'var') r = { status: 'not-run', message: `cannot resolve ${f.unresolved.join(', ')} within the source` };
-      else {
+    for (let k = 0; k < K; k++) {
+      const flat = [];
+      written.forEach((w, i) => {
+        const a = altsByTok[i][Math.min(k, altsByTok[i].length - 1)];
+        const subs = splitValue(a.text);
+        for (const sub of subs.length ? subs : [a.text]) flat.push({ text: sub, origin: i, chain: a.chain, unresolved: a.unresolved, whole: a.text });
+      });
+      const atoms = expandAtoms(prop, flat.map((f) => f.text));
+      for (const atom of atoms) {
+        const f = flat[atom.index];
+        if (!f) continue;
+        let c = classifyToken(f.text);
+        if (f.unresolved.length) c = { kind: 'var' };
+        if (c.kind === 'var' && atom.maybe) continue;
+        if (atom.maybe && c.kind !== 'length' && c.kind !== 'zero') continue;
+        const isCountable = c.kind === 'length' || c.kind === 'calc' || (c.kind === 'minmax' && splitArgs(f.text.slice(f.text.indexOf('(') + 1, f.text.length - 1)).some((a) => ['length', 'calc'].includes(classifyToken(a).kind)));
+        if (k === 0 && isCountable) counted += atom.mult;
+        if (k === 0) for (const n of f.chain) if (fam === 'radius') radiusTokensUsed.add(n);
+        if (!inScope) continue;
+        let r;
         const rs = rolesOf(f.chain);
         const exempt = [...rs].some((x) => EXEMPT_ROLES.has(x));
-        if (exempt) r = { status: 'pass', message: 'exempt by role' };
+        if (c.kind === 'var') r = { status: 'not-run', message: `cannot resolve ${f.unresolved.join(', ')} within the source` };
+        else if (exempt) r = { status: 'pass', message: 'exempt by role' };
         else if (rs.has('target') && c.kind === 'length' && c.px >= ladderTarget(u, pointer)) r = { status: 'pass', message: 'target token' };
-        else r = key === 'layout' ? layoutTest(f.text, written[f.origin]) : fineTest(key, f.text);
+        else if (mode === 'snap' && (key === 'layout' || key === 'radius') && c.kind === 'length') {
+          // Snap maps tokens and bare literals; a token Snap maps is checked where used once the mapping is known
+          const mapped = f.chain.length > 0 && f.chain.every((n) => snapNames.has(n) || n.startsWith('--fp-'));
+          if (mapped) { if (k === 0) snapUses.push({ file, rule, decl, written: written[f.origin], whole: f.whole, chain: f.chain, key }); r = { status: 'pass' }; }
+          else { if (k === 0) literalDecls.push({ file, rule, decl, f, key, px: c.px, written: written[f.origin] }); r = { status: 'pass' }; }
+        } else r = key === 'layout' ? layoutTest(f.text, written[f.origin]) : fineTest(key, f.text);
+        const cur = per.get(f.origin) || { status: 'pass', also: [], whole: f.whole, chain: f.chain };
+        if (RESULT_ORDER.indexOf(r.status) < RESULT_ORDER.indexOf(cur.status)) { cur.status = r.status; cur.message = r.message; cur.whole = f.whole; cur.chain = f.chain; }
+        if (r.also) cur.also.push(...r.also);
+        per.set(f.origin, cur);
       }
-      const cur = per.get(f.origin) || { status: 'pass', also: [] };
-      if (RESULT_ORDER.indexOf(r.status) < RESULT_ORDER.indexOf(cur.status)) { cur.status = r.status; cur.message = r.message; }
-      if (r.also) cur.also.push(...r.also);
-      per.set(f.origin, cur);
     }
     if (inScope) counts.inScope += counted;
     counts.inSource += counted;
     if (counted > 0) anyChecked = anyChecked || inScope;
     if (!inScope) return;
 
+    const { check, rule: ruleId } = CHECKS[key];
     for (const [origin, r] of per) {
-      const { check, rule: ruleId } = CHECKS[key];
-      const chain = flat.filter((f) => f.origin === origin).flatMap((f) => f.chain);
-      const whole = flat.filter((f) => f.origin === origin).map((f) => f.text).join(' ');
-      let result = r.status;
-      let exc = null;
+      let result = r.status; let exc = null;
       if (result === 'fail' || result === 'not-run') {
-        exc = exceptions.find({ values: [written[origin], whole], selector: rule.selector, tokens: chain, file, line: decl.line });
+        exc = exceptions.find({ values: [written[origin], r.whole], selector: rule.selector, tokens: r.chain, file, line: decl.line, rules: [ruleId, ...(/^calc|^min|^max|^clamp/i.test(written[origin]) ? ['FP-SPACE-04'] : [])] });
         if (exc) result = exc.status === 'accepted' ? 'exception' : 'pending';
-      }
-      if (mode === 'snap' && result === 'pass' && !chain.length && counted > 0) {
-        // a bare literal in Snap is mapped by the same rules and listed under "literals"
       }
       if (result === 'pass') { mark(check, 'pass'); continue; }
       mark(check, result, r.message);
       for (const a of r.also ?? []) mark(a, result, r.message);
-      addFinding({ file, selector: rule.selector, property: prop, value: written[origin], resolved: whole, check, rule: ruleId, result, line: decl.line, ...(r.message ? { message: r.message } : {}), ...(exc ? { exception: exc.reason } : {}) });
+      addFinding({ file, selector: rule.selector, property: prop, value: written[origin], resolved: r.whole, check, rule: ruleId, result, line: decl.line, ...(r.message ? { message: r.message } : {}), ...(exc ? { exception: exc.reason } : {}) });
     }
   }
 
   // FP-2 type, FP-LAYOUT, FP-TYPE-09 --------------------------------------------------------------
+  const FONT_KEYWORDS = /^(xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large|larger|smaller|math)$/i;
+  const KEEP_KEYWORDS = /^(inherit|initial|unset|revert|revert-layer)$/i;
+  const lastItem = (sel) => splitSelectors(sel).map((i) => collapse(i));
+
   function typeRule(file, rule, inScope) {
     if (!inScope || level !== 'FP-2' || rule.kind !== 'style') return;
     const get = (p) => [...rule.decls].reverse().find((d) => d.prop === p);
-    const fs_ = get('font-size'); const lh = get('line-height'); const font = get('font');
-    let sizeText = null; let sizeWritten = null; let sizeProp = 'font-size'; let sizeLine = rule.line; let lhText = null; let lhWritten = null; let lhLine = rule.line; let lhProp = 'line-height';
-    if (fs_) { sizeWritten = fs_.value; sizeLine = fs_.line; }
-    if (lh) { lhWritten = lh.value; lhLine = lh.line; }
-    if (font && !/^(inherit|initial|unset|revert|caption|icon|menu|message-box|small-caption|status-bar)$/i.test(font.value)) {
-      const toks = splitValue(font.value);
-      const i = toks.findIndex((t) => { const c = classifyToken(resolveVars(t, vars).text); return c.kind === 'length' || c.kind === 'relative' || (c.kind === 'intrinsic' && c.unit === '%'); });
-      if (i >= 0 && (!fs_ || font.line > fs_.line)) { sizeWritten = toks[i]; sizeProp = 'font'; sizeLine = font.line; if (toks[i + 1] === '/' && toks[i + 2]) { lhWritten = toks[i + 2]; lhProp = 'font'; lhLine = font.line; } }
-    }
-    if (sizeWritten === null) return;
-    const r = resolveVars(sizeWritten, vars);
-    sizeText = r.text;
-    const c = classifyToken(sizeText);
-    const isMicro = /^var\(\s*--fp-type-micro\s*\)$/.test(sizeWritten) || rolesOf(r.chain).has('micro');
-    if (r.unresolved.length) {
-      addFinding({ file, selector: rule.selector, property: sizeProp, value: sizeWritten, check: 'type.scale', rule: 'FP-TYPE-01', result: 'not-run', message: `cannot resolve ${r.unresolved.join(', ')}`, line: sizeLine });
-      mark('type.scale', 'not-run');
-      return;
-    }
-    if (rolesOf(r.chain).has('type') === false && (c.kind === 'intrinsic' || c.kind === 'unknown' || c.kind === 'calc' || c.kind === 'minmax')) {
-      if (c.kind === 'calc' || c.kind === 'minmax') note(`${file}:${sizeLine} ${sizeProp}: ${sizeText} is a computed size and is not tested`);
-      return;
-    }
+    const fsD = get('font-size'); const lhD = get('line-height'); const fontD = get('font');
     const sel = rule.selector;
-    const finding = (p, value, check, ruleId, message, line, resolved) => {
+    const items = lastItem(sel);
+    const isRoot = items.length > 0 && items.every((i) => /^(html|:root)$/i.test(i));
+    const isBody = items.some((i) => /(^|[\s>+~])body$/i.test(i));
+    const useFont = fontD && !/^(inherit|initial|unset|revert|caption|icon|menu|message-box|small-caption|status-bar)$/i.test(fontD.value) && (!fsD || fontD.line > fsD.line);
+
+    // combos: one per definition of each variable involved
+    const combos = [];
+    let sizeProp = 'font-size'; let sizeWritten = null; let sizeLine = rule.line; let lhProp = 'line-height'; let lhWritten = null; let lhLine = rule.line;
+    if (useFont) {
+      sizeProp = 'font'; lhProp = 'font'; sizeLine = lhLine = fontD.line; sizeWritten = fontD.value;
+      for (const alt of resolveAll(fontD.value, vars, protoDefault)) {
+        const toks = splitValue(alt.text);
+        const i = toks.findIndex((t) => { const c = classifyToken(t); return c.kind === 'length' || c.kind === 'relative' || (c.kind === 'intrinsic' && c.unit) || FONT_KEYWORDS.test(t); });
+        if (i < 0) continue;
+        const hasLh = toks[i + 1] === '/' && toks[i + 2] !== undefined;
+        combos.push({ size: { text: toks[i], chain: alt.chain, unresolved: alt.unresolved }, lh: hasLh ? { text: toks[i + 2], chain: alt.chain, unresolved: [] } : null, written: toks[i], lhWritten: hasLh ? toks[i + 2] : null });
+      }
+      lhWritten = combos.some((c) => c.lh) ? fontD.value : null;
+    } else {
+      if (fsD) { sizeWritten = fsD.value; sizeLine = fsD.line; }
+      if (lhD) { lhWritten = lhD.value; lhLine = lhD.line; }
+      if (sizeWritten === null) return;
+      const sa = resolveAll(sizeWritten, vars, protoDefault);
+      const la = lhWritten !== null ? resolveAll(lhWritten, vars, protoDefault) : null;
+      const K = Math.min(64, Math.max(sa.length, la ? la.length : 1));
+      for (let k = 0; k < K; k++) combos.push({ size: sa[Math.min(k, sa.length - 1)], lh: la ? la[Math.min(k, la.length - 1)] : null, written: sizeWritten, lhWritten });
+    }
+    if (!combos.length) return;
+
+    const seen = new Set();
+    const finding = (p, value, check, ruleId, message, line, resolved, chain) => {
+      const key = [p, check, resolved, message].join('|');
+      if (seen.has(key)) return; seen.add(key);
       let result = 'fail';
-      const exc = exceptions.find({ values: [value, resolved ?? value], selector: sel, tokens: r.chain, file, line });
+      const exc = exceptions.find({ values: [value, resolved ?? value], selector: sel, tokens: chain ?? [], file, line, rules: [ruleId] });
       if (exc) result = exc.status === 'accepted' ? 'exception' : 'pending';
       mark(check, result, message);
       addFinding({ file, selector: sel, property: p, value, resolved, check, rule: ruleId, result, message, line });
     };
-    let px = null;
-    if (c.kind === 'length' || c.kind === 'zero') {
-      px = c.px;
-      if (c.kind === 'length' && c.unit !== 'rem') finding(sizeProp, sizeWritten, 'type.units', 'FP-TYPE-04', /^(html|:root)$/i.test(rule.selector) ? 'the root font size must not be set in px' : 'a type size is written in rem', sizeLine, sizeText);
-      else mark('type.units', 'pass');
-    } else if (c.kind === 'relative') {
-      finding(sizeProp, sizeWritten, 'type.units', 'FP-TYPE-04', 'a type size is written in rem', sizeLine, sizeText);
-    } else if (c.kind === 'intrinsic') return; // keywords and percentages (a root of 100%) are not sizes
 
-    let stepKey = null;
-    if (isMicro) {
-      if (px !== null && Math.abs(px - MICRO_PX) > 0.005) finding(sizeProp, sizeWritten, 'type.micro', 'FP-TYPE-05', `micro is ${MICRO_PX}px, found ${fmt(px)}`, sizeLine, sizeText);
-      else mark('type.micro', 'pass');
-      stepKey = 'micro';
-    } else if (px !== null) {
-      const s = findStep(px, bodyPx, align);
-      if (!s) finding(sizeProp, sizeWritten, 'type.scale', 'FP-TYPE-01', `${fmt(px)} is not a step of the scale`, sizeLine, sizeText);
-      else if (s.kind === 'odd') finding(sizeProp, sizeWritten, 'type.step-range', 'FP-TYPE-02', `${fmt(px)} is step ${s.step}: odd steps above 4 are not used`, sizeLine, sizeText);
-      else if (s.kind === 'replaced') finding(sizeProp, sizeWritten, 'type.align', 'FP-TYPE-03', `${fmt(px)} is replaced by ${stepSize(s.step, bodyPx, 'fibonacci')} under type.align fibonacci`, sizeLine, sizeText);
-      else { mark('type.scale', 'pass'); mark('type.step-range', 'pass'); mark('type.align', 'pass'); stepKey = s.step; }
-      if (/^(html\s+)?body$/i.test(rule.selector.trim()) && px < 16 - 0.005) finding(sizeProp, sizeWritten, 'a11y.body-anchor', 'FP-A11Y-07', `body text ${fmt(px)} is below the 16px anchor`, sizeLine, sizeText);
-      else mark('a11y.body-anchor', 'pass');
-      if (px < MICRO_PX - 0.005) finding(sizeProp, sizeWritten, 'a11y.min-text', 'FP-A11Y-08', `${fmt(px)} is below the 11px floor`, sizeLine, sizeText);
-      else mark('a11y.min-text', 'pass');
+    let missingLh = false;
+    for (const combo of combos) {
+      const { size } = combo;
+      const w = combo.written;
+      if (size.unresolved.length) { finding(sizeProp, w, 'type.scale', 'FP-TYPE-01', `cannot resolve ${size.unresolved.join(', ')}`, sizeLine, size.text, size.chain); const f = report.findings[report.findings.length - 1]; f.result = 'not-run'; mark('type.scale', 'not-run'); continue; }
+      const text = size.text;
+      if (KEEP_KEYWORDS.test(text)) continue;
+      const c = classifyToken(text);
+
+      if (isRoot) {
+        // the root font size keeps 1rem at 16px: never px, never a percentage other than 100% (FP-TYPE-04, FP-PLAT-01)
+        if (c.kind === 'length' || c.kind === 'relative') finding(sizeProp, w, 'type.units', 'FP-TYPE-04', 'the root font size must not be set in px', sizeLine, text, size.chain);
+        else if (c.kind === 'intrinsic' && c.unit === '%' && c.n !== 100) finding(sizeProp, w, 'type.units', 'FP-TYPE-04', 'the root font size is 100% so that 1rem is 16px', sizeLine, text, size.chain);
+        continue;
+      }
+
+      const isMicro = /^var\(\s*--fp-type-micro\s*\)$/.test(w) || rolesOf(size.chain).has('micro');
+      let px = null;
+      if (FONT_KEYWORDS.test(text) || c.kind === 'calc' || c.kind === 'minmax' || (c.kind === 'intrinsic') || (c.kind === 'unknown')) {
+        finding(sizeProp, w, 'type.scale', 'FP-TYPE-01', `${text} is not a step of the scale: a type size is a fixed rem value`, sizeLine, text, size.chain);
+        continue;
+      }
+      if (c.kind === 'length' || c.kind === 'zero') {
+        px = c.px;
+        if (c.kind === 'length' && c.unit !== 'rem') finding(sizeProp, w, 'type.units', 'FP-TYPE-04', 'a type size is written in rem', sizeLine, text, size.chain);
+        else mark('type.units', 'pass');
+      } else if (c.kind === 'relative') finding(sizeProp, w, 'type.units', 'FP-TYPE-04', 'a type size is written in rem', sizeLine, text, size.chain);
+
+      let stepKey = null;
+      if (isMicro) {
+        if (px !== null && Math.abs(px - MICRO_PX) > 0.005) finding(sizeProp, w, 'type.micro', 'FP-TYPE-05', `micro is ${MICRO_PX}px, found ${fmt(px)}`, sizeLine, text, size.chain);
+        else mark('type.micro', 'pass');
+        stepKey = 'micro';
+      } else if (px !== null) {
+        const st = findStep(px, bodyPx, align);
+        if (!st) finding(sizeProp, w, 'type.scale', 'FP-TYPE-01', `${fmt(px)} is not a step of the scale`, sizeLine, text, size.chain);
+        else if (st.kind === 'odd') finding(sizeProp, w, 'type.step-range', 'FP-TYPE-02', `${fmt(px)} is step ${st.step}: odd steps above 4 are not used`, sizeLine, text, size.chain);
+        else if (st.kind === 'replaced') finding(sizeProp, w, 'type.align', 'FP-TYPE-03', `${fmt(px)} is replaced by ${stepSize(st.step, bodyPx, 'fibonacci')} under type.align fibonacci`, sizeLine, text, size.chain);
+        else { mark('type.scale', 'pass'); mark('type.step-range', 'pass'); mark('type.align', 'pass'); stepKey = st.step; }
+        if (isBody && px < 16 - 0.005) finding(sizeProp, w, 'a11y.body-anchor', 'FP-A11Y-07', `body text ${fmt(px)} is below the 16px anchor`, sizeLine, text, size.chain);
+        else if (isBody) mark('a11y.body-anchor', 'pass');
+        if (px < MICRO_PX - 0.005) finding(sizeProp, w, 'a11y.min-text', 'FP-A11Y-08', `${fmt(px)} is below the 11px floor`, sizeLine, text, size.chain);
+        else mark('a11y.min-text', 'pass');
+      }
+
+      // leading
+      if (!combo.lh) { missingLh = true; continue; }
+      mark('type.leading-declared', 'pass');
+      const lt = combo.lh.text;
+      if (KEEP_KEYWORDS.test(lt)) continue;
+      if (!/^[+-]?(\d*\.)?\d+$/.test(lt)) { finding(lhProp, combo.lhWritten, 'type.leading-unitless', 'FP-TYPE-08', 'line height is not a unitless ratio', lhLine, lt, combo.lh.chain); continue; }
+      mark('type.leading-unitless', 'pass');
+      if (stepKey === null) continue;
+      const allowed = allowedLeading(stepKey);
+      if (allowed.some((a) => sameRatio(a, Number(lt)))) mark('type.leading', 'pass');
+      else finding(lhProp, combo.lhWritten, 'type.leading', 'FP-TYPE-07', `line height ${lt} is not allowed at step ${stepKey}`, lhLine, lt, combo.lh.chain);
     }
-
-    // leading
-    if (lhWritten === null) {
+    if (missingLh) {
       let result = 'fail';
-      const exc = exceptions.find({ values: ['', sizeWritten], selector: sel, tokens: [], file, line: sizeLine });
+      const exc = exceptions.find({ values: ['', sizeWritten ?? ''], selector: sel, tokens: [], file, line: sizeLine, rules: ['FP-TYPE-13'] });
       if (exc) result = exc.status === 'accepted' ? 'exception' : 'pending';
       mark('type.leading-declared', result, 'no line-height in the rule that sets font-size');
       addFinding({ file, selector: sel, property: 'line-height', value: null, check: 'type.leading-declared', rule: 'FP-TYPE-13', result, message: 'no line-height in the rule that sets font-size', line: sizeLine });
-      return;
     }
-    mark('type.leading-declared', 'pass');
-    const lr = resolveVars(lhWritten, vars);
-    if (/^(inherit|initial|unset|revert)$/i.test(lr.text)) return;
-    if (!/^[+-]?(\d*\.)?\d+$/.test(lr.text)) {
-      finding(lhProp, lhWritten, 'type.leading-unitless', 'FP-TYPE-08', 'line height is not a unitless ratio', lhLine, lr.text);
-      return;
-    }
-    mark('type.leading-unitless', 'pass');
-    if (stepKey === null) return;
-    const ratio = Number(lr.text);
-    const allowed = allowedLeading(stepKey);
-    if (allowed.some((a) => sameRatio(a, ratio))) mark('type.leading', 'pass');
-    else finding(lhProp, lhWritten, 'type.leading', 'FP-TYPE-07', `line height ${lr.text} is not allowed at step ${stepKey}`, lhLine, lr.text);
   }
 
   function layoutExtras(file, rule, decl, inScope) {
     if (!inScope || level !== 'FP-2') return;
     const prop = decl.prop;
-    const r = resolveVars(decl.value, vars);
+    const alts = resolveAll(decl.value, vars, protoDefault);
+    const r = alts[0];
     const add = (check, ruleId, message, resolved) => {
       let result = 'fail';
-      const exc = exceptions.find({ values: [decl.value, resolved ?? r.text], selector: rule.selector, tokens: r.chain, file, line: decl.line });
+      const exc = exceptions.find({ values: [decl.value, resolved ?? r.text], selector: rule.selector, tokens: r.chain, file, line: decl.line, rules: [ruleId] });
       if (exc) result = exc.status === 'accepted' ? 'exception' : 'pending';
       mark(check, result, message);
       addFinding({ file, selector: rule.selector, property: prop, value: decl.value, resolved: resolved ?? r.text, check, rule: ruleId, result, message, line: decl.line });
     };
-    if (prop === 'grid-template-columns') {
-      const declared = rule.decls.some((d) => d.prop === '--fp-layout' && /^phi-split$/i.test(d.value));
-      if (declared) {
-        let t = splitValue(r.text);
-        if (/^var\(\s*--fp-split-(major|minor)\s*\)\s+var\(\s*--fp-split-(major|minor)\s*\)$/.test(r.text)) t = ['1.618fr', '1fr'];
+    const marker = (name, value) => rule.decls.some((d) => d.prop === name && d.value.toLowerCase() === value) || (rule.parent?.decls ?? []).some((d) => d.prop === name && d.value.toLowerCase() === value);
+    if (prop === 'grid-template-columns' && marker('--fp-layout', 'phi-split')) {
+      for (const alt of alts) {
+        const t = splitValue(alt.text);
         const nums = t.length === 2 ? t.map((x) => { const m = /^([\d.]+)(fr|%)$/.exec(x); return m ? { n: parseFloat(m[1]), u: m[2] } : null; }) : [];
         if (nums.length === 2 && nums.every(Boolean) && nums[0].u === nums[1].u && nums[0].n > 0 && nums[1].n > 0) {
           const share = (nums[0].n / (nums[0].n + nums[1].n)) * 100;
-          const near = Math.abs(share - 61.8) <= 0.1 + 1e-9 || Math.abs(share - 38.2) <= 0.1 + 1e-9;
-          if (near) mark('layout.phi-split', 'pass');
-          else add('layout.phi-split', 'FP-LAYOUT-01', `split ${roundHalfUp(share, 1)} to ${roundHalfUp(100 - share, 1)} is not 61.8 to 38.2`);
-        } else add('layout.phi-split', 'FP-LAYOUT-01', 'a declared phi split has exactly two tracks, in fr or %, or --fp-split-major and --fp-split-minor');
+          if (Math.abs(share - 61.8) <= 0.1 + 1e-9 || Math.abs(share - 38.2) <= 0.1 + 1e-9) mark('layout.phi-split', 'pass');
+          else add('layout.phi-split', 'FP-LAYOUT-01', `split ${roundHalfUp(share, 1)} to ${roundHalfUp(100 - share, 1)} is not 61.8 to 38.2`, alt.text);
+        } else add('layout.phi-split', 'FP-LAYOUT-01', 'a declared phi split has exactly two tracks, in fr or %, or --fp-split-major and --fp-split-minor', alt.text);
       }
     }
     if (/^(max-inline-size|max-width)$/.test(prop)) {
-      const m = /^([\d.]+)ch$/.exec(r.text);
-      if (m) {
-        if (parseFloat(m[1]) > 80) add('type.measure-max', 'FP-TYPE-09', `${m[1]}ch is more than 80 characters per line`);
-        else mark('type.measure-max', 'pass');
+      for (const alt of alts) {
+        for (const m of alt.text.matchAll(/([\d.]+)ch\b/g)) {
+          if (parseFloat(m[1]) > 80) { add('type.measure-max', 'FP-TYPE-09', `${m[1]}ch is more than 80 characters per line`, alt.text); break; }
+          mark('type.measure-max', 'pass');
+        }
       }
     }
     // FP-LAYOUT-05: a container limit is identified by its token, not by its size (Native, FP-2)
     if (mode === 'native' && /^(max-inline-size|max-width|width|inline-size)$/.test(prop)) {
+      const isTokenOnly = /^var\(\s*--fp-container-(610|987|1597)\s*\)$/.test(decl.value.trim());
       const usesToken = /--fp-container-(610|987|1597)/.test(decl.value);
       const isMax = /^max-/.test(prop);
-      if (usesToken && isMax) mark('layout.container-widths', 'pass');
-      else if (usesToken) add('layout.container-widths', 'FP-LAYOUT-05', `a container is written as max-inline-size or max-width, never as a fixed ${prop}`);
-      else if (isMax && rule.decls.some((d) => d.prop === '--fp-layout' && /^container$/i.test(d.value))) add('layout.container-widths', 'FP-LAYOUT-05', 'a rule marked --fp-layout: container sets its limit with a --fp-container-* token');
+      if (isTokenOnly && isMax) mark('layout.container-widths', 'pass');
+      else if (usesToken && !isMax) add('layout.container-widths', 'FP-LAYOUT-05', `a container is written as max-inline-size or max-width, never as a fixed ${prop}`);
+      else if (isMax && marker('--fp-layout', 'container')) add('layout.container-widths', 'FP-LAYOUT-05', 'a rule marked --fp-layout: container sets its limit with a bare --fp-container-* token');
     }
   }
 
+  if (mode === 'snap') {
+    for (const f of snapFiles) {
+      for (const cp of parsed.get(f)?.customProps ?? []) if (!cp.name.startsWith('--fp-')) snapNames.add(cp.name);
+      const doc = jsonDocs.get(f);
+      if (doc) for (const l of flatten(doc)) snapNames.add(l.path);
+    }
+  }
   for (const f of [...parsed.keys()].filter((x) => sourceFiles.includes(x)).sort()) {
     const p = parsed.get(f);
     const inScope = scopeSet.has(f);
@@ -504,7 +570,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
       for (const decl of rule.decls) {
         processDecl(f, rule, decl, inScope);
         layoutExtras(f, rule, decl, inScope);
-        if (inScope && /^(animation|transition)(-|$)/.test(decl.prop) && !/^none$/i.test(decl.value)) hasSeen.motion.push(`${f}:${decl.line} ${decl.prop}`);
+        if (inScope && /^(animation|transition)(-|$)/.test(decl.prop) && !/^(none|initial|unset|revert)?(\s+0s)*$/i.test(decl.value.trim())) hasSeen.motion.push(`${f}:${decl.line} ${decl.prop}`);
       }
       typeRule(f, rule, inScope);
       if (inScope && rule.kind === 'style' && rule.selector && SELECT_INTERACTIVE.test(rule.selector)) hasSeen.controls.push(`${f}:${rule.line} ${rule.selector}`);
@@ -532,15 +598,35 @@ export function runCheck({ dir, configPath, specDir } = {}) {
 
   // ---- Snap -----------------------------------------------------------------------------------------
   if (mode === 'snap') runSnap();
+  function parseSnapTable(text) {
+    // rows of a markdown table: | token | role | original | snapped | ... (FP-SNAP-06)
+    const rows = new Map();
+    for (const line of text.split(/\r?\n/)) {
+      if (!line.trim().startsWith('|')) continue;
+      const cells = line.trim().replace(/^\||\|$/g, '').split('|').map((c) => c.trim().replace(/^`|`$/g, ''));
+      if (cells.length < 4) continue;
+      const m = /^(-?[\d.]+)(px|rem)?$/.exec(cells[2]);
+      if (!m) continue;
+      rows.set(cells[0], { role: cells[1], original: parseFloat(m[1]) * (m[2] === 'rem' ? 16 : 1) });
+    }
+    return rows;
+  }
+
   function runSnap() {
     const rows = [];
     const seen = new Set();
-    const addRow = (name, px, file, line) => {
-      if (seen.has(name) || name.startsWith('--fp-') || px === null || px === 0) return;
+    const tablePath = path.join(dir, config.snap?.table ?? 'fp-snap.md');
+    const table = fs.existsSync(tablePath) ? parseSnapTable(fs.readFileSync(tablePath, 'utf8')) : null;
+    if (table) report.snapTable = { path: posix(path.relative(dir, tablePath)), rows: table.size };
+    const addRow = (name, srcPx, file, line) => {
+      if (seen.has(name) || name.startsWith('--fp-')) return;
+      const fromTable = table?.get(name);
+      const px = fromTable ? fromTable.original : srcPx; // FP-SNAP-06: originals come from the published table when it exists
+      if (px === null || px === 0) return;
       seen.add(name);
       const rs = rolesOf([name]);
       const exemptRole = [...rs].find((x) => EXEMPT_ROLES.has(x));
-      const radius = radiusTokensUsed.has(name) || /radius|rounded|corner/i.test(name);
+      const radius = radiusTokensUsed.has(name) || /radius|rounded|corner/i.test(name) || (fromTable && /^radius$/i.test(fromTable.role));
       const base = { token: name, file, line };
       if (exemptRole) rows.push({ ...base, role: exemptRole, original: px, snapped: px, drift: 0, note: 'exempt by role, unchanged', exempt: true });
       else if (rs.has('target')) rows.push({ ...base, role: 'target', original: px, ...mapTarget(px, u, pointer) });
@@ -564,13 +650,13 @@ export function runCheck({ dir, configPath, specDir } = {}) {
         for (const l of leaves) { if (l.type !== 'dimension') continue; const px = dimensionPx(resolveAlias(l.token.$value, by)); if (px) addRow(l.path, px, f, 0); }
       }
     }
-    // bare literals in the scope (FP-SNAP-02, listed under "literals")
+    // bare literals in the scope, and values that reach a declaration through a local property Snap does not map (FP-SNAP-02)
     const literals = [];
     for (const l of literalDecls) {
       const row = { file: l.file, selector: l.rule.selector, property: l.decl.prop, original: l.px, ...mapLength(l.px, l.key === 'radius' ? 'radius' : 'space', u), role: l.key === 'radius' ? 'radius' : 'space' };
       literals.push(row);
       if (row.snapped === null) {
-        const exc = exceptions.find({ values: [l.written, `${fmt(l.px)}px`], selector: l.rule.selector, tokens: [], file: l.file, line: l.decl.line, reason: 'snap-drift' });
+        const exc = exceptions.find({ values: [l.written, `${fmt(l.px)}px`], selector: l.rule.selector, tokens: l.f.chain, file: l.file, line: l.decl.line, rules: ['FP-SNAP-10', 'FP-SNAP-03', 'FP-SPACE-01', 'FP-RADIUS-01'] });
         const result = exc ? (exc.status === 'accepted' ? 'exception' : 'pending') : 'fail';
         mark('snap.unsnappable', result, 'literal kept unchanged');
         report.findings.push({ file: l.file, selector: l.rule.selector, property: l.decl.prop, value: l.written, check: 'snap.unsnappable', rule: 'FP-SNAP-10', result, line: l.decl.line, message: result === 'fail' ? 'kept unchanged; no snap-drift exception is declared' : 'kept unchanged; declared as a snap-drift exception' });
@@ -579,7 +665,6 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     report.literals = literals;
     // overrides (FP-SNAP-07)
     const overrides = [];
-    const finalOf = new Map();
     for (const r of rows) { r.final = r.snapped === null ? r.original : r.snapped; }
     for (const o of config.snap?.overrides ?? []) {
       const row = rows.find((r) => r.token === o.token);
@@ -601,20 +686,33 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     const merges = findMerges(rows.filter((r) => !r.exempt));
     // unsnappable (FP-SNAP-10)
     const snapFindings = [];
+    const unsnappable = new Map(); // token -> exception result
     for (const r of rows.filter((x) => x.snapped === null && !x.exempt)) {
-      const exc = exceptions.find({ values: [`${fmt(r.original)}px`, String(r.original)], selector: '', tokens: [r.token], file: r.file, line: r.line, reason: 'snap-drift' });
+      const exc = exceptions.find({ values: [`${fmt(r.original)}px`, String(r.original)], selector: '', tokens: [r.token], file: r.file, line: r.line, reason: 'snap-drift', rules: ['FP-SNAP-10', 'FP-SNAP-03', 'FP-SPACE-01', 'FP-RADIUS-01'] });
       let result = 'fail'; let message = 'kept unchanged; no snap-drift exception is declared';
       if (exc) { result = exc.status === 'accepted' ? 'exception' : 'pending'; message = exc.status === 'accepted' ? 'kept unchanged; declared as a snap-drift exception' : 'kept unchanged; the snap-drift exception is still pending'; }
+      unsnappable.set(r.token, { result, value: r.original });
       mark('snap.unsnappable', result, message);
       snapFindings.push({ token: r.token, value: `${fmt(r.original)}px`, check: 'snap.unsnappable', rule: 'FP-SNAP-10', result, message });
     }
     mark('snap.unsnappable', 'pass');
     report.findings.push(...snapFindings);
+    // a length still off the ladder after Snap fails FP-SPACE-01 where it is used
+    for (const use of snapUses) {
+      const bad = use.chain.filter((n) => unsnappable.has(n));
+      if (!bad.length) continue;
+      const worstRes = bad.map((n) => unsnappable.get(n).result).sort((x, y) => RESULT_ORDER.indexOf(x) - RESULT_ORDER.indexOf(y))[0];
+      const result = worstRes === 'exception' ? 'exception' : worstRes;
+      const check = use.key === 'radius' ? 'radius.set' : 'space.on-ladder';
+      mark(check, result, 'a token Snap kept off the ladder is used here');
+      if (result !== 'exception') report.findings.push({ file: use.file, selector: use.rule.selector, property: use.decl.prop, value: use.written, resolved: use.whole, check, rule: CHECKS[use.key].rule, result, line: use.decl.line, message: `${bad.join(', ')} is still off the ladder after Snap` });
+    }
+    mark('snap.exempt-by-role', 'pass'); mark('snap.nearest', 'pass'); mark('snap.drift', 'pass'); mark('snap.target-up', 'pass'); mark('snap.level-cap', 'pass');
     for (const o of overrides) mark('snap.override', o.result, o.message);
     mark('snap.override', 'pass');
     for (const b of breaches) mark('snap.monotonic', 'fail', `${b.tokens.join(' > ')}`);
     mark('snap.monotonic', 'pass');
-    mark('snap.exempt-by-role', 'pass'); mark('snap.nearest', 'pass'); mark('snap.drift', 'pass'); mark('snap.target-up', 'pass'); mark('snap.level-cap', 'pass');
+    mark('snap.merge-listed', 'pass'); // the merges listed in the report are this rule's machine test (FP-SNAP-06)
     mark('snap.control-height', 'pass');
 
     const outRows = rows.map((r) => {
@@ -632,12 +730,12 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     report.orderBreaches = breaches;
     report.final = Object.fromEntries(rows.map((r) => [r.token, r.final]));
 
-    // FP-SNAP-06: the merges listed above are the machine test; the published table is a self-report item (FP-SNAP-08).
-    mark('snap.merge-listed', 'pass');
-    // FP-SNAP-11: control heights
+    // FP-SNAP-11: control heights. Interactive = element name, ARIA role, or a class listed in `controls`.
+    const classRes = (config.controls ?? []).map((c) => new RegExp(`${c.replace(/[.+^${}()|[\]\\]/g, '\\$&')}(?![\\w-])`));
+    const interactive = (sel) => INTERACTIVE_ELEMENT.test(sel) || classRes.some((re) => re.test(sel));
     for (const f of [...parsed.keys()].filter((x) => scopeSet.has(x) && sourceFiles.includes(x))) {
       for (const rule of parsed.get(f).rules) {
-        if (rule.kind !== 'style' || !INTERACTIVE_ELEMENT.test(rule.selector)) continue;
+        if (rule.kind !== 'style' || !interactive(rule.selector)) continue;
         for (const d of rule.decls) {
           if (!/^(height|min-height|block-size|min-block-size)$/.test(d.prop)) continue;
           const r = resolveVars(d.value, vars);
@@ -645,7 +743,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
           if (c.kind === 'zero' || c.kind === 'intrinsic') continue;
           const rs = rolesOf(r.chain);
           if (!rs.has('target') && !rs.has('drawn')) {
-            const exc = exceptions.find({ values: [d.value, r.text], selector: rule.selector, tokens: r.chain, file: f, line: d.line });
+            const exc = exceptions.find({ values: [d.value, r.text], selector: rule.selector, tokens: r.chain, file: f, line: d.line, rules: ['FP-SNAP-11'] });
             const result = exc ? (exc.status === 'accepted' ? 'exception' : 'pending') : 'fail';
             mark('snap.control-height', result, 'control height without a target or drawn role');
             report.findings.push({ file: f, selector: rule.selector, property: d.prop, value: d.value, resolved: r.text, check: 'snap.control-height', rule: 'FP-SNAP-11', result, line: d.line, message: 'the height of an interactive element needs the target or drawn role' });
@@ -659,63 +757,63 @@ export function runCheck({ dir, configPath, specDir } = {}) {
   report.pairs = runContrast();
   function runContrast() {
     const themes = config.themes?.length ? config.themes : [{ name: null }];
-    const out = [];
-    const base = (name) => { const v = vars.get(name); return v; };
-    const themeVar = (theme, name) => {
-      if (theme.selector) {
-        const e = (vars.entries.get(name) || []).filter((x) => collapse(x.selector) === collapse(theme.selector) && x.at.length === 0);
-        if (e.length) return e[e.length - 1].value;
-      }
-      if (theme.media) {
-        const e = (vars.entries.get(name) || []).filter((x) => x.at.some((a) => collapse(a).toLowerCase().includes(collapse(theme.media).toLowerCase())));
-        if (e.length) return e[e.length - 1].value;
-      }
-      if (theme.files?.length) {
-        const fl = new Set(expandGlobs(dir, theme.files, all));
-        const e = (vars.entries.get(name) || []).filter((x) => fl.has(x.file));
-        if (e.length) return e[e.length - 1].value;
-      }
-      return undefined;
+    const normSel = (x) => collapse(x).toLowerCase().replace(/\[\s*([^\]=~|^$*\s]+)\s*([~|^$*]?=)\s*(["']?)([^\]"']*)\3\s*\]/g, '[$1$2"$4"]');
+    const stripRoot = (x) => x.replace(/^(:root|html)(?=[\[.#:])/, '');
+    const normMedia = (x) => x.toLowerCase().replace(/\s+/g, '').replace(/^@media/, '');
+    const selMatches = (entrySel, themeSel) => {
+      const t = normSel(themeSel);
+      return splitSelectors(entrySel).some((i) => { const n = normSel(i); return n === t || stripRoot(n) === stripRoot(t); });
     };
+    const isBase = (e) => /^(:root|html)$/i.test(e.selector.trim()) && e.at.length === 0;
+    const themeFilesSet = (theme) => new Set(expandGlobs(dir, theme.files ?? [], all));
+    const own = (theme, name) => {
+      const list = vars.entries.get(name) || [];
+      let e = [];
+      if (theme.selector && !/^(:root|html)$/i.test(theme.selector.trim())) e = list.filter((x) => selMatches(x.selector, theme.selector) && !x.at.some((a) => /@media/i.test(a) && theme.media === undefined && false));
+      else if (theme.selector) e = list.filter(isBase);
+      if (!e.length && theme.media) e = list.filter((x) => x.at.some((a) => normMedia(a).includes(normMedia(theme.media))));
+      if (!e.length && theme.files?.length) { const fl = themeFilesSet(theme); e = list.filter((x) => fl.has(x.file)); }
+      return e.length ? e[e.length - 1].value : undefined;
+    };
+    const declared = (x) => themes.some((t) => (t.selector && selMatches(x.selector, t.selector)) || (t.media && x.at.some((a) => normMedia(a).includes(normMedia(t.media)))) || (t.files?.length && themeFilesSet(t).has(x.file)));
     const themeTokens = (theme) => {
       if (!theme.files?.length) return null;
-      const fl = new Set(expandGlobs(dir, theme.files, all));
       const m = new Map();
-      for (const f of fl) { const d = jsonDocs.get(f); if (d) for (const l of flatten(d)) m.set(l.path, l); }
+      for (const f of themeFilesSet(theme)) { const d = jsonDocs.get(f); if (d) for (const l of flatten(d)) m.set(l.path, l); }
       return m;
     };
-    const resolveColor = (ref, theme, depth = 0) => {
-      if (depth > 15) return null;
-      if (ref.startsWith('#')) return parseColor(ref);
+    const colourOf = (ref, theme, depth = 0) => {
+      if (depth > 15) return { err: 'reference loop' };
+      if (ref.startsWith('#')) return { c: parseColor(ref) };
       if (ref.startsWith('--')) {
-        let v = themeVar(theme, ref); if (v === undefined) v = base(ref);
-        if (v === undefined) return null;
+        let v = theme.name === null ? undefined : own(theme, ref);
+        if (v === undefined) v = vars.get(ref);
+        if (v === undefined) return { err: `${ref} is not defined` };
         const vm = /^var\(\s*(--[\w-]+)\s*(?:,[^)]*)?\)$/.exec(v.trim());
-        if (vm) return resolveColor(vm[1], theme, depth + 1);
-        return parseColor(v);
+        if (vm) return colourOf(vm[1], theme, depth + 1);
+        return { c: parseColor(v), raw: v };
       }
       const tt = themeTokens(theme);
       const tok = (tt && tt.get(ref)) || tokenByPath.get(ref);
-      if (!tok) return null;
-      const by = tt || tokenByPath;
-      const val = resolveAlias(tok.token.$value, tt ? new Map([...tokenByPath, ...tt]) : tokenByPath);
-      return parseColor(val);
+      if (!tok) return { err: `${ref} is not defined` };
+      return { c: parseColor(resolveAlias(tok.token.$value, tt ? new Map([...tokenByPath, ...tt]) : tokenByPath)) };
     };
+    const out = [];
     for (const theme of themes) {
       for (const p of config.pairs) {
-        const fg = resolveColor(p.fg, theme); const bg = resolveColor(p.bg, theme);
         const rec = { fg: p.fg, bg: p.bg, kind: p.kind, ...(theme.name ? { theme: theme.name } : {}) };
-        if (!fg || !bg) {
-          Object.assign(rec, { ratio: null, required: null, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: 'not-run', message: `cannot resolve ${!fg ? p.fg : p.bg} to a colour` });
-          mark('a11y.contrast', 'not-run', rec.message); mark('a11y.contrast-exact', 'not-run', rec.message);
-        } else if (fg.a < 1 || bg.a < 1) {
-          Object.assign(rec, { ratio: null, required: null, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: 'not-run', message: 'a colour with transparency has no fixed contrast without compositing' });
-          mark('a11y.contrast', 'not-run', rec.message); mark('a11y.contrast-exact', 'not-run', rec.message);
-        } else {
-          const t = testPair(fg, bg, p.kind);
-          Object.assign(rec, { ratio: t.ratio, required: t.required, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: t.pass ? 'pass' : 'fail' });
-          mark('a11y.contrast', rec.result, `${p.fg} on ${p.bg}: ${t.ratio} < ${t.required}`); mark('a11y.contrast-exact', rec.result);
-        }
+        const notRun = (message) => { Object.assign(rec, { ratio: null, required: null, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: 'not-run', message }); mark('a11y.contrast', 'not-run', message); mark('a11y.contrast-exact', 'not-run', message); out.push(rec); };
+        const isNonBase = theme.name !== null && !(theme.selector && /^(:root|html)$/i.test(theme.selector.trim()) && !theme.media && !theme.files);
+        if (isNonBase && ![p.fg, p.bg].some((x) => x.startsWith('--') && own(theme, x) !== undefined) && !themeTokens(theme)?.has(p.fg) && !themeTokens(theme)?.has(p.bg)) { notRun(`theme "${theme.name}" defines neither ${p.fg} nor ${p.bg}: its selector, media query or files match nothing`); continue; }
+        // an override of a pair's colour that no declared theme covers (FP-A11Y-01: every theme the product ships is declared)
+        const stray = [p.fg, p.bg].filter((x) => x.startsWith('--')).flatMap((x) => (vars.entries.get(x) || []).filter((e) => !isBase(e) && !declared(e)));
+        if (!isNonBase && stray.length) { notRun(`${stray[0].file}:${stray[0].line} sets a pair colour under "${stray[0].at.concat(stray[0].selector).join(' ')}", which no declared theme covers`); continue; }
+        const fg = colourOf(p.fg, theme); const bg = colourOf(p.bg, theme);
+        if (fg.err || bg.err || !fg.c || !bg.c) { notRun(fg.err || bg.err || `cannot resolve ${!fg.c ? p.fg : p.bg} to a colour`); continue; }
+        if (fg.c.a < 1 || bg.c.a < 1) { notRun('a colour with transparency has no fixed contrast without compositing'); continue; }
+        const t = testPair(fg.c, bg.c, p.kind);
+        Object.assign(rec, { ratio: t.ratio, required: t.required, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: t.pass ? 'pass' : 'fail' });
+        mark('a11y.contrast', rec.result, `${p.fg} on ${p.bg}: ${t.ratio} < ${t.required}`); mark('a11y.contrast-exact', rec.result);
         out.push(rec);
       }
     }
@@ -723,6 +821,8 @@ export function runCheck({ dir, configPath, specDir } = {}) {
   }
 
   // ---- FP-PLAT: web custom properties --------------------------------------------------------------------
+  const PLAT_NAMES = /^--fp-(space-(1|2|3|5|8|13|21|34|55|89|144|233|377)|container-(610|987|1597)|radius-(2|3|5|8|13|21|pill|round)|line-(hairline|stroke-2|stroke-3)|focus-(gap|ring)|target|target-coarse|target-floor-(coarse|fine)|type-(n1|[0-8]|micro)|leading-(body|dense|small|heading|display)|duration-(89|144|233|377)|easing-(standard|enter|exit)|layer-(base|raised|overlay|popover|toast)|tone-[1-5]|split-(major|minor)|math-(phi|phi-inverse|phi-inverse-squared|phi-root|golden-angle-degrees|golden-angle-radians|hash-constant)|layout)$/;
+  const sameValue = (a, b) => { const ca = classifyToken(a); const cb = classifyToken(b); const pa = ca.kind === 'length' || ca.kind === 'zero' ? ca.px : null; const pb = cb.kind === 'length' || cb.kind === 'zero' ? cb.px : null; return (pa !== null && pb !== null) ? Math.abs(pa - pb) < 1e-6 : normValue(a) === normValue(b); };
   for (const [f, p] of parsed) {
     if (!scopeSet.has(f)) continue;
     for (const cp of p.customProps) {
@@ -731,26 +831,22 @@ export function runCheck({ dir, configPath, specDir } = {}) {
         mark(check, 'fail', message);
         report.findings.push({ file: f, selector: cp.selector, property: cp.name, value: cp.value, check, rule: ruleId, result: 'fail', message, line: cp.line });
       };
-      const fam = /^--fp-(space|container|radius|focus|type|leading|duration|tone)-(.+)$/.exec(cp.name);
-      if (fam) {
-        const allowed = { space: FIB.map(String), container: CONTAINERS.map(String), radius: ['2', '3', '5', '8', '13', '21', 'pill', 'round'], focus: ['gap', 'ring'], type: ['n1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'micro'], leading: ['body', 'dense', 'small', 'heading', 'display'], duration: ['89', '144', '233', '377'], tone: ['1', '2', '3', '4', '5'] }[fam[1]];
-        if (!allowed.includes(fam[2])) { bad('plat.web-tokens', 'FP-PLAT-02', `${cp.name} is not a protocol name`); continue; }
-        mark('plat.web-tokens', 'pass');
-        const r = resolveVars(cp.value, vars); const c = classifyToken(r.text);
-        if (fam[1] === 'space' && c.kind === 'length') {
-          if (Math.abs(c.px - Number(fam[2]) * u) > 1e-6) bad('plat.web-units', 'FP-PLAT-01', `${cp.name} should be ${Number(fam[2]) * u}px at u=${u}, found ${fmt(c.px)}px`);
-          else mark('plat.web-units', 'pass');
-        }
-        if ((fam[1] === 'container' || (fam[1] === 'radius' && fam[2] !== 'pill')) && c.kind === 'length' && Math.abs(c.px - Number(fam[2])) > 1e-6) bad('plat.web-units', 'FP-PLAT-01', `${cp.name} does not scale with u and should be ${fam[2]}px, found ${fmt(c.px)}px`);
-        if (fam[1] === 'type' && c.kind === 'length' && c.unit !== 'rem') bad('plat.web-units', 'FP-PLAT-01', `${cp.name}: protocol type is written in rem`);
-      }
-      if (cp.name === '--fp-target' && pointer !== 'fine') {
-        const c = classifyToken(resolveVars(cp.value, vars).text);
-        const fineV = ladderTarget(u, 'fine');
+      if (!PLAT_NAMES.test(cp.name)) { bad('plat.web-tokens', 'FP-PLAT-02', `${cp.name} is not a protocol name (FP-PLAT-02 table)`); continue; }
+      mark('plat.web-tokens', 'pass');
+      const r = resolveAll(cp.value, vars, protoDefault)[0];
+      if (r.unresolved.length) continue;
+      if (cp.name === '--fp-target') {
         const inQuery = cp.at.some((a) => /pointer:\s*fine/i.test(a) && /not\s*\(\s*any-pointer:\s*coarse\s*\)/i.test(a));
-        if (c.kind === 'length' && Math.abs(c.px - fineV) < 1e-6 && !inQuery) bad('plat.web-pointer', 'FP-PLAT-03', `--fp-target is the fine value ${fineV} outside @media (pointer: fine) and (not (any-pointer: coarse))`);
+        const want = pointer === 'fine' || inQuery ? ladderTarget(u, 'fine') : ladderTarget(u, 'both');
+        if (!sameValue(r.text, `${want}px`)) bad('plat.web-pointer', 'FP-PLAT-03', inQuery || pointer === 'fine' ? `--fp-target under a fine pointer is ${want}, found ${r.text}` : `--fp-target outside @media (pointer: fine) and (not (any-pointer: coarse)) is the coarse value ${want}, found ${r.text}`);
         else mark('plat.web-pointer', 'pass');
+        continue;
       }
+      const want = protoDefault(cp.name);
+      if (want !== undefined && !sameValue(r.text, want)) {
+        const fam = /^--fp-(space|container|radius|line|focus|target|type)/.exec(cp.name);
+        bad(fam ? 'plat.web-units' : 'plat.web-tokens', fam ? 'FP-PLAT-01' : 'FP-PLAT-02', `${cp.name} should be ${want}, found ${r.text}`);
+      } else if (want !== undefined) mark('plat.web-units', 'pass');
     }
   }
 
@@ -798,6 +894,9 @@ export function runCheck({ dir, configPath, specDir } = {}) {
   if (pendingDeclared.length) hasPending = true;
   if (hasFail) result = 'fail'; else if (hasNotRun) result = 'not-run'; else if (hasPending) result = 'pending'; else result = 'pass';
   if (!sourceFiles.length) { result = 'not-run'; note('No source file matched `source`: nothing was read.'); }
+  else if (![...scopeSet].some((f) => parsed.has(f) || jsonDocs.has(f))) { result = 'not-run'; note('No file in `scope` was read: the scope matches nothing (a glob typo?).'); }
+  if (report.inlineStyles?.length) note(`${report.inlineStyles.length} inline style attribute(s) are not read; their lengths are a self-report item (FP-CONF-08). See inlineStyles in the report.`);
+  else note('The scope has no inline style attributes.');
   report.result = result;
   report.unread = unread;
 

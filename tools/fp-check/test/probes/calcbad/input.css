@@ -1,0 +1,1 @@
+:root{--fp-space-13:2em} .a{width:calc(100% - var(--fp-space-13))}

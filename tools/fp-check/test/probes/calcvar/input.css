@@ -1,0 +1,1 @@
+:root{--s:var(--fp-space-13)} .a{width:calc(100% - var(--s))} .b{width:calc(100% - 14px)}

@@ -88,7 +88,13 @@ export function parseCss(source, { file = '', lineOffset = 0 } = {}) {
         if (headTrim.startsWith('@')) {
           atRules.push({ prelude: collapse(headTrim), file, line: lineAt(source, i) + lineOffset });
           if (GROUPING.test(headTrim)) {
-            parseBody(inner[0], inner[1], { selector: ctx.selector, at: [...ctx.at, collapse(headTrim)], kind: ctx.kind, rule: null });
+            const at = [...ctx.at, collapse(headTrim)];
+            if (ctx.rule && ctx.kind === 'style') {
+              // a conditional group nested in a style rule is a rule of the same selector (CSS nesting), linked to its parent
+              const r = { selector: ctx.selector, decls: [], line: lineAt(source, i) + lineOffset, at, kind: 'style', parent: ctx.rule };
+              rules.push(r);
+              parseBody(inner[0], inner[1], { selector: ctx.selector, at, kind: 'style', rule: r });
+            } else parseBody(inner[0], inner[1], { selector: ctx.selector, at, kind: ctx.kind, rule: null });
           } else if (/^@(-\w+-)?keyframes\b/i.test(headTrim)) {
             parseBody(inner[0], inner[1], { selector: '', at: [...ctx.at, collapse(headTrim)], kind: 'keyframes', rule: null });
           } else if (OPAQUE.test(headTrim)) {

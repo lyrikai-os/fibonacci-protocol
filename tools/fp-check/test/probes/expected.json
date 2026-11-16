@@ -1,0 +1,749 @@
+{
+ "anim": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "animnone": {
+  "result": "pass"
+ },
+ "base": {
+  "result": "pass"
+ },
+ "c-fallback": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "c-marked": {
+  "result": "fail",
+  "checks": [
+   "layout.container-widths"
+  ]
+ },
+ "c-marked2": {
+  "result": "fail",
+  "checks": [
+   "layout.container-widths",
+   "space.on-ladder"
+  ]
+ },
+ "c-width": {
+  "result": "fail",
+  "checks": [
+   "layout.container-widths"
+  ]
+ },
+ "calcbad": {
+  "result": "fail",
+  "checks": [
+   "plat.web-units",
+   "space.on-ladder"
+  ]
+ },
+ "calcvar": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "classvar": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "comment": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "cssnest": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable",
+   "space.on-ladder"
+  ]
+ },
+ "ctrl": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "ctrl10": {
+  "result": "pass"
+ },
+ "ctrl11": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "ctrl2": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "ctrl3": {
+  "result": "pass"
+ },
+ "ctrl4": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "ctrl5": {
+  "result": "pass"
+ },
+ "ctrl6": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "ctrl7": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "ctrl8": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "ctrl9": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "em": {
+  "result": "not-run",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "excfile": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "excglob": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "excrule": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "fb": {
+  "result": "fail",
+  "checks": [
+   "radius.set",
+   "space.on-ladder"
+  ]
+ },
+ "fbc": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "fpcalc": {
+  "result": "pass"
+ },
+ "fpcalc2": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "fpcalc3": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "fpcalc4": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "fpcalc5": {
+  "result": "pass"
+ },
+ "fpcalc6": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "fpcalc7": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "fpcalc8": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "fpcalc9": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "frac": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "imp": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "kf": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "kfmedia": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "kfwebkit": {
+  "result": "fail",
+  "checks": [
+   "conf.not-applicable"
+  ]
+ },
+ "l-media": {
+  "result": "pass"
+ },
+ "l-minmax": {
+  "result": "fail",
+  "checks": [
+   "layout.phi-split"
+  ]
+ },
+ "l-mm": {
+  "result": "fail",
+  "checks": [
+   "layout.phi-split"
+  ]
+ },
+ "l-nested": {
+  "result": "fail",
+  "checks": [
+   "layout.phi-split"
+  ]
+ },
+ "l-ok": {
+  "result": "pass"
+ },
+ "ladu4": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "ladu4b": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "lname": {
+  "result": "fail",
+  "checks": [
+   "plat.web-tokens"
+  ]
+ },
+ "mediavar": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "minmax": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "neg": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "nested": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "nolen": {
+  "result": "pass"
+ },
+ "off": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "pillredef": {
+  "result": "fail",
+  "checks": [
+   "plat.web-units",
+   "radius.set"
+  ]
+ },
+ "pt": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "pt-coarse": {
+  "result": "fail",
+  "checks": [
+   "plat.web-units"
+  ]
+ },
+ "pt-fine": {
+  "result": "fail",
+  "checks": [
+   "plat.web-pointer"
+  ]
+ },
+ "pt-finemedia": {
+  "result": "fail",
+  "checks": [
+   "plat.web-pointer"
+  ]
+ },
+ "pt-low": {
+  "result": "fail",
+  "checks": [
+   "plat.web-pointer"
+  ]
+ },
+ "pt-u4": {
+  "result": "fail",
+  "checks": [
+   "plat.web-pointer"
+  ]
+ },
+ "rad2": {
+  "result": "fail",
+  "checks": [
+   "radius.set"
+  ]
+ },
+ "rad30": {
+  "result": "fail",
+  "checks": [
+   "radius.set"
+  ]
+ },
+ "radem": {
+  "result": "fail",
+  "checks": [
+   "radius.set"
+  ]
+ },
+ "radlong": {
+  "result": "fail",
+  "checks": [
+   "radius.set"
+  ]
+ },
+ "radvw": {
+  "result": "fail",
+  "checks": [
+   "radius.set"
+  ]
+ },
+ "redefspace": {
+  "result": "fail",
+  "checks": [
+   "plat.web-units",
+   "space.on-ladder"
+  ]
+ },
+ "redefspace2": {
+  "result": "fail",
+  "checks": [
+   "plat.web-units",
+   "space.on-ladder"
+  ]
+ },
+ "rem": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "roundredef": {
+  "result": "fail",
+  "checks": [
+   "plat.web-units",
+   "radius.set"
+  ]
+ },
+ "s-body": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-color": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-color5": {
+  "result": "not-run",
+  "checks": [
+   "pair:not-run"
+  ]
+ },
+ "s-dataexc": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-emptysrc": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-extra": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-fine": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-fpver": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-hasnull": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-level3": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-ovr": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-ovr4": {
+  "result": "fail"
+ },
+ "s-snapnosrc": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-snapnosrc2": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-theme0": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-themenosel": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-unicode": {
+  "result": "pass"
+ },
+ "s-unit2": {
+  "result": "fail",
+  "configError": true
+ },
+ "s-unitstr": {
+  "result": "fail",
+  "configError": true
+ },
+ "scope-none": {
+  "result": "not-run"
+ },
+ "scope-typo": {
+  "result": "not-run"
+ },
+ "scopedvar": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "scrollb": {
+  "result": "pass"
+ },
+ "shorth": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "sn-big": {
+  "result": "pass"
+ },
+ "sn-calc": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "sn-em": {
+  "result": "not-run",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "sn-localvar": {
+  "result": "pass"
+ },
+ "sn-ok": {
+  "result": "pass"
+ },
+ "sn-radius": {
+  "result": "fail",
+  "checks": [
+   "radius.set"
+  ]
+ },
+ "strokeu4": {
+  "result": "fail",
+  "checks": [
+   "math.fixed-detail"
+  ]
+ },
+ "t-bodylist": {
+  "result": "fail",
+  "checks": [
+   "a11y.body-anchor"
+  ]
+ },
+ "t-bodyroot": {
+  "result": "fail",
+  "checks": [
+   "a11y.body-anchor"
+  ]
+ },
+ "t-calc": {
+  "result": "fail",
+  "checks": [
+   "type.scale"
+  ]
+ },
+ "t-clamp": {
+  "result": "fail",
+  "checks": [
+   "type.scale"
+  ]
+ },
+ "t-kw": {
+  "result": "fail",
+  "checks": [
+   "type.scale"
+  ]
+ },
+ "t-lh161": {
+  "result": "fail",
+  "checks": [
+   "type.leading"
+  ]
+ },
+ "t-lhpct": {
+  "result": "fail",
+  "checks": [
+   "type.leading-unitless"
+  ]
+ },
+ "t-lhvar": {
+  "result": "fail",
+  "checks": [
+   "type.leading-unitless"
+  ]
+ },
+ "t-measure": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder",
+   "type.measure-max"
+  ]
+ },
+ "t-micro": {
+  "result": "pass"
+ },
+ "t-micro2": {
+  "result": "fail",
+  "checks": [
+   "plat.web-units",
+   "type.micro"
+  ]
+ },
+ "t-micro3": {
+  "result": "fail",
+  "checks": [
+   "type.leading"
+  ]
+ },
+ "t-ok": {
+  "result": "pass"
+ },
+ "t-pct": {
+  "result": "fail",
+  "checks": [
+   "type.scale"
+  ]
+ },
+ "t-root": {
+  "result": "fail",
+  "checks": [
+   "type.units"
+  ]
+ },
+ "t-root2": {
+  "result": "fail",
+  "checks": [
+   "type.units"
+  ]
+ },
+ "t-scoped": {
+  "result": "fail",
+  "checks": [
+   "type.scale"
+  ]
+ },
+ "t-shorthand": {
+  "result": "fail",
+  "checks": [
+   "type.scale"
+  ]
+ },
+ "t-shortvar": {
+  "result": "fail",
+  "checks": [
+   "type.scale"
+  ]
+ },
+ "t-varsize": {
+  "result": "fail",
+  "checks": [
+   "plat.web-units",
+   "type.scale"
+  ]
+ },
+ "t-vw": {
+  "result": "fail",
+  "checks": [
+   "type.scale"
+  ]
+ },
+ "th-compound": {
+  "result": "fail",
+  "checks": [
+   "pair:fail"
+  ]
+ },
+ "th-hsl": {
+  "result": "fail",
+  "checks": [
+   "pair:fail"
+  ]
+ },
+ "th-ld": {
+  "result": "not-run",
+  "checks": [
+   "pair:not-run"
+  ]
+ },
+ "th-media": {
+  "result": "fail",
+  "checks": [
+   "pair:fail"
+  ]
+ },
+ "th-mediaroot": {
+  "result": "not-run",
+  "checks": [
+   "pair:not-run"
+  ]
+ },
+ "th-nomatch": {
+  "result": "not-run",
+  "checks": [
+   "pair:not-run"
+  ]
+ },
+ "th-notheme": {
+  "result": "not-run",
+  "checks": [
+   "pair:not-run"
+  ]
+ },
+ "th-ok": {
+  "result": "fail",
+  "checks": [
+   "pair:fail"
+  ]
+ },
+ "th-rgb": {
+  "result": "fail",
+  "checks": [
+   "pair:fail"
+  ]
+ },
+ "th-typo": {
+  "result": "fail",
+  "checks": [
+   "pair:fail"
+  ]
+ },
+ "thick": {
+  "result": "fail",
+  "checks": [
+   "math.fixed-detail"
+  ]
+ },
+ "unitless": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ },
+ "varchain": {
+  "result": "fail",
+  "checks": [
+   "space.on-ladder"
+  ]
+ }
+}

@@ -1,0 +1,1 @@
+.a{padding:var(--x)} :root{--x:14px} .b{padding:var(--y)} :root{--y:14px}

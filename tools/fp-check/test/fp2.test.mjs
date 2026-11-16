@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { run, by, HAS_NONE } from './helpers.mjs';
+import { run, by, HAS_NONE, SPEC } from './helpers.mjs';
 
 const FP2 = { level: 'FP-2' };
 const sel = (r, check) => by(r, check).map((f) => f.selector);
@@ -90,7 +90,7 @@ test('layout: container limits are identified by token (FP-LAYOUT-05)', () => {
 });
 
 test('web tokens: names, values at u, and the fine pointer target (FP-PLAT-01 to FP-PLAT-03)', () => {
-  const css = ':root{--fp-space-13:52px;--fp-space-16:16px;--fp-container-987:987px;--fp-radius-13:12px;--fp-type-0:1rem;--fp-target:55px;--fp-layer-base:1;--fp-easing-x:ease}';
+  const css = ':root{--fp-space-13:52px;--fp-space-16:16px;--fp-container-987:987px;--fp-radius-13:12px;--fp-type-0:1rem;--fp-target:52px;--fp-layer-base:1;--fp-easing-standard:ease}';
   const r = run({ 'a.css': css }, { unit: 4 });
   assert.deepEqual(r.findings.map((f) => `${f.property} ${f.check}`).sort(), ['--fp-radius-13 plat.web-units', '--fp-space-16 plat.web-tokens']);
   const t = (v, extra = '') => run({ 'a.css': `:root{--fp-target:${v}} ${extra}` });
@@ -104,10 +104,10 @@ test('web tokens: names, values at u, and the fine pointer target (FP-PLAT-01 to
 
 test('protocol token files: the published master passes every FP-TOKEN machine test', () => {
   const doc = {
-    $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.2', unit: 1 } },
+    $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: SPEC, unit: 1 } },
     space: { $type: 'dimension', 13: { $value: { value: 13, unit: 'px' }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-MATH-03' } } } },
     target: { $type: 'dimension', coarse: { $value: { value: 55, unit: 'px' }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-CTRL-01', pinnedFloor: true } } } },
-    type: { $type: 'dimension', 0: { $value: { value: 1, unit: 'rem' }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-TYPE-01', pinnedFloor: true } } } },
+    type: { $type: 'dimension', 0: { $value: { value: 16, unit: 'px' }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-TYPE-01', pinnedFloor: true } } } },
   };
   const cfg = { source: ['*.tokens.json'], pairs: [{ fg: '#000', bg: '#fff', kind: 'text' }] };
   const ok = run({ 'fp.tokens.json': doc }, cfg);
@@ -127,7 +127,7 @@ test('protocol token files: the published master passes every FP-TOKEN machine t
 });
 
 test('token.themes: light and dark colour values are two files', () => {
-  const colour = { $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.2', unit: 1 } }, color: { $type: 'color', ink: { $value: { colorSpace: 'srgb', components: [0, 0, 0] }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-COLOR-01' } } } } };
+  const colour = { $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: SPEC, unit: 1 } }, color: { $type: 'color', ink: { $value: { colorSpace: 'srgb', components: [0, 0, 0] }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-COLOR-01' } } } } };
   const r = run({ 'color.light.tokens.json': colour }, { source: ['*.tokens.json'] });
   assert.ok(by(r, 'token.themes').length === 1);
   const both = run({ 'color.light.tokens.json': colour, 'color.dark.tokens.json': colour }, { source: ['*.tokens.json'] });

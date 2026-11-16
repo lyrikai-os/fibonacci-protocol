@@ -30,6 +30,7 @@ function compareList(name, got, want, diffs) {
 
 export function compareExpected(report, expected) {
   const diffs = [];
+  if (!('result' in expected)) diffs.push('expected file has no "result": nothing to compare the run against');
   if ('result' in expected && report.result !== expected.result) diffs.push(`result: expected ${expected.result}, got ${report.result}`);
   if ('checkedValues' in expected && report.checkedValues !== expected.checkedValues) diffs.push(`checkedValues: expected ${expected.checkedValues}, got ${report.checkedValues}`);
   if ('claim' in expected && report.claim !== expected.claim) diffs.push(`claim: expected "${expected.claim}", got "${report.claim}"`);

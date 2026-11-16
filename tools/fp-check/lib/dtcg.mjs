@@ -48,7 +48,7 @@ export function checkTokenDoc(doc, fileName, { unit = 1 } = {}) {
   (function names(node, path) {
     if (node === null || typeof node !== 'object' || Array.isArray(node)) return;
     for (const [k, v] of Object.entries(node)) {
-      if (k.startsWith('$')) continue;
+      if (k.startsWith('$')) { if (path.length > 0 && !['$value', '$type', '$description', '$extensions', '$deprecated'].includes(k)) add('token.names', `${[...path, k].join('/')}: a name must not begin with $`); continue; }
       if (/[{}.]/.test(k)) add('token.names', `${[...path, k].join('/')}: a name must not contain { } or .`);
       names(v, [...path, k]);
     }
@@ -76,6 +76,7 @@ export function checkTokenDoc(doc, fileName, { unit = 1 } = {}) {
     else if (PINNED(path) && ext.pinnedFloor !== true) add('token.extensions', `${path}: an accessibility floor must carry "pinnedFloor": true`);
     // FP-TOKEN-09 binds generated web type; the master is in px (FP-TOKEN-04). px and rem both pass; any other unit fails.
     if (path.startsWith('type.') && type === 'dimension' && v && typeof v === 'object' && v.unit !== 'rem' && v.unit !== 'px') add('token.type-rem', `${path}: web type sizes are in rem`);
+    if (type === 'dimension' && v && typeof v === 'object' && v.unit !== 'px') add('token.master-unit', `${path}: the master stores lengths as px, found ${v.unit}`);
     if (path.startsWith('space.') && type === 'dimension') {
       const n = Number(path.slice(6)); const px = dimensionPx(v);
       if (Number.isInteger(n) && px !== null && Math.abs(px - n * unit) > 1e-9) add('token.master-unit', `${path}: expected ${n} x u = ${n * unit}px, found ${px}px`);

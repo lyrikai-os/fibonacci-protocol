@@ -57,6 +57,56 @@ export class VarTable {
     return (root.length ? root[root.length - 1] : list[list.length - 1]).value;
   }
   has(name) { return this.entries.has(name); }
+  hasRoot(name) { return (this.entries.get(name) || []).some((e) => /^(:root|html)$/i.test(e.selector) && e.at.length === 0); }
+  /** Every distinct value the property is given anywhere in the source, the primary one first. */
+  all(name) {
+    const list = this.entries.get(name);
+    if (!list || !list.length) return [];
+    const first = this.get(name);
+    return [first, ...new Set(list.map((e) => e.value))].filter((v, i, a) => a.indexOf(v) === i);
+  }
+}
+
+/**
+ * Resolve var() against EVERY definition of each variable (local, @media and :root alike).
+ * Returns alternatives [{ text, chain, unresolved }], the primary one first, at most 64.
+ * A var() with no definition uses its fallback if it has one, else `protoDefault(name)` (the protocol's published value).
+ */
+export function resolveAll(text, vars, protoDefault, depth = 0, seen = []) {
+  const m = /var\(/i.exec(text);
+  if (!m) return [{ text: depth === 0 && !seen.length ? collapse(text) : text, chain: [], unresolved: [] }];
+  const open = m.index + 3;
+  const close = matchParen(text, open);
+  if (close < 0) return [{ text: text, chain: [], unresolved: [] }];
+  const args = splitArgs(text.slice(open + 1, close));
+  const name = args[0];
+  const prefix = text.slice(0, m.index);
+  const tails = resolveAll(text.slice(close + 1), vars, protoDefault, depth + 1, seen);
+  const sources = [];
+  const defs = depth > 20 || seen.includes(name) ? [] : vars.all(name);
+  for (const d of defs) sources.push(d);
+  const pd = protoDefault?.(name);
+  if (defs.length && pd !== undefined && !vars.hasRoot(name)) sources.push(pd);
+  if (!defs.length) {
+    if (args.length > 1) sources.push(args.slice(1).join(','));
+    else if (pd !== undefined) sources.push(pd);
+  }
+  let heads;
+  if (!sources.length) heads = [{ text: text.slice(m.index, close + 1), chain: [name], unresolved: [name] }];
+  else {
+    heads = [];
+    for (const v of sources) for (const h of resolveAll(v, vars, protoDefault, depth + 1, [...seen, name])) heads.push({ text: h.text, chain: [name, ...h.chain], unresolved: h.unresolved });
+  }
+  const out = []; const seenKey = new Set();
+  for (const h of heads) for (const t of tails) {
+    const text2 = depth === 0 && !seen.length ? collapse(prefix + h.text + t.text) : prefix + h.text + t.text;
+    const key = text2 + '|' + h.unresolved.join() + t.unresolved.join();
+    if (seenKey.has(key)) continue;
+    seenKey.add(key);
+    out.push({ text: text2, chain: [...h.chain, ...t.chain], unresolved: [...h.unresolved, ...t.unresolved] });
+    if (out.length >= 64) return out;
+  }
+  return out;
 }
 
 /**
@@ -97,7 +147,8 @@ export function resolveVars(text, vars, depth = 0, seen = []) {
 const ABS_PX = { px: 1, pt: 96 / 72, pc: 16, in: 96, cm: 96 / 2.54, mm: 96 / 25.4, q: 96 / 101.6 };
 const INTRINSIC_UNITS = /^(%|fr|ch|vw|vh|vi|vb|vmin|vmax|svw|svh|lvw|lvh|dvw|dvh|svi|svb|lvi|lvb|dvi|dvb|cqw|cqh|cqi|cqb|cqmin|cqmax)$/i;
 const RELATIVE_UNITS = /^(em|ex|cap|ic|lh|rlh|rex|rcap|ric)$/i;
-const INTRINSIC_WORDS = new Set(['auto', 'min-content', 'max-content', 'fit-content', 'stretch', 'none', 'inherit', 'initial', 'unset', 'revert', 'revert-layer', 'normal', 'thin', 'medium', 'thick', '-webkit-fill-available', '-moz-available', 'contain', 'cover', 'infinity', 'currentcolor', 'transparent']);
+const BORDER_KEYWORDS = { thin: 1, medium: 3, thick: 5 };
+const INTRINSIC_WORDS = new Set(['auto', 'min-content', 'max-content', 'fit-content', 'stretch', 'none', 'inherit', 'initial', 'unset', 'revert', 'revert-layer', 'normal', '-webkit-fill-available', '-moz-available', 'contain', 'cover', 'infinity', 'currentcolor', 'transparent']);
 
 const NUM = /^([+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)([a-z%]*)$/i;
 
@@ -118,6 +169,7 @@ export function classifyToken(tok) {
     if (RELATIVE_UNITS.test(unit)) return { kind: 'relative', unit, n };
     return { kind: 'unknown' };
   }
+  if (low in BORDER_KEYWORDS) return { kind: 'length', px: BORDER_KEYWORDS[low], unit: 'keyword' };
   if (INTRINSIC_WORDS.has(low)) return { kind: 'intrinsic' };
   if (/^(fit-content|env|attr|anchor|anchor-size|stretch)\(/i.test(t)) return { kind: 'intrinsic' };
   if (/^calc\(/i.test(t) && matchParen(t, 4) === t.length - 1) return { kind: 'calc' };
@@ -237,7 +289,7 @@ export function expandAtoms(prop, tokens, classifyFn = classifyToken) {
   const total = p === 'border' ? 4 : (p === 'outline' || /^border-(top|right|bottom|left)$/.test(p)) ? 1 : 2;
   for (const i of idx) {
     const c = classifyFn(tokens[i]);
-    if (c.kind === 'length' || c.kind === 'zero' || (c.kind === 'intrinsic' && /^(thin|medium|thick)$/i.test(tokens[i]))) return [{ index: i, mult: total }];
+    if (c.kind === 'length' || c.kind === 'zero') return [{ index: i, mult: total }];
     if (c.kind === 'var') return [{ index: i, mult: total, maybe: true }];
   }
   return [];

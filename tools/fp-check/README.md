@@ -1,6 +1,6 @@
 # fp-check
 
-The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0-rc.2.
+The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0-rc.3.
 MIT License. [www.lyrikai.com](https://www.lyrikai.com)
 
 `fp-check` reads an `fp.config.json` and the CSS it names, runs the protocol's machine tests locally (no network, no dependencies, Node 20), and reports one result per rule ID: `pass`, `fail`, `pending`, `n/a`, `not-run`, or `self-report` for the rules only people can answer.
@@ -23,7 +23,7 @@ node tools/fp-check/fp-check.mjs [dir] [--config fp.config.json] [--json] [--exp
 
 Exit codes: `0` pass (or `--expect` matches), `1` fail or pending (or `--expect` differs), `2` not-run or an input error (no configuration, bad option).
 
-A passing run prints the claim string of FP-CONF-04, for example `FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.2 · self-assessed`. It ends in `self-assessed` for as long as self-report rules remain that people have not answered (FP-CONF-14). A failed, pending or not-run run prints no claim.
+A passing run prints the claim string of FP-CONF-04, for example `FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.3 · self-assessed`. It ends in `self-assessed` for as long as self-report rules remain that people have not answered (FP-CONF-14). A failed, pending or not-run run prints no claim.
 
 ### Tests
 
@@ -58,17 +58,22 @@ Machine tests implemented (62 of the 94 machine rules in `rules.json`; the other
 
 Type tests run when `level` is `FP-2`, in every mode (the host's type in an Overlay or Snap scope is replaced by the protocol's, FP-MODE-09). At FP-1 type is not read.
 
-### Declarations the checker relies on (spec 1.0.0-rc.2)
+### Declarations and readings the checker relies on (spec 1.0.0-rc.3)
 
-- A phi split (FP-LAYOUT-01) is tested only when `--fp-layout: phi-split` is in the same rule as `grid-template-columns`; it needs two tracks (`fr`, `%`, or `--fp-split-major` and `--fp-split-minor`) at 61.8 to 38.2 within 0.1.
-- A container limit (FP-LAYOUT-05, Native, FP-2) is identified by its `--fp-container-*` token: in `max-width` or `max-inline-size` it passes, in `width` or `inline-size` it fails, and a rule marked `--fp-layout: container` must set its limit with a token. Any other width is an ordinary length.
-- `pill` is `--fp-radius-pill` or the literal `9999px`; `round` is `--fp-radius-round` or `50%`. Any other large radius fails the radius set.
-- The protocol's own `--fp-space-N`, `--fp-container-N` and `--fp-radius-*` properties resolve to their published values when the source does not define them.
-- Merged groups (FP-SNAP-06), including raised `target` tokens, are computed and listed in the report; the published Snap table is a self-report item (FP-SNAP-08) and is not read.
-- Token rules apply only when protocol-format token files are in the scope; otherwise they are `n/a`.
-- The claim always ends in `self-assessed` after a clean run (FP-CONF-14); the report names the tool that ran the tests.
-- `em`, `ex`, `lh` and similar units depend on a font size the checker does not compute; they are not flagged and are listed in the notes. Viewport, container and `%` units are intrinsic (FP-CONF-09).
-- `calc()` is allowed for layout lengths only in the derived patterns; in a radius or stroke it fails. `min()`, `max()` and `clamp()` test each length argument.
+- `var()` is tested against every definition of the variable in the source (`:root`, local rules, `@media`), not only the `:root` one. A `var()` with no definition uses its fallback, which is tested; only a bare `var(--fp-*)` with no fallback falls back to the protocol's published value.
+- A phi split (FP-LAYOUT-01) is tested only when `--fp-layout: phi-split` is in the same rule (or the rule it is nested in) as `grid-template-columns`; it needs two tracks at 61.8 to 38.2 within 0.1 (`1.618fr 1fr`, `61.8% 38.2%`, or `--fp-split-major --fp-split-minor`).
+- A container limit (FP-LAYOUT-05, Native, FP-2) is identified by a bare `--fp-container-*` token: in `max-width` or `max-inline-size` it passes, in `width` or `inline-size` it fails, and a rule marked `--fp-layout: container` must set its limit with one. Any other width is an ordinary length.
+- Radius: set members, `--fp-radius-pill` or `9999px`, `--fp-radius-round` or `50%`. Any other percentage, viewport unit or relative unit fails. Strokes are 0, 1, 2 or 3; `thin`, `medium` and `thick` are read as 1, 3 and 5.
+- Type (FP-2): a keyword size (`large`), a percentage (other than a 100% root), `calc()`, `clamp()` or a viewport size is not a step and fails FP-TYPE-01. The root font size is not px and is 100%.
+- Themes: selectors and media queries are normalised (quotes, spaces, `:root` prefix) and selector lists are split. A theme that defines neither colour of a pair, and an override of a pair colour under a selector or media query that no declared theme covers, make the pair `not-run`.
+- Snap: originals come from the published table's first four columns when `snap.table` exists, else from `snap.source`. Merges (targets included) are computed and listed. Drift of at most 25% of the value is the only bound; the top rung is 1597 at u = 1 and u = 4, 3016 at u = 8. Bare literals, and values that reach a declaration through a property Snap does not map, are mapped and listed under `literals`; a token kept off the ladder fails FP-SPACE-01 / FP-RADIUS-01 where it is used unless excepted. Interactive elements for FP-SNAP-11 are elements, ARIA roles and the classes in `controls`.
+- Exceptions match by value, by `where` (a selector, a token address, or `file:line`) and by the rule they depart from.
+- Each off-ladder value is reported once, under FP-SPACE-01, FP-RADIUS-01 or FP-MATH-07, never also FP-MODE-04.
+- `pill` is 9999px only; the protocol's own `--fp-*` properties are checked against the FP-PLAT-02 table, including `--fp-target` (coarse outside the pointer query, fine inside) and `--fp-target-coarse`.
+- Token rules apply only when protocol-format token files are in the scope. The claim always ends in `self-assessed` after a clean run (FP-CONF-14); the report names the tool that ran the tests.
+- Inline `style` attributes are not read; they are listed with their values in `inlineStyles`, or the report states the scope has none (self-report, FP-CONF-08).
+- `em`, `ex`, `lh` and similar units depend on a font size the checker does not compute: they are `not-run` for layout lengths and fail for radius and strokes. Viewport, container and `%` units are intrinsic for layout (FP-CONF-09). A non-zero number with no unit is not a length and fails.
+- `calc()` is allowed for layout lengths only in the derived patterns. `min()`, `max()` and `clamp()` test each length argument.
 - Accepted exceptions counted in an Overlay claim are those that matched a checked value in the scope.
 
 ## What it does not check: self-report rules
@@ -87,13 +92,13 @@ Machine rules that are `n/a` in an adopter's run because they bind the checker o
 Rules are `not-run`, and so is the run, when the machine tests cannot run:
 
 - a file in `source` is CSS-in-JS or preprocessor source (`.js`, `.ts`, `.tsx`, `.scss`, `.less`, `.vue` and so on): compile it to CSS first (FP-CONF-08);
-- a `var()` cannot be resolved inside the source, or a colour in a declared pair cannot be resolved;
+- a `var()` cannot be resolved inside the source, a colour in a declared pair cannot be resolved, or the `scope` matches no file;
 - no file matched `source`.
 
 Inline `style` attributes are not read; a note says so. 
-## Disagreements with the published vectors
+## Disagreements and deliberate passes
 
-None against spec 1.0.0-rc.2: all 18 vectors pass. The rc.1 disagreements (target merges in 08 and 09, FP-TYPE-02 and FP-TYPE-03 attribution in 11 and 12) were resolved in the specification.
+All 18 vectors pass against spec 1.0.0-rc.3. `test/probes/` holds the adversary's probes as regression tests (`expected.json` is the answer for each). Probes that are deliberately not failed: `l-media` (the phi marker and the grid are in different rules; FP-LAYOUT-01 says the same rule), `sn-localvar` (in Snap a local property is a bare literal: mapped and listed, failing only if it cannot be snapped), `s-color5` and `th-ld` (reported `not-run`, not a pass), and the schema's 5-digit hex colour pattern is the spec's, not the checker's.
 
 ## License
 

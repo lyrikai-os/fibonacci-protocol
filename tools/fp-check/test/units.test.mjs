@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { SPEC } from './helpers.mjs';
 import { PHI, ladder, isRung, roundHalfUp, truncate, RADIUS_SET } from '../lib/util.mjs';
 import { globToRegExp, matchesAny } from '../lib/glob.mjs';
 import { parseColor, contrastRatio, testPair } from '../lib/contrast.mjs';
@@ -93,7 +94,7 @@ test('dtcg: flatten, aliases and dimension values', () => {
 });
 
 test('dtcg: FP-TOKEN-03 names must not begin with $ (as a token) or hold { } .', () => {
-  const p = checkTokenDoc({ $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.2', unit: 1 } }, 'a.b': { $type: 'dimension', 'x{y}': { $value: { value: 1, unit: 'px' } } } }, 'x.tokens.json');
+  const p = checkTokenDoc({ $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: SPEC, unit: 1 } }, 'a.b': { $type: 'dimension', 'x{y}': { $value: { value: 1, unit: 'px' } } } }, 'x.tokens.json');
   assert.equal(p['token.names'].length, 2);
   assert.equal(checkTokenDoc({}, 'x.json')['token.dtcg'].length, 1);
 });
@@ -102,7 +103,8 @@ test('compareExpected: only the keys the expected file has are compared; message
   const report = { result: 'fail', findings: [{ file: 'a', selector: '.x', check: 'c', rule: 'R', result: 'fail', message: 'm', line: 3 }], checkedValues: 4 };
   assert.deepEqual(compareExpected(report, { result: 'fail', checkedValues: 4, findings: [{ file: 'a', selector: '.x', check: 'c', rule: 'R', result: 'fail', message: 'other' }] }), []);
   assert.equal(compareExpected(report, { result: 'pass' }).length, 1);
-  assert.equal(compareExpected(report, { findings: [] }).length, 1);
-  assert.equal(compareExpected(report, { findings: [{ file: 'a', selector: '.y' }] }).length, 2);
-  assert.deepEqual(compareExpected(report, { vector: 'x', about: 'y' }), []);
+  assert.equal(compareExpected(report, { result: 'fail', findings: [] }).length, 1);
+  assert.equal(compareExpected(report, { result: 'fail', findings: [{ file: 'a', selector: '.y' }] }).length, 2);
+  assert.deepEqual(compareExpected(report, { vector: 'x', about: 'y', result: 'fail' }), []);
+  assert.equal(compareExpected(report, {}).length, 1); // an empty expected file proves nothing
 });

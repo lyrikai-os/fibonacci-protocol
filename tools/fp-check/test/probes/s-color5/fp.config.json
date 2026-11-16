@@ -1,0 +1,25 @@
+{
+ "fp": "1.0.0-rc.2",
+ "mode": "native",
+ "level": "FP-1",
+ "platform": "web",
+ "unit": 1,
+ "has": {
+  "motion": false,
+  "timeLimits": false,
+  "controls": false,
+  "charts": false,
+  "generatedArt": false,
+  "states": false
+ },
+ "source": [
+  "input.css"
+ ],
+ "pairs": [
+  {
+   "fg": "#12345",
+   "bg": "#fff",
+   "kind": "text"
+  }
+ ]
+}
