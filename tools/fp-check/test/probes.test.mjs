@@ -4,7 +4,7 @@
 //
 // Probes the checker deliberately does NOT turn into a fail (spec reasons):
 //   l-media     `--fp-layout: phi-split` and `grid-template-columns` are in different rules; FP-LAYOUT-01 says "in the same CSS rule".
-//   s-color5    `#12345` is allowed by the schema's colour pattern (3 to 8 hex digits); the checker reports the pair `not-run`.
+//   (s-color5: `#12345` is now refused by the schema's colour pattern, so it is a configuration failure.)
 //   th-ld       `light-dark()` colours are not resolved; the pair is `not-run`, not a pass.
 import test from 'node:test';
 import assert from 'node:assert/strict';

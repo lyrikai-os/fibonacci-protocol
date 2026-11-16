@@ -1,10 +1,12 @@
 // Human-readable report.
 export function formatText(r) {
   const L = [];
+  // The first line says what passed: the machine tests, not the claim (FP-CONF-04, FP-CONF-06).
+  L.push(r.outputFirstLine ?? `MACHINE TESTS: ${r.result.toUpperCase()}`);
   L.push(`fp-check ${r.toolVersion} · spec ${r.spec} · https://www.lyrikai.com`);
   L.push(`config: ${r.config}   mode: ${r.mode}   level: ${r.level}   u=${r.unit}   platform: ${r.platform}`);
   L.push('');
-  L.push(`RESULT: ${r.result.toUpperCase()}`);
+  L.push(`CLAIM STATE: ${r.claimState ?? 'none'}`);
   if (r.claim) L.push(`CLAIM:  ${r.claim}`);
   else if (r.candidate) { L.push(`CANDIDATE (not a claim): ${r.candidate}`); L.push(`  open: ${r.openItems.join(' ')}`); }
   else if (r.claimNote) L.push(`CLAIM:  none. ${r.claimNote}`);

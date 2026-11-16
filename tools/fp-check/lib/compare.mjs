@@ -34,6 +34,7 @@ export function compareExpected(report, expected) {
   if ('result' in expected && report.result !== expected.result) diffs.push(`result: expected ${expected.result}, got ${report.result}`);
   if ('checkedValues' in expected && report.checkedValues !== expected.checkedValues) diffs.push(`checkedValues: expected ${expected.checkedValues}, got ${report.checkedValues}`);
   if ('claim' in expected && report.claim !== expected.claim) diffs.push(`claim: expected "${expected.claim}", got "${report.claim}"`);
+  if ('outputFirstLine' in expected && report.outputFirstLine !== expected.outputFirstLine) diffs.push(`outputFirstLine: expected "${expected.outputFirstLine}", got "${report.outputFirstLine}"`);
   if ('claimState' in expected && report.claimState !== expected.claimState) diffs.push(`claimState: expected ${expected.claimState}, got ${report.claimState}`);
   if ('candidate' in expected && report.candidate !== expected.candidate) diffs.push(`candidate: expected "${expected.candidate}", got "${report.candidate}"`);
   for (const k of ['openItems', 'applicableSelfReport']) if (k in expected && JSON.stringify(report[k] ?? null) !== JSON.stringify(expected[k])) diffs.push(`${k}: expected ${JSON.stringify(expected[k])}, got ${JSON.stringify(report[k])}`);

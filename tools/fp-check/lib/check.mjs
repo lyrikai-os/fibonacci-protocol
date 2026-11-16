@@ -7,7 +7,7 @@ import { walk, expandGlobs, matchesAny, globToRegExp } from './glob.mjs';
 import { validate } from './schema.mjs';
 import { parseCss, extractStyleBlocks, splitSelectors } from './css.mjs';
 import { splitValue, splitArgs, matchParen, VarTable, resolveVars, resolveAll, classifyToken, expandAtoms, propertyFamily, fineKind, CONTAINER_BOX, CONTAINER_TOKEN } from './values.mjs';
-import { parseColor, testPair } from './contrast.mjs';
+import { parseColor, testPair, REQUIRED } from './contrast.mjs';
 import { findStep, stepSize, allowedLeading, sameRatio, MICRO_PX } from './type.mjs';
 import { flatten, resolveAlias, dimensionPx, checkTokenDoc } from './dtcg.mjs';
 import { EXEMPT_ROLES, ladderTarget, mapLength, mapTarget, findMerges, findOrderBreaches, driftPct } from './snap.mjs';
@@ -37,6 +37,18 @@ const SELECT_INTERACTIVE = /(^|[\s>+~,(])(button|a|input|select|textarea|summary
 const INTERACTIVE_ELEMENT = /(^|[\s>+~,(])(button|a|input|select|textarea)(?![\w-])|\[role=["']?(button|link|checkbox|menuitem|tab|switch|option|radio)["']?\]/i;
 const modeName = (m) => ({ overlay: 'Overlay', snap: 'Snap', native: 'Native' })[m] ?? m;
 const pct = (n) => (Number.isInteger(n) ? String(n) : String(roundHalfUp(n, 3)));
+
+/** Interactive elements and motion in HTML markup (outside <style>, <script> and comments). */
+function scanHtml(html) {
+  const body = html.replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' ')).replace(/<(style|script)\b[\s\S]*?<\/\1\s*>/gi, (m) => m.replace(/[^\n]/g, ' '));
+  const controls = []; const motion = [];
+  for (const m of body.matchAll(/<([a-zA-Z][\w:-]*)\b([^>]*)>/g)) {
+    const tag = m[1].toLowerCase(); const attrs = m[2]; const line = lineAt(html, m.index);
+    if (['button', 'input', 'select', 'textarea', 'summary'].includes(tag) || (tag === 'a' && /\shref\b/i.test(attrs)) || /\srole\s*=\s*["']?(button|link|checkbox|radio|tab|switch)\b/i.test(attrs)) controls.push(`line ${line} <${tag}>`);
+    if (['marquee', 'animate', 'animatetransform', 'animatemotion'].includes(tag)) motion.push(`line ${line} <${tag}>`);
+  }
+  return { controls, motion };
+}
 
 function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) { throw new UsageError(`cannot read ${file}: ${e.message}`); }
@@ -117,6 +129,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     report.result = 'fail';
     report.mode = config.mode; report.level = config.level; report.unit = config.unit ?? 1; report.platform = config.platform;
     finalizeRules(report, spec, config, checkRes, { invalidConfig: true });
+    report.claimState = 'none'; report.outputFirstLine = 'MACHINE TESTS: FAIL';
     return report;
   }
   mark('mode.config-schema', 'pass');
@@ -142,6 +155,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
   const toRead = [...new Set([...sourceFiles, ...snapFiles, ...themeFiles])];
 
   const parsed = new Map(); // file -> { rules, customProps, atRules }
+  const htmlHas = new Map(); // file -> { controls: [...], motion: [...] } read from the markup (FP-CONF-11)
   const jsonDocs = new Map(); // file -> doc
   const unread = [];
   for (const f of toRead) {
@@ -159,6 +173,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
         merged.rules.push(...p.rules); merged.customProps.push(...p.customProps); merged.atRules.push(...p.atRules);
       }
       parsed.set(f, merged);
+      htmlHas.set(f, scanHtml(html));
     } else if (ext === '.json') {
       try { jsonDocs.set(f, JSON.parse(text())); } catch (e) { note(`${f}: not valid JSON (${e.message}); not read`); unread.push(f); }
     } else if (CODE_EXT.test(f)) {
@@ -515,6 +530,24 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     }
   }
 
+  // FP-A11Y-12, the part a machine can read: outline removed on :focus or :focus-visible with no replacement in the same rule
+  function focusRule(file, rule) {
+    if (rule.kind !== 'style' || !/:focus(?![\w-])|:focus-visible/.test(rule.selector)) return;
+    const REPLACEMENT = new Set(['box-shadow', 'border', 'border-color', 'background', 'background-color', 'text-decoration']);
+    const removal = rule.decls.find((d) => {
+      if (d.prop === 'outline') { const t = splitValue(d.value); return t.some((x) => /^none$/i.test(x)) || (t.length > 0 && /^0(px)?$/i.test(t[0])); }
+      if (d.prop === 'outline-width') return /^0(px|rem)?$/i.test(d.value.trim());
+      return false;
+    });
+    mark('a11y.focus-outline-removed', 'pass');
+    if (!removal || rule.decls.some((d) => REPLACEMENT.has(d.prop) && !/^(none|initial|unset)$/i.test(d.value.trim()))) return;
+    let result = 'fail';
+    const exc = exceptions.find({ values: [removal.value], selector: rule.selector, tokens: [], file, line: removal.line, rules: ['FP-A11Y-12'] });
+    if (exc) result = exc.status === 'accepted' ? 'exception' : 'pending';
+    mark('a11y.focus-outline-removed', result, 'the focus indicator is removed');
+    addFinding({ file, selector: rule.selector, property: removal.prop, value: removal.value, check: 'a11y.focus-outline-removed', rule: 'FP-A11Y-12', result, line: removal.line, message: 'a rule for :focus or :focus-visible removes the outline and sets no replacement indicator' });
+  }
+
   function layoutExtras(file, rule, decl, inScope) {
     if (!inScope || level !== 'FP-2') return;
     const prop = decl.prop;
@@ -576,8 +609,10 @@ export function runCheck({ dir, configPath, specDir } = {}) {
         if (inScope && /^(animation|transition)(-|$)/.test(decl.prop) && !/^(none|initial|unset|revert)?(\s+0s)*$/i.test(decl.value.trim())) hasSeen.motion.push(`${f}:${decl.line} ${decl.prop}`);
       }
       typeRule(f, rule, inScope);
+      if (inScope) focusRule(f, rule);
       if (inScope && rule.kind === 'style' && rule.selector && SELECT_INTERACTIVE.test(rule.selector)) hasSeen.controls.push(`${f}:${rule.line} ${rule.selector}`);
     }
+    if (inScope && htmlHas.has(f)) { for (const k of ['controls', 'motion']) for (const e of htmlHas.get(f)[k]) hasSeen[k].push(`${f}: ${e}`); }
     if (inScope) for (const a of p.atRules) if (/^@(-\w+-)?keyframes\b/i.test(a.prelude)) hasSeen.motion.push(`${f}:${a.line} ${a.prelude}`);
   }
 
@@ -759,15 +794,18 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     };
     const isBase = (e) => /^(:root|html)$/i.test(e.selector.trim()) && e.at.length === 0;
     const themeFilesSet = (theme) => new Set(expandGlobs(dir, theme.files ?? [], all));
-    const own = (theme, name) => {
+    // The unconditional definitions of `name` in the theme's scope (FP-A11Y-01). If any carries !important, only those count.
+    const defsIn = (theme, name) => {
       const list = vars.entries.get(name) || [];
       let e = [];
-      if (theme.selector && !/^(:root|html)$/i.test(theme.selector.trim())) e = list.filter((x) => selMatches(x.selector, theme.selector) && !x.at.some((a) => /@media/i.test(a) && theme.media === undefined && false));
+      if (theme.selector && !/^(:root|html)$/i.test(theme.selector.trim())) e = list.filter((x) => selMatches(x.selector, theme.selector) && x.at.length === 0);
       else if (theme.selector) e = list.filter(isBase);
       if (!e.length && theme.media) e = list.filter((x) => x.at.some((a) => normMedia(a).includes(normMedia(theme.media))));
       if (!e.length && theme.files?.length) { const fl = themeFilesSet(theme); e = list.filter((x) => fl.has(x.file)); }
-      return e.length ? e[e.length - 1].value : undefined;
+      return e;
     };
+    const pick = (e) => { const imp = e.filter((x) => x.important); return (imp.length ? imp : e).map((x) => x.value); };
+    const own = (theme, name) => { const v = pick(defsIn(theme, name)); return v.length ? v[v.length - 1] : undefined; };
     const declared = (x) => themes.some((t) => (t.selector && selMatches(x.selector, t.selector)) || (t.media && x.at.some((a) => normMedia(a).includes(normMedia(t.media)))) || (t.files?.length && themeFilesSet(t).has(x.file)));
     const themeTokens = (theme) => {
       if (!theme.files?.length) return null;
@@ -775,38 +813,54 @@ export function runCheck({ dir, configPath, specDir } = {}) {
       for (const f of themeFilesSet(theme)) { const d = jsonDocs.get(f); if (d) for (const l of flatten(d)) m.set(l.path, l); }
       return m;
     };
-    const colourOf = (ref, theme, depth = 0) => {
+    // every colour a reference can have in the theme: a list of parsed colours, or { err }
+    const coloursOf = (ref, theme, depth = 0) => {
       if (depth > 15) return { err: 'reference loop' };
-      if (ref.startsWith('#')) return { c: parseColor(ref) };
+      if (ref.startsWith('#')) { const c = parseColor(ref); return c ? { list: [c] } : { err: `${ref} is not a colour` }; }
       if (ref.startsWith('--')) {
-        let v = theme.name === null ? undefined : own(theme, ref);
-        if (v === undefined) v = vars.get(ref);
-        if (v === undefined) return { err: `${ref} is not defined` };
-        const vm = /^var\(\s*(--[\w-]+)\s*(?:,[^)]*)?\)$/.exec(v.trim());
-        if (vm) return colourOf(vm[1], theme, depth + 1);
-        return { c: parseColor(v), raw: v };
+        let defs = theme.name === null ? [] : pick(defsIn(theme, ref));
+        if (!defs.length) defs = pick((vars.entries.get(ref) || []).filter(isBase));
+        if (!defs.length) return { err: `${ref} has no unconditional definition in the theme's scope` };
+        const list = [];
+        for (const v of defs) {
+          const vm = /^var\(\s*(--[\w-]+)\s*(?:,[^)]*)?\)$/.exec(v.trim());
+          const sub = vm ? coloursOf(vm[1], theme, depth + 1) : (() => { const c = parseColor(v); return c ? { list: [c] } : { err: `${ref}: "${v}" is not a colour the checker can read` }; })();
+          if (sub.err) return sub;
+          list.push(...sub.list);
+        }
+        return { list };
       }
       const tt = themeTokens(theme);
       const tok = (tt && tt.get(ref)) || tokenByPath.get(ref);
       if (!tok) return { err: `${ref} is not defined` };
-      return { c: parseColor(resolveAlias(tok.token.$value, tt ? new Map([...tokenByPath, ...tt]) : tokenByPath)) };
+      const c = parseColor(resolveAlias(tok.token.$value, tt ? new Map([...tokenByPath, ...tt]) : tokenByPath));
+      return c ? { list: [c] } : { err: `${ref} is not a colour the checker can read` };
     };
     const out = [];
     for (const theme of themes) {
       for (const p of config.pairs) {
         const rec = { fg: p.fg, bg: p.bg, kind: p.kind, ...(theme.name ? { theme: theme.name } : {}) };
-        const notRun = (message) => { Object.assign(rec, { ratio: null, required: null, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: 'not-run', message }); mark('a11y.contrast', 'not-run', message); mark('a11y.contrast-exact', 'not-run', message); out.push(rec); };
+        const notRun = (message) => { Object.assign(rec, { ratio: null, required: REQUIRED[p.kind] === undefined ? null : (p.kind === 'large-text' ? null : REQUIRED[p.kind]), definitionsTested: 0, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: 'not-run', message }); mark('a11y.contrast', 'not-run', message); mark('a11y.contrast-exact', 'not-run', message); out.push(rec); };
         const isNonBase = theme.name !== null && !(theme.selector && /^(:root|html)$/i.test(theme.selector.trim()) && !theme.media && !theme.files);
         if (isNonBase && ![p.fg, p.bg].some((x) => x.startsWith('--') && own(theme, x) !== undefined) && !themeTokens(theme)?.has(p.fg) && !themeTokens(theme)?.has(p.bg)) { notRun(`theme "${theme.name}" defines neither ${p.fg} nor ${p.bg}: its selector, media query or files match nothing`); continue; }
         // an override of a pair's colour that no declared theme covers (FP-A11Y-01: every theme the product ships is declared)
         const stray = [p.fg, p.bg].filter((x) => x.startsWith('--')).flatMap((x) => (vars.entries.get(x) || []).filter((e) => !isBase(e) && !declared(e)));
         if (!isNonBase && stray.length) { notRun(`${stray[0].file}:${stray[0].line} sets a pair colour under "${stray[0].at.concat(stray[0].selector).join(' ')}", which no declared theme covers`); continue; }
-        const fg = colourOf(p.fg, theme); const bg = colourOf(p.bg, theme);
-        if (fg.err || bg.err || !fg.c || !bg.c) { notRun(fg.err || bg.err || `cannot resolve ${!fg.c ? p.fg : p.bg} to a colour`); continue; }
-        if (fg.c.a < 1 || bg.c.a < 1) { notRun('a colour with transparency has no fixed contrast without compositing'); continue; }
-        const t = testPair(fg.c, bg.c, p.kind);
-        Object.assign(rec, { ratio: t.ratio, required: t.required, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: t.pass ? 'pass' : 'fail' });
-        mark('a11y.contrast', rec.result, `${p.fg} on ${p.bg}: ${t.ratio} < ${t.required}`); mark('a11y.contrast-exact', rec.result);
+        const fg = coloursOf(p.fg, theme); const bg = coloursOf(p.bg, theme);
+        if (fg.err || bg.err) { notRun(fg.err || bg.err); continue; }
+        if ([...fg.list, ...bg.list].some((c) => c.a < 1)) { notRun('a colour with transparency has no fixed contrast without compositing'); continue; }
+        // FP-A11Y-02: a large-text pair qualifies only at 24px, or 18.67px at weight 700 or more; otherwise it is tested as text
+        let kind = p.kind;
+        if (p.kind === 'large-text') {
+          const sz = p.size;
+          const qualifies = sz && (sz.px >= 24 || (sz.px >= 18.67 && sz.weight >= 700));
+          rec.size = sz; rec.qualifiesAsLarge = Boolean(qualifies);
+          if (!qualifies) kind = 'text';
+        }
+        let worstT = null; let tested = 0;
+        for (const f of fg.list) for (const b of bg.list) { tested++; const t = testPair(f, b, kind); if (!worstT || t.exact < worstT.exact) worstT = t; }
+        Object.assign(rec, { ratio: worstT.ratio, required: worstT.required, definitionsTested: tested, check: 'a11y.contrast', rule: 'FP-A11Y-01', result: worstT.pass ? 'pass' : 'fail' });
+        mark('a11y.contrast', rec.result, `${p.fg} on ${p.bg}: ${worstT.ratio} < ${worstT.required}`); mark('a11y.contrast-exact', rec.result);
         out.push(rec);
       }
     }
@@ -897,7 +951,8 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     const it = items[id];
     if (!it || typeof it.evidence !== 'string' || it.evidence.trim() === '') { openItems.push(id); continue; }
     answered.push(id);
-    if (it.result === 'fail') evFail(`${id}: the self-report item is answered "fail" by ${it.by}: ${it.evidence}`, { selfReport: id });
+    if (it.result === 'fail') evFail(`${id}: the self-report item is answered "fail" by ${it.by}: ${it.evidence}`, { item: id });
+    else if (it.result === 'n/a') evFail('answered n/a, but the configuration makes this rule applicable', { item: id });
   }
   for (const id of Object.keys(items)) if (!applicableSR.includes(id)) note(`fp-evidence.json has an entry for ${id}, which is not an applicable self-report rule here`);
   report.applicableSelfReport = applicableSR;
@@ -927,10 +982,11 @@ export function runCheck({ dir, configPath, specDir } = {}) {
 
   // ---- claim (FP-CONF-04, FP-CONF-06, FP-CONF-14) ---------------------------------------------------------------------
   for (const r of report.rules) {
+    if (r.id === 'FP-A11Y-12' && checkRes.get('a11y.focus-outline-removed')?.result === 'fail') { r.result = 'fail'; r.reason = 'a11y.focus-outline-removed: ' + checkRes.get('a11y.focus-outline-removed').messages[0]; continue; }
     if (r.result !== 'self-report') continue;
     if (openItems.includes(r.id)) { r.reason = 'open: no evidence in fp-evidence.json (FP-CONF-06)'; continue; }
     const it = items[r.id];
-    r.result = it.result === 'n/a' ? 'n/a' : it.result; r.reason = `${it.by}: ${it.evidence}`; r.independent = it.independent === true;
+    r.result = it.result === 'n/a' ? 'fail' : it.result; r.reason = `${it.by}: ${it.evidence}`; r.independent = it.independent === true;
   }
   report.ranBy = `fp-check ${TOOL_VERSION} (reference checker)`;
   report.claimState = 'none';
@@ -951,6 +1007,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     report.claim = null;
     report.claimNote = result === 'pending' ? 'No claim: pending exceptions (FP-CONF-07).' : result === 'not-run' ? 'No claim: machine tests did not run (FP-CONF-14).' : 'No claim: the run failed.';
   }
+  report.outputFirstLine = `MACHINE TESTS: ${report.result.toUpperCase()}`;
   report.exceptionsUsed = exceptionsUsed();
   return report;
 }

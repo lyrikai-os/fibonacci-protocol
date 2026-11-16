@@ -238,3 +238,29 @@ test('7. the .mdc can be acted on alone', () => {
     assert.ok(s.includes(t), `mdc lacks ${t}`);
   }
 });
+
+test('rc.5: "open" is the only word; n/a not allowed on an applicable item; machine pass is not a claim', () => {
+  for (const rel of ENTRY) {
+    const s = flat(rel);
+    assert.match(s, /\*\*open\*\*[^.]*never `not-run` or `failed`/, `${rel}: open`);
+    assert.match(s, /`n\/a` is not allowed on an applicable item/, `${rel}: n/a`);
+    assert.match(s, /change the declaration/, `${rel}: change the declaration`);
+    assert.match(s, /MACHINE TESTS: PASS/, `${rel}: machine pass`);
+    assert.match(s, /machine pass is not a claim/, `${rel}: machine pass is not a claim`);
+  }
+  assert.match(c.spec.rules.find((x) => x.id === 'FP-CONF-06').text, /"Open" is the only word/);
+});
+
+test('rc.5: pair kinds, grid-locked token files, and the clone requirement', () => {
+  const first = read(`${SKILL}/SKILL.md`);
+  const sec = first.slice(first.indexOf('## First run: checklist'), first.indexOf('## Check'));
+  for (const t of ['`text`', '`large-text`', '`size`', '{px, weight}', '`mark`']) assert.ok(sec.includes(t), `first run lacks ${t}`);
+  for (const rel of ENTRY) {
+    const s = flat(rel);
+    assert.ok(s.includes('dist/u4/fp.css') && s.includes('dist/u8/fp.css'), `${rel}: u4/u8 files`);
+    assert.match(s, /only u = 1/, `${rel}: bundles only u = 1`);
+    assert.match(s, /needs a clone of the protocol repository/, `${rel}: clone`);
+    assert.match(s, /self-report path/, `${rel}: self-report path`);
+  }
+  for (const f of ['dist/u4/fp.css', 'dist/u8/fp.css']) assert.ok(existsSync(join(root, f)), `${f} exists in the repo`);
+});

@@ -1,6 +1,6 @@
 {
   "$schema": "../../spec/fp-evidence.schema.json",
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "adopter": "fixture author",
   "items": {
     "FP-MATH-04": {
@@ -49,8 +49,8 @@
       "by": "fixture author"
     },
     "FP-A11Y-19": {
-      "result": "n/a",
-      "evidence": "The scope has no toast, notice or saved indicator: it is one card with a title, text and an action.",
+      "result": "pass",
+      "evidence": "No status messages in scope: The scope has no toast, notice or saved indicator: it is one card with a title, text and an action. Checked by reading the HTML and CSS; no role=status, toast, notice or saved indicator is needed.",
       "by": "fixture author"
     },
     "FP-A11Y-12": {
@@ -99,8 +99,8 @@
       "by": "fixture author"
     },
     "FP-CTRL-04": {
-      "result": "n/a",
-      "evidence": "The host's components in host/ have no controls; the one control in the scope is protocol-owned and governed by FP-CTRL-01.",
+      "result": "pass",
+      "evidence": "No host control in scope lacks the target role or protocol ownership: The host's components in host/ have no controls; the one control in the scope is protocol-owned and governed by FP-CTRL-01. Checked by reading the HTML and CSS.",
       "by": "fixture author"
     },
     "FP-HONEST-03": {

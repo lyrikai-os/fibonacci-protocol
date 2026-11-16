@@ -1,6 +1,6 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: FP-AGENT, the protocol in one file
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 This file is the whole protocol for a design agent, for any LLM or tool. It is generated from `spec/rules.json`, so it matches the specification exactly. Normative rules are binding and tested: their ID, title and text are given in full. Informative rules are guidance that binds no claim in this version: they are listed at the end.
 
@@ -48,7 +48,7 @@ When no one is available to answer, an agent MUST NOT wait. It applies what it h
 
 #### FP-AGENT-05 · Done-checks
 
-Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires. The agent records each self-report item it assessed in `fp-evidence.json` (FP-CONF-06), with itself and the adopter it works for as `by`; items it could not assess stay open, and the agent then reports a candidate line, not a claim.
+Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires. The agent records each self-report item it assessed in `fp-evidence.json` (FP-CONF-06), with itself and the adopter it works for as `by`; items it could not assess stay open, and the agent then reports a candidate line, not a claim. An agent MUST NOT answer `n/a` for an applicable rule, and MUST NOT describe a pass of the machine tests as a pass of the protocol.
 
 - **Applies when:** always · **Test:** self-report, `agent.done-checks` · **Evidence:** convention (protocol choice)
 
@@ -156,7 +156,7 @@ FP-4a (art and illustration) and FP-4b (data visualisation) each require only th
 
 #### FP-CONF-04 · The claim string
 
-A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped. When the machine tests pass but self-report rules are still open (FP-CONF-06), there is no claim yet. A checker then prints a candidate line instead, in the form `candidate · <the claim string> · open <count>`, and lists the open rule IDs. A candidate line MUST NOT be published or quoted as a claim.
+A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped. When the machine tests pass but self-report rules are still open (FP-CONF-06), there is no claim yet. A checker then prints a candidate line instead, in the form `candidate · <the claim string> · open <count>`, and lists the open rule IDs. In its text output a checker heads the machine result `MACHINE TESTS: PASS` (or `FAIL`, `PENDING`, `NOT-RUN`), never `RESULT: PASS`, so that a pass of the machine tests above a candidate line is not read as a claim. A candidate line MUST NOT be published or quoted as a claim.
 
 - **Applies when:** the report · **Test:** machine, `conf.claim-format` · **Evidence:** convention (protocol choice)
 
@@ -174,21 +174,26 @@ The FP-AGENT rules describe an agent or a skill, not a design system. They MUST 
 
 #### FP-CONF-11 · Not applicable
 
-Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example "no charts", "platform is web", "mode is overlay"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement, which MUST be honest: `has.states` is true wherever the scope shows status of any kind (badges, alerts, validation messages, progress, online or offline marks).
+Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example "no charts", "platform is web", "mode is overlay"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true: `n/a` comes from the configuration alone, and an `n/a` written into `fp-evidence.json` for an applicable rule fails FP-CONF-06. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope, and by a `<marquee>` element or an SVG `<animate>`, `<animateTransform>` or `<animateMotion>` element in any HTML file the checker reads; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover`, and by any of these elements in an HTML file the checker reads: `button`, `a` with `href`, `input`, `select`, `textarea`, `summary`, or an element whose `role` is `button`, `link`, `checkbox`, `radio`, `tab` or `switch`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement, which MUST be honest: `has.states` is true wherever the scope shows status of any kind (badges, alerts, validation messages, progress, online or offline marks).
 
 - **Applies when:** a checker · **Test:** machine, `conf.not-applicable` · **Evidence:** convention (protocol choice)
 
 #### FP-CONF-06 · Machine tests, self-report and the evidence file
 
-Each rule names its test. A machine test is one that can be decided from the inputs listed under "Checker inputs", locally, with no network. A self-report item MUST be answered with evidence: a measurement, a screenshot, a file reference or a recorded check. A self-report item that applies and has no evidence counts as failed. A SHOULD inside a normative rule is a recommendation: not following it is reported as "recommendation not followed", with the reason, and does not fail the rule.
+Each rule names its test. A machine test is one that can be decided from the inputs listed under "Checker inputs", locally, with no network. A self-report item MUST be answered with evidence: a measurement, a screenshot, a file reference or a recorded check. A self-report item that applies and has no evidence is open (see below): it is not a failure and not `not-run`, and it holds back the claim. A SHOULD inside a normative rule is a recommendation: not following it is reported as "recommendation not followed", with the reason, and does not fail the rule.
 
-Self-report answers are recorded in a file, `fp-evidence.json`, beside `fp.config.json`. It MUST validate against fp-evidence.schema.json. It holds `fp` (the spec version), `adopter` (who is making the claim), and `items`: one entry for each applicable self-report rule, keyed by rule ID, with `result` (`pass`, `fail` or `n/a`), `evidence` (text, a file path or a URL; for `n/a`, the reason) and `by` (who assessed it). An entry MAY add `"independent": true` when `by` is neither the adopter nor a person or agent working for the adopter.
+Self-report answers are recorded in a file, `fp-evidence.json`, beside `fp.config.json`. It MUST validate against fp-evidence.schema.json. It holds `fp` (the spec version), `adopter` (who is making the claim), and `items`: one entry for each applicable self-report rule, keyed by rule ID, with `result` (`pass` or `fail`), `evidence` (text, a file path or a URL) and `by` (who assessed it). An entry MAY add `"independent": true` when `by` is neither the adopter nor a person or agent working for the adopter.
 
 A self-report rule is applicable when it is normative, its level is within the claim (Guard, FP-1, and FP-2 for an FP-2 claim), and its applies-when condition is true for the configuration. A checker works this list out from `rules.json` and the configuration, and reads the file:
 
-- an applicable rule with no entry, or with empty `evidence`, is **open**;
-- an entry with `result` `fail` fails the run;
+- an applicable rule with no entry, or with empty `evidence`, is **open**. "Open" is the only word for this state;
+- an entry with `result` `fail` fails this rule and the run;
+- an entry with `result` `n/a` on an applicable rule fails this rule and the run. Whether a rule applies is decided only by the configuration (`mode`, `level`, `platform`, `has`, `roles`), never by the evidence file. An adopter who believes a rule does not apply changes the declaration that makes it apply, and a checker can contradict that declaration (FP-CONF-11). A rule that applies but finds nothing to act on (a scope with no status messages, for FP-A11Y-19) is answered `pass`, with that fact as the evidence. An `n/a` entry is accepted only for a rule the configuration already makes not applicable, where it changes nothing;
 - the claim is valid only when the machine tests pass, no exception is pending, and no applicable self-report rule is open.
+
+Two things are reported separately and never merged. The **machine result** (`result` in a report: `pass`, `fail`, `pending` or `not-run`) covers the machine tests, this one included. The **claim state** (`claimState`) is `valid` when there is a claim, `candidate` when the machine result is `pass` but rules are open, and `none` otherwise.
+
+`"independent": true` is a statement by whoever writes the file. A checker cannot verify it; it only reads it. A reader who relies on a claim without the `self-assessed` suffix is relying on that statement and on the named assessor.
 
 - **Applies when:** the report · **Test:** machine, `conf.evidence` · **Evidence:** convention (protocol choice)
 
@@ -236,13 +241,13 @@ Where a ladder value, a type step, a φ proportion or a Snap mapping would break
 
 #### FP-A11Y-01 · Contrast floors
 
-Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. Where a host colour fails, the floor wins in every mode: the colour is changed by the smallest amount that passes, and the change is reported. Who is asked first, and when, is set once in FP-AGENT-03.
+Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. A checker resolves each colour within the theme's scope (`:root` for the default theme). Where a colour has more than one unconditional definition there, the pair is tested against every one of them and all must pass; a checker does not guess which the browser will use. The exception is `!important`: if any definition carries it, only the `!important` definitions are tested. A pair that a checker cannot resolve to colours has the result `not-run`, never `pass`. Where a host colour fails, the floor wins in every mode: the colour is changed by the smallest amount that passes, and the change is reported. Who is asked first, and when, is set once in FP-AGENT-03.
 
 - **Applies when:** always · **Test:** machine, `a11y.contrast` · **Evidence:** cited (https://www.w3.org/TR/WCAG22/)
 
 #### FP-A11Y-02 · Large text and no rounding
 
-Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold. A contrast ratio MUST NOT be rounded: 4.499:1 fails.
+Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold (a weight of 700 or more). A `large-text` pair MUST state its text size in `size` (`px` and `weight`); a checker tests that size against these two thresholds, and a pair whose size does not qualify is tested as `text`, at 4.5:1. A contrast ratio MUST NOT be rounded: 4.499:1 fails.
 
 - **Applies when:** always · **Test:** machine, `a11y.contrast-exact` · **Evidence:** cited (https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
 
@@ -308,7 +313,7 @@ A message that reports a result or a state without taking focus (a toast, an "Un
 
 #### FP-A11Y-12 · Focus is always visible
 
-Every keyboard-operable element MUST show a visible focus indicator when it has keyboard focus, and the indicator MUST NOT be removed (WCAG 2.2, 2.4.7). The indicator MUST have at least 3:1 contrast against adjacent colours (1.4.11). The protocol's own ring is a gap of 2 and a ring of 3, in platform units at every u, drawn in the `focus` slot, which MUST NOT be a state colour; a host in Overlay or Snap MAY keep its own indicator if it meets the first two sentences. Evidence: a screenshot of each kind of control with keyboard focus, and the ring and its ground declared as a `mark` pair that passes.
+Every keyboard-operable element MUST show a visible focus indicator when it has keyboard focus, and the indicator MUST NOT be removed (WCAG 2.2, 2.4.7). The indicator MUST have at least 3:1 contrast against adjacent colours (1.4.11). The protocol's own ring is a gap of 2 and a ring of 3, in platform units at every u, drawn in the `focus` slot, which MUST NOT be a state colour; a host in Overlay or Snap MAY keep its own indicator if it meets the first two sentences. Evidence: a screenshot of each kind of control with keyboard focus, and the ring and its ground declared as a `mark` pair that passes. One part of this rule is read by machine, as the finding `a11y.focus-outline-removed`: a CSS rule whose selector contains `:focus` or `:focus-visible` and that sets `outline` to `none` or `0` (or `outline-width` to `0`) fails this rule, unless the same CSS rule also sets `box-shadow`, `border`, `border-color`, `background`, `background-color` or `text-decoration` as the replacement indicator.
 
 - **Applies when:** has: controls · **Test:** self-report, `a11y.focus` · **Evidence:** cited (https://www.w3.org/TR/WCAG22/#focus-visible)
 
@@ -356,9 +361,9 @@ A mark, glyph or chip that acts as a control MUST have the full hit area of FP-C
 
 #### FP-CTRL-04 · Host controls keep their size if they meet the floor
 
-A host control that is not given the `target` role is not tested against the ladder. It MUST meet the target minimum of its platform (FP-A11Y-05). A host target of 44 or 48 therefore passes as it is; it does not have to become 55.
+In Overlay and Snap, a host control that is not given the `target` role is not tested against the ladder. It MUST meet the target minimum of its platform (FP-A11Y-05). A host target of 44 or 48 therefore passes as it is; it does not have to become 55.
 
-- **Applies when:** mode: overlay or snap · **Test:** self-report, `ctrl.host` · **Evidence:** convention (protocol choice)
+- **Applies when:** has: controls · **Test:** self-report, `ctrl.host` · **Evidence:** convention (protocol choice)
 
 #### FP-VIZ-01 · φ frames, never data
 
@@ -370,7 +375,7 @@ A host control that is not given the `target` role is not tested against the lad
 
 A bar's length encodes its value, so a bar chart's value axis MUST start at zero, and bars in one series MUST have equal thickness. A line chart MAY start its axis elsewhere, with the axis labelled.
 
-- **Applies when:** has: charts · **Test:** self-report, `viz.bars` · **Evidence:** cited (https://ar5iv.arxiv.org/html/1907.02035)
+- **Applies when:** has: charts · **Test:** self-report, `viz.bars` · **Evidence:** convention
 
 #### FP-VIZ-05 · No bent scales, no blended measures
 
@@ -424,7 +429,7 @@ A conformance claim or report, and the protocol's own text, MUST NOT describe φ
 
 The following MUST NOT be claimed: that the Parthenon, the Great Pyramid, the Mona Lisa, or any company logo was designed on φ; that φ is the ratio people find most pleasing; that people are "wired" for φ; that Fibonacci numbers are universal in nature.
 
-- **Applies when:** always · **Test:** self-report, `honest.banned-claims` · **Evidence:** cited (https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf)
+- **Applies when:** always · **Test:** self-report, `honest.banned-claims` · **Evidence:** convention
 
 #### FP-HONEST-04 · A claim says what was tested
 
@@ -450,7 +455,7 @@ Where this specification discusses preference for φ, it MUST state the null and
 
 A checker, a generator or a protocol token file MUST use the values in the constants table, to at least the precision shown. φ is (1 + √5) / 2. The golden angle is 360° / φ², which is 137.50776° (2.39996323 radians).
 
-- **Applies when:** a checker · **Test:** machine, `math.constants` · **Evidence:** cited (https://en.wikipedia.org/wiki/Golden_angle)
+- **Applies when:** a checker · **Test:** machine, `math.constants` · **Evidence:** convention
 
 #### FP-MATH-03 · The length ladder
 
@@ -502,7 +507,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 
 #### FP-MODE-02 · Configuration fields
 
-The file MUST validate against fp.config.schema.json. The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.4`).
+The file MUST validate against fp.config.schema.json. The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.5`).
 
 | Field | Type | Required | Values and default |
 |---|---|---|---|
@@ -519,7 +524,7 @@ The file MUST validate against fp.config.schema.json. The field table and the to
 | `source` | array of globs | yes | Every file the product ships that holds lengths. |
 | `scope` | array of globs | no | The files the claim covers. Default: the same as `source`. |
 | `themes` | array | no | Each: `name`, and where the theme's colour values are found: `selector` (for example `[data-theme="dark"]`), `media` (for example `(prefers-color-scheme: dark)`) or `files` (globs). Default: one unnamed theme read from `:root`. Every theme the product ships MUST be listed, and every pair is tested in every theme. |
-| `pairs` | array | yes | Each: `fg`, `bg` (token addresses or hex colours) and `kind`: `text`, `large-text` or `mark`. Every pair in use in the scope is listed (FP-A11Y-20). |
+| `pairs` | array | yes | Each: `fg`, `bg` (token addresses or hex colours) and `kind`: `text`, `large-text` or `mark`. A `large-text` pair also needs `size`: `px` (the smallest size the pair is used at) and `weight` (FP-A11Y-02). Every pair in use in the scope is listed (FP-A11Y-20). |
 | `roles` | array | no | Each: `match` (a token address or glob) and `role`: `icon`, `type`, `breakpoint`, `target`, `drawn` or `micro` (FP-MODE-10). Used in every mode. |
 | `controls` | array of strings | no | Class selectors of interactive elements that are not interactive by their element name or ARIA role, for example `.btn` or `.nav-item` (FP-SNAP-11). |
 | `snap.source` | array of globs | yes in Snap | The files that hold the host's tokens as they are now, after snapping. The original values are kept in the Snap table, which is the record of what changed. |
@@ -570,7 +575,7 @@ Inside the declared scope, every checked declaration (the list is in 03-conforma
 
 #### FP-MODE-05 · Overlay coverage and exceptions are reported
 
-An Overlay report MUST state coverage: the checked values inside the scope, divided by the checked values in the whole `source`. Checked values are counted one way only: every checked declaration is expanded to its longhands (`padding: 12px 16px` becomes four values, `gap: 8px` two), and each longhand whose value is a length other than 0 or an intrinsic value counts once. The percentage is rounded half-up to a whole number. It MUST also state the number of accepted exceptions inside the scope. Both figures MUST appear in the claim (FP-CONF-04). A scope with no checked declarations MUST NOT be claimed. There is no minimum coverage: the figure is published so that a reader can judge the claim.
+An Overlay report MUST state coverage: the checked values inside the scope, divided by the checked values in the whole `source`. The numerator counts values in files matched by `scope` only; the denominator counts values in every file matched by `source`, the scope's files included. Checked values are counted one way only: every checked declaration is expanded to its longhands (`padding: 12px 16px` becomes four values, `gap: 8px` two), and each longhand whose value is a length other than 0 or an intrinsic value counts once. The percentage is rounded half-up to a whole number. It MUST also state the number of accepted exceptions inside the scope. Both figures MUST appear in the claim (FP-CONF-04). A scope with no checked declarations MUST NOT be claimed. There is no minimum coverage: the figure is published so that a reader can judge the claim.
 
 - **Applies when:** mode: overlay · **Test:** machine, `mode.overlay-coverage` · **Evidence:** convention (protocol choice)
 
@@ -948,4 +953,4 @@ Published as guidance. They bind no claim in this version. A request for a level
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

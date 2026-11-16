@@ -68,6 +68,7 @@ function walk(schema, data, p, errors, root) {
   }
   if (typeof data === 'number') {
     if (schema.minimum !== undefined && data < schema.minimum) errors.push({ path: at, message: `must be >= ${schema.minimum}` });
+    if (schema.exclusiveMinimum !== undefined && data <= schema.exclusiveMinimum) errors.push({ path: at, message: `must be > ${schema.exclusiveMinimum}` });
     if (schema.maximum !== undefined && data > schema.maximum) errors.push({ path: at, message: `must be <= ${schema.maximum}` });
   }
   if (Array.isArray(data)) {

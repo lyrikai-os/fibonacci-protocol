@@ -1,11 +1,11 @@
 # fp-check
 
-The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0-rc.3.
+The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0-rc.5.
 MIT License. [www.lyrikai.com](https://www.lyrikai.com)
 
 `fp-check` reads an `fp.config.json` and the CSS it names, runs the protocol's machine tests locally (no network, no dependencies, Node 20), and reports one result per rule ID: `pass`, `fail`, `pending`, `n/a`, `not-run`, or `self-report` for the rules only people can answer.
 
-It was written from the specification text (`spec/`) and checked against the published test vectors in `spec/test-vectors/`. It did not read the script that made the vectors. Where it and a vector disagree, the test is left failing and the disagreement is listed below.
+It was written from the specification text (`spec/`) and checked against the published test vectors in `spec/test-vectors/`. It did not read the script that made the vectors. Where it and a vector disagree, the test is left failing and the disagreement is listed below. All 24 vectors pass against spec 1.0.0-rc.5.
 
 ## Use
 
@@ -26,6 +26,8 @@ Exit codes: `0` the machine tests pass (the claim is `valid` or still a `candida
 The specification is silent on exit codes, so this is the checker's decision. Basis: FP-CONF-04 and FP-CONF-06 make the machine result (`result`) and the claim state two separate things. A candidate line is "not a claim yet" but the machine tests passed (the vectors give `result: pass` with `claimState: candidate`), so a candidate exits 0; a script must read `claimState` (`valid`, `candidate` or `none`, in `--json`) before it publishes anything. FP-CONF-07 says pending "is not a pass", hence 1; FP-CONF-14 says not-run is not a pass and no claim may be made, hence 2.
 
 ### Evidence and the claim state
+
+The text output's first line is `MACHINE TESTS: PASS` (or `FAIL`, `PENDING`, `NOT-RUN`), never `RESULT:`: it says what the machine tests did, not whether a claim exists. `CLAIM STATE:` follows. In `--json`, `result` is the machine result, `claimState` is `valid`, `candidate` or `none`, and `outputFirstLine` repeats the heading.
 
 `fp-evidence.json` beside `fp.config.json` holds the self-report answers (FP-CONF-06); it is validated against `spec/fp-evidence.schema.json`. The checker works out the applicable self-report rules from `rules.json` (normative, within the claim level, applies-when true for the configuration), lists them as `applicableSelfReport`, and reads each entry:
 
@@ -48,7 +50,7 @@ Configuration: validates `fp.config.json` against `fp.config.schema.json` with a
 
 Reading (FP-CONF-08): plain `.css`, `<style>` blocks in `.html`, and DTCG token files (`*.json`). Shorthands are expanded to longhands (`padding`, `margin`, `inset`, `gap`, logical pairs, `border-radius` with `/`, `border-width`, `border`, `outline`), `var()` is followed within the source (with fallbacks and chains), and `calc()` is accepted only in the two derived patterns. `@media`, `@supports`, `@layer`, `@container`, `@keyframes` and nested rules are read.
 
-Machine tests implemented (62 of the 94 machine rules in `rules.json`; the other 32 are `n/a` in any adopter's run, see below):
+Machine tests implemented (63 of the 96 machine rules in `rules.json`; the other 33 are `n/a` in any adopter's run, see below):
 
 | Area | Rules and check names |
 |---|---|
@@ -67,7 +69,7 @@ Machine tests implemented (62 of the 94 machine rules in `rules.json`; the other
 
 Type tests run when `level` is `FP-2`, in every mode (the host's type in an Overlay or Snap scope is replaced by the protocol's, FP-MODE-09). At FP-1 type is not read.
 
-### Declarations and readings the checker relies on (spec 1.0.0-rc.3)
+### Declarations and readings the checker relies on (spec 1.0.0-rc.5)
 
 - `var()` is tested against every definition of the variable in the source (`:root`, local rules, `@media`), not only the `:root` one. A `var()` with no definition uses its fallback, which is tested; only a bare `var(--fp-*)` with no fallback falls back to the protocol's published value.
 - A phi split (FP-LAYOUT-01) is tested only when `--fp-layout: phi-split` is in the same rule (or the rule it is nested in) as `grid-template-columns`; it needs two tracks at 61.8 to 38.2 within 0.1 (`1.618fr 1fr`, `61.8% 38.2%`, or `--fp-split-major --fp-split-minor`).
@@ -108,7 +110,16 @@ Rules are `not-run`, and so is the run, when the machine tests cannot run:
 Inline `style` attributes are not read; a note says so. 
 ## Disagreements and deliberate passes
 
-All 18 vectors pass against spec 1.0.0-rc.3. `test/probes/` holds the adversary's probes as regression tests (`expected.json` is the answer for each). Probes that are deliberately not failed: `l-media` (the phi marker and the grid are in different rules; FP-LAYOUT-01 says the same rule), `sn-localvar` (in Snap a local property is a bare literal: mapped and listed, failing only if it cannot be snapped), `s-color5` and `th-ld` (reported `not-run`, not a pass), and the schema's 5-digit hex colour pattern is the spec's, not the checker's.
+All 24 vectors pass against spec 1.0.0-rc.5. `test/probes/` holds the adversary's probes as regression tests (`expected.json` is the answer for each). Probes that are deliberately not failed: `l-media` (the phi marker and the grid are in different rules; FP-LAYOUT-01 says the same rule), `sn-localvar`-style locals are mapped, listed and fail where off the ladder, and `th-ld` (reported `not-run`, not a pass). `#12345` and other 5- or 7-digit hex colours are refused by the schema.
+
+## Pair colours, evidence and HTML (rc.5)
+
+- A colour pair is tested against every unconditional definition of each colour in the theme's scope (`:root` for the default theme); all must pass; a definition marked `!important` makes only the `!important` ones count. `definitionsTested` says how many combinations ran. A pair that cannot be resolved is `not-run`, never `pass`.
+- A `large-text` pair needs `size` (`px`, `weight`): it is tested at 3:1 only at 24px, or 18.67px at weight 700 or more; otherwise at 4.5:1 as text (`qualifiesAsLarge` in the report).
+- An applicable self-report item answered `n/a` fails `conf.evidence` and the run.
+- `.html` files in `source` are read for interactive elements (`button`, `a[href]`, `input`, `select`, `textarea`, `summary`, `[role=button|link|checkbox|radio|tab|switch]`) and motion (`marquee`, SVG `animate`, `animateTransform`, `animateMotion`) to contradict `has.controls` and `has.motion`.
+- `a11y.focus-outline-removed` (FP-A11Y-12): a rule for `:focus` or `:focus-visible` that sets `outline` to `none` or `0` (or `outline-width` to `0`) with no `box-shadow`, `border`, `border-color`, `background`, `background-color` or `text-decoration` in the same rule fails.
+- CSS escapes in property names (`pad\64ing`) are resolved before a declaration is classified.
 
 ## License
 

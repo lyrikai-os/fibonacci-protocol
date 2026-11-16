@@ -46,9 +46,9 @@ export function matchParen(s, i) {
  */
 export class VarTable {
   constructor() { this.entries = new Map(); }
-  add({ name, value, selector = '', at = [], file = '', line = 0 }) {
+  add({ name, value, important = false, selector = '', at = [], file = '', line = 0 }) {
     if (!this.entries.has(name)) this.entries.set(name, []);
-    this.entries.get(name).push({ value, selector, at, file, line });
+    this.entries.get(name).push({ value, important, selector, at, file, line });
   }
   get(name) {
     const list = this.entries.get(name);

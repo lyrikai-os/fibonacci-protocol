@@ -1,6 +1,6 @@
 # Fixtures
 
-Three sample systems, one per integration mode, that show an existing design system adopting **Lyrikai: Fibonacci Protocol for UI/UX Design Agents** ([www.lyrikai.com](https://www.lyrikai.com)), plus seeded-fault copies that the checker must catch. Spec 1.0.0-rc.4.
+Three sample systems, one per integration mode, that show an existing design system adopting **Lyrikai: Fibonacci Protocol for UI/UX Design Agents** ([www.lyrikai.com](https://www.lyrikai.com)), plus seeded-fault copies that the checker must catch. Spec 1.0.0-rc.5.
 
 | Folder | Mode and level | What it shows |
 |---|---|---|

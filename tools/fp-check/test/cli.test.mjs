@@ -22,8 +22,8 @@ function project(css, cfg = {}) {
 test('exit 0 on a pass, 1 on a fail', () => {
   const ok = project('.a{gap:8px}'); const bad = project('.a{gap:7px}');
   try {
-    const a = fp(ok); assert.equal(a.status, 0); assert.match(a.stdout, /RESULT: PASS/); assert.match(a.stdout, /CANDIDATE \(not a claim\): candidate · FP-1 · Native/); assert.equal(JSON.parse(fp(ok, '--json').stdout).claimState, 'candidate');
-    const b = fp(bad); assert.equal(b.status, 1); assert.match(b.stdout, /RESULT: FAIL/); assert.match(b.stdout, /FP-SPACE-01/);
+    const a = fp(ok); assert.equal(a.status, 0); assert.match(a.stdout, /MACHINE TESTS: PASS/); assert.match(a.stdout, /CANDIDATE \(not a claim\): candidate · FP-1 · Native/); assert.equal(JSON.parse(fp(ok, '--json').stdout).claimState, 'candidate');
+    const b = fp(bad); assert.equal(b.status, 1); assert.match(b.stdout, /MACHINE TESTS: FAIL/); assert.match(b.stdout, /FP-SPACE-01/);
   } finally { fs.rmSync(ok, { recursive: true }); fs.rmSync(bad, { recursive: true }); }
 });
 
@@ -34,7 +34,7 @@ test('exit 2 on a usage error, a missing configuration and a not-run result', ()
   const css = project('.a{padding:var(--missing)}');
   try {
     const m = fp(empty); assert.equal(m.status, 2); assert.match(m.stderr, /fp\.config\.json not found/);
-    const n = fp(css); assert.equal(n.status, 2); assert.match(n.stdout, /RESULT: NOT-RUN/);
+    const n = fp(css); assert.equal(n.status, 2); assert.match(n.stdout, /MACHINE TESTS: NOT-RUN/);
   } finally { fs.rmSync(empty, { recursive: true }); fs.rmSync(css, { recursive: true }); }
 });
 

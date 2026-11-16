@@ -50,6 +50,11 @@ function matchBrace(text, i) {
   return text.length;
 }
 
+/** Resolve CSS escapes (`pad\64 ing`, `\-x`) so a property name cannot hide behind one. */
+export function unescapeCss(s) {
+  return s.replace(/\\([0-9a-fA-F]{1,6})\s?|\\([^\n])/g, (_, hex, ch) => (hex ? String.fromCodePoint(Math.min(parseInt(hex, 16) || 0xfffd, 0x10ffff)) : ch));
+}
+
 const GROUPING = /^@(media|supports|layer|container|document|scope|starting-style)\b/i;
 const OPAQUE = /^@(font-face|page|property|counter-style|font-feature-values|font-palette-values|view-transition|position-try)\b/i;
 
@@ -139,9 +144,10 @@ export function parseCss(source, { file = '', lineOffset = 0 } = {}) {
     value = collapse(value);
     if (/!\s*important$/i.test(value)) { important = true; value = value.replace(/\s*!\s*important$/i, ''); }
     if (!prop) return;
+    prop = unescapeCss(prop);
     const decl = { prop: prop.startsWith('--') ? prop : prop.toLowerCase(), value, important, line };
     ctx.rule.decls.push(decl);
-    if (decl.prop.startsWith('--')) customProps.push({ name: decl.prop, value, selector: ctx.selector, at: ctx.at, file, line });
+    if (decl.prop.startsWith('--')) customProps.push({ name: decl.prop, value, important, selector: ctx.selector, at: ctx.at, file, line });
   }
 
   parseBody(0, text.length, { selector: '', at: [], kind: 'style', rule: null });

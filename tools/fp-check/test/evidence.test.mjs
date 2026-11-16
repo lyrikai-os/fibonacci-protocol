@@ -65,7 +65,7 @@ test('an item answered fail fails the run', () => {
   const ev = full(ids); ev.items['FP-A11Y-03'].result = 'fail';
   const r = check('.a{gap:8px}', {}, ev);
   assert.equal(r.result, 'fail'); assert.equal(r.claim, null); assert.equal(r.claimState, 'none');
-  assert.ok(r.findings.some((f) => f.check === 'conf.evidence' && f.selfReport === 'FP-A11Y-03'));
+  assert.ok(r.findings.some((f) => f.check === 'conf.evidence' && f.item === 'FP-A11Y-03'));
 });
 
 test('an invalid or wrong-version evidence file fails conf.evidence', () => {

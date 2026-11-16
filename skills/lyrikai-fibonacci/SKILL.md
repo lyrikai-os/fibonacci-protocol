@@ -1,13 +1,13 @@
 ---
 name: lyrikai-fibonacci
-description: Turns on the Lyrikai Fibonacci Protocol for UI/UX design agents (spec 1.0.0-rc.4) for a conversation, so that every length, radius, type size and target an agent writes or edits comes from one small set of numbers (the Fibonacci ladder times a base unit) while accessibility floors and data honesty always win. Use when the user types "/lyrikai-fibonacci" (verbs on, off, init, check, explain, map), says "use Fibonacci design principles", mentions "Fibonacci Protocol", or asks for a "golden ratio design system", Fibonacci spacing scale or phi-based tokens. It reads or creates fp.config.json, applies the protocol in Overlay, Snap or Native mode, and reports every off-ladder value and every changed host value with rule IDs. Works offline from bundled rules.
+description: Turns on the Lyrikai Fibonacci Protocol for UI/UX design agents (spec 1.0.0-rc.5) for a conversation, so that every length, radius, type size and target an agent writes or edits comes from one small set of numbers (the Fibonacci ladder times a base unit) while accessibility floors and data honesty always win. Use when the user types "/lyrikai-fibonacci" (verbs on, off, init, check, explain, map), says "use Fibonacci design principles", mentions "Fibonacci Protocol", or asks for a "golden ratio design system", Fibonacci spacing scale or phi-based tokens. It reads or creates fp.config.json, applies the protocol in Overlay, Snap or Native mode, and reports every off-ladder value and every changed host value with rule IDs. Works offline from bundled rules.
 ---
 
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: the `/lyrikai-fibonacci` skill
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-This file is the operating guide. Detail lives in the bundled files at the end. Everything below is generated from the specification, spec 1.0.0-rc.4, so it cannot drift from it. The protocol is a convention for internal consistency. It is not an aesthetic law, and you never say it makes a design better (FP-AGENT-09).
+This file is the operating guide. Detail lives in the bundled files at the end. Everything below is generated from the specification, spec 1.0.0-rc.5, so it cannot drift from it. The protocol is a convention for internal consistency. It is not an aesthetic law, and you never say it makes a design better (FP-AGENT-09).
 
 ## Verbs
 
@@ -22,7 +22,7 @@ This file is the operating guide. Detail lives in the bundled files at the end. 
 | `explain <rule-ID>` | Print the rule's text, level, status, applies-when, test and evidence from `reference/rules.json`. |
 | `map` | Print the Snap table for the user's tokens, with merges, drift and the "what breaks" block. Changes nothing. |
 
-A request for a level that is informative in this version (FP-3, FP-4a, FP-4b) is answered with that fact: it is published as guidance and cannot be claimed in 1.0.0-rc.4 (FP-CONF-05). Version 1.0 claims are FP-1 or FP-2 on the web only. For any other platform, say the same.
+A request for a level that is informative in this version (FP-3, FP-4a, FP-4b) is answered with that fact: it is published as guidance and cannot be claimed in 1.0.0-rc.5 (FP-CONF-05). Version 1.0 claims are FP-1 or FP-2 on the web only. For any other platform, say the same.
 
 ## State: sticky until `off`
 
@@ -67,7 +67,7 @@ Never let the ladder shrink a target, drop a body size below the anchor, or bend
 Use these every time you write a length or a type size. Look the details up in `reference/FP-AGENT.md`.
 
 - **Ladder (FP-MATH-03).** Lengths are F(n) x u for 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, plus container widths 610, 987, 1597. No other value is on the ladder. Below u only 1 and 2 count (FP-MATH-06). The ladder covers lengths only: never type sizes, durations or anything that encodes data (FP-MATH-04).
-- **Tokens.** `reference/fp.css` holds the ready tokens at u = 1: `--fp-space-*`, `--fp-container-*`, `--fp-radius-*`, `--fp-focus-gap`, `--fp-focus-ring`, `--fp-target`. Use them by name (`padding: var(--fp-space-21)`). Do not hand-write a ladder value where a token exists. For u = 4 or u = 8 regenerate the values (multiply by u) and keep the names.
+- **Tokens.** `reference/fp.css` holds the ready tokens at u = 1: `--fp-space-*`, `--fp-container-*`, `--fp-radius-*`, `--fp-focus-gap`, `--fp-focus-ring`, `--fp-target`. Use them by name (`padding: var(--fp-space-21)`). Do not hand-write a ladder value where a token exists. This skill bundles only u = 1. For u = 4 or u = 8 use the grid-locked token files in the protocol repository, `dist/u4/fp.css` and `dist/u8/fp.css` (same names, values multiplied by u).
 - **Radius (FP-RADIUS-01).** One of 0, 2, 3, 5, 8, 13, 21, `pill`, `round`.
 - **Targets (FP-CTRL-01, FP-SNAP-04).** Coarse or unknown pointer: at least 55. Fine pointer: at least 34. Targets never shrink. A drawn height smaller than its hit area takes the `drawn` role.
 - **Type (FP-2 only).** Type sizes come from the type scale, not the ladder (FP-TYPE-*). Every CSS rule that sets a protocol `font-size` also sets `line-height` in the same rule (FP-TYPE-13). Body stays at or above the platform anchor (16 on the web, FP-A11Y-07).
@@ -85,7 +85,7 @@ When the protocol is turned on for a project for the first time, do these in ord
 
 1. Write `fp.config.json` (see "Start"), valid against `reference/fp.config.schema.json`. Validate it with fp-check (`node <repo>/tools/fp-check/fp-check.mjs <folder>`, run from the protocol repository; the adopter's folder has no `tools/`); a rejected configuration is exit 2 with the reason.
 2. Edit the adopter's own files in place (FP-AGENT-13). Do not write a parallel copy. If the folder is not under version control, first keep `<file>.fp-original` beside each file you will change, and say so in the report.
-3. Declare every colour pair in use in `pairs` (FP-A11Y-20), each as `fg`, `bg` and `kind` (`text` or `mark`). A pair that is used and not declared is not tested.
+3. Declare every colour pair in use in `pairs` (FP-A11Y-20), each as `fg`, `bg` and `kind`: `text` (4.5:1), `large-text` (3:1; it also needs `size` as `{px, weight}`, the smallest size the pair is used at, and qualifies only at 24 px, or 18.67 px with weight 700 or more) or `mark` (3:1). A pair that is used and not declared is not tested, and a missing pair is a failed self-report (FP-A11Y-20).
 4. Answer every applicable self-report rule with evidence you gathered, in `fp-evidence.json` beside `fp.config.json` (see "Evidence").
 5. Run fp-check from the protocol repository: `node <repo>/tools/fp-check/fp-check.mjs <folder>`. Fix what fails (floors first, per the decision order) and run it again. If the tool is absent, follow "Check" below and say so.
 6. **Write `fp-report.md`** beside `fp.config.json` (FP-AGENT-14; see "Reports"). `FP-OFF`, `FP-CHANGE` and Suggestions go in that file, not only in chat. Snapped lengths go in the Snap table, never as `FP-CHANGE` lines.
@@ -93,9 +93,9 @@ When the protocol is turned on for a project for the first time, do these in ord
 
 ## Check (`check`, and before saying "done": FP-AGENT-05)
 
-1. **Run the machine tests.** If the reference checker is present, run `node <repo>/tools/fp-check/fp-check.mjs <folder>` from the protocol repository (add `--json` for the full report) and say which tool and version ran. Exit 0 is pass; 1 is fail or pending; 2 is not-run or an input error. Look for an installed `fp-check` if you do not have the repository. If it is absent, run your own script or check by hand against `reference/rules.json` (each rule with `"test": {"kind": "machine"}` names its check), and say which.
-2. **Answer the self-report items** that apply (`"kind": "self-report"`), each with evidence: a file and line, a command and its output, a screenshot, or a measured value. An answer with no evidence is `not-run`.
-3. **Mark non-applicable rules** `n/a` with a one-line reason (FP-CONF-11), from the `has` block of the configuration. Never mark `n/a` a rule whose condition is true.
+1. **Run the machine tests.** `check` needs a clone of the protocol repository, because `fp-check` lives there and is not bundled in this skill. Without a clone, take the self-report path: run your own script or check by hand against `reference/rules.json`, say so, and report `not-run` for the machine tests. If you have the clone, run `node <repo>/tools/fp-check/fp-check.mjs <folder>` from the protocol repository (add `--json` for the full report) and say which tool and version ran. Exit 0 is pass; 1 is fail or pending; 2 is not-run or an input error. Look for an installed `fp-check` if you do not have the repository. If it is absent, run your own script or check by hand against `reference/rules.json` (each rule with `"test": {"kind": "machine"}` names its check), and say which.
+2. **Answer the self-report items** that apply (`"kind": "self-report"`), each with evidence: a file and line, a command and its output, a screenshot, or a measured value. An applicable item with no evidence is **open**: "open" is the only word for it, never `not-run` or `failed`, and it holds back the claim.
+3. **Mark non-applicable rules** `n/a` with a one-line reason (FP-CONF-11), decided by the configuration alone (`mode`, `level`, `platform`, `has`, `roles`). `n/a` is not allowed on an applicable item, and an `n/a` in `fp-evidence.json` for one fails the run (FP-CONF-06): if you think a rule does not apply, change the declaration that makes it apply. A rule that applies but finds nothing to act on is answered `pass`, with that fact as the evidence.
 4. **State** mode, level, unit and platform, and list every exception and every `n/a` with its reason.
 5. **Put recommendations** you may not apply without consent (another unit, an override) under the heading "Suggestions".
 6. **State the result** as one of `pass`, `fail`, `pending`, `not-run`.
@@ -107,9 +107,9 @@ When the protocol is turned on for a project for the first time, do these in ord
 
 Claim string (FP-CONF-04): `<level> · <mode> · u=<unit> · <platform> · spec <version>`. Overlay adds `scope <globs> · coverage <percent> · exceptions <count>` before the version. Example:
 
-`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed`
+`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.5 · self-assessed`
 
-A skill or agent that meets every normative FP-AGENT rule may say it "follows the Fibonacci Protocol agent rules, spec 1.0.0-rc.4". The FP-AGENT rules are not counted in a system's claim (FP-CONF-12).
+A skill or agent that meets every normative FP-AGENT rule may say it "follows the Fibonacci Protocol agent rules, spec 1.0.0-rc.5". The FP-AGENT rules are not counted in a system's claim (FP-CONF-12).
 
 ## Reports
 
@@ -146,12 +146,13 @@ Self-report answers are recorded in `fp-evidence.json` beside `fp.config.json`, 
 
 - A claim is valid only with complete evidence: an applicable rule with no entry or empty `evidence` is open, an entry with `result` `fail` fails the run, and the claim needs the machine tests to pass with no exception pending.
 - **Never invent evidence.** Record only what you gathered: a measurement, a file and line, a command and its output. If you did not check it, leave it open.
+- fp-check's text output prints `MACHINE TESTS: PASS` above a candidate line. A machine pass is not a claim: the claim state is `valid`, `candidate` or `none` (FP-CONF-06). Report "machine tests pass, claim not made" until nothing is open.
 - With evidence missing, report the **candidate line** exactly as `fp-check` prints it, with the open rule IDs, and do not call it a claim.
 - The `self-assessed` suffix stays when you, or the adopter, assessed the items; only an independent party named in `by` with `"independent": true` removes it (FP-CONF-14).
 
 ## `explain <rule-ID>`
 
-Read `reference/rules.json` (offline copy, spec 1.0.0-rc.4). Find the entry whose `id` matches (case-insensitive). Print: ID and title; text; level; status; applies when; test (`kind`, `check`); evidence (`label`, and `url` or basis if present); the spec file it came from. If the status is `informative`, say it binds no claim in this version. If the ID is unknown, say so and suggest the closest IDs by prefix; never invent a rule. A shell one-liner: `node -e 'const r=require("./reference/rules.json").rules.find(x=>x.id===process.argv[1]);console.log(r||"unknown rule")' FP-SPACE-01`, run from the skill folder.
+Read `reference/rules.json` (offline copy, spec 1.0.0-rc.5). Find the entry whose `id` matches (case-insensitive). Print: ID and title; text; level; status; applies when; test (`kind`, `check`); evidence (`label`, and `url` or basis if present); the spec file it came from. If the status is `informative`, say it binds no claim in this version. If the ID is unknown, say so and suggest the closest IDs by prefix; never invent a rule. A shell one-liner: `node -e 'const r=require("./reference/rules.json").rules.find(x=>x.id===process.argv[1]);console.log(r||"unknown rule")' FP-SPACE-01`, run from the skill folder.
 
 ## `map`: the Snap table
 
@@ -170,7 +171,7 @@ Print one row per token and per in-scope literal: name, role, original, snapped,
 
 When `on` runs, and at the end of every output this skill produces, the last line is exactly:
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.4 · MIT License · https://www.lyrikai.com
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.5 · MIT License · https://www.lyrikai.com
 
 ## Bundled files (work offline)
 
@@ -181,4 +182,4 @@ Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.4 · MIT Li
 - `reference/fp.css`: the ready `--fp-*` tokens at u = 1.
 - `reference/fp.config.example.json`: the quick-start `fp.config.json`.
 
-MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.4. https://www.lyrikai.com
+MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.5. https://www.lyrikai.com

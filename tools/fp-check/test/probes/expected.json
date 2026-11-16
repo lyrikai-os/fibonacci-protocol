@@ -424,10 +424,8 @@
   "configError": true
  },
  "s-color5": {
-  "result": "not-run",
-  "checks": [
-   "pair:not-run"
-  ]
+  "result": "fail",
+  "configError": true
  },
  "s-dataexc": {
   "result": "fail",

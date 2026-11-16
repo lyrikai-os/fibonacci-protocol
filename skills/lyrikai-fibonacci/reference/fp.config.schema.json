@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:lyrikai:fibonacci-protocol:fp-config:1.0.0-rc.4",
+  "$id": "urn:lyrikai:fibonacci-protocol:fp-config:1.0.0-rc.5",
   "title": "fp.config.json",
-  "description": "Configuration for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.4. MIT License. https://www.lyrikai.com . Defined by rule FP-MODE-02 in spec/02-integration-modes.md.",
+  "description": "Configuration for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.5. MIT License. https://www.lyrikai.com . Defined by rule FP-MODE-02 in spec/02-integration-modes.md.",
   "type": "object",
   "additionalProperties": false,
   "required": ["fp", "mode", "level", "platform", "has", "source", "pairs"],
@@ -90,8 +90,20 @@
           "kind": {
             "description": "text: 4.5:1. large-text and mark: 3:1.",
             "enum": ["text", "large-text", "mark"]
+          },
+          "size": {
+            "description": "Required for large-text: the smallest size the pair is used at. It qualifies at 24 px, or at 18.67 px with a weight of 700 or more; otherwise the pair is tested as text (FP-A11Y-02).",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["px", "weight"],
+            "properties": {
+              "px": { "type": "number", "exclusiveMinimum": 0 },
+              "weight": { "type": "integer", "minimum": 1, "maximum": 1000 }
+            }
           }
-        }
+        },
+        "if": { "properties": { "kind": { "const": "large-text" } }, "required": ["kind"] },
+        "then": { "required": ["size"] }
       }
     },
     "roles": {
@@ -196,7 +208,7 @@
     "colourRef": {
       "description": "A token address, or a hex colour.",
       "type": "string",
-      "pattern": "^(--[A-Za-z0-9_-]+|[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*|#[0-9A-Fa-f]{3,8})$"
+      "pattern": "^(--[A-Za-z0-9_-]+|[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*|#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8}))$"
     },
     "rungsU1": {
       "description": "The ladder at u = 1 (which contains the radius set).",

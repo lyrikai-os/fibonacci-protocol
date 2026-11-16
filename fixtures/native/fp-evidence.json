@@ -1,6 +1,6 @@
 {
   "$schema": "../../spec/fp-evidence.schema.json",
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "adopter": "fixture author",
   "items": {
     "FP-MATH-04": {
@@ -59,8 +59,8 @@
       "by": "fixture author"
     },
     "FP-A11Y-19": {
-      "result": "n/a",
-      "evidence": "The scope has no toast, notice or saved indicator; the status chips are static text inside cards.",
+      "result": "pass",
+      "evidence": "No status messages in scope: The scope has no toast, notice or saved indicator; the status chips are static text inside cards. Checked by reading the HTML and CSS; no role=status, toast, notice or saved indicator is needed.",
       "by": "fixture author"
     },
     "FP-A11Y-12": {
@@ -126,6 +126,11 @@
     "FP-HONEST-05": {
       "result": "pass",
       "evidence": "index.html says 'Demonstration content, sample text only.' in the first paragraph and writes its one unknown count as [n]; the CSS shows no content.",
+      "by": "fixture author"
+    },
+    "FP-CTRL-04": {
+      "result": "pass",
+      "evidence": "Native has no host system and no host control: the only control in the scope is the pause button in index.html, which is protocol-owned (34px drawn, 55px hit area, see FP-CTRL-01). Checked by reading the HTML and CSS.",
       "by": "fixture author"
     }
   }
