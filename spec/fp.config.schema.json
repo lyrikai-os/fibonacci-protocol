@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:lyrikai:fibonacci-protocol:fp-config:1.0.0-rc.2",
+  "$id": "urn:lyrikai:fibonacci-protocol:fp-config:1.0.0-rc.3",
   "title": "fp.config.json",
-  "description": "Configuration for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.2. MIT License. https://www.lyrikai.com . Defined by rule FP-MODE-02 in spec/02-integration-modes.md.",
+  "description": "Configuration for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.3. MIT License. https://www.lyrikai.com . Defined by rule FP-MODE-02 in spec/02-integration-modes.md.",
   "type": "object",
   "additionalProperties": false,
   "required": ["fp", "mode", "level", "platform", "has", "source", "pairs"],
@@ -106,6 +106,12 @@
           "role": { "enum": ["icon", "type", "breakpoint", "target", "drawn", "micro"] }
         }
       }
+    },
+    "controls": {
+      "description": "Class selectors of interactive elements that are not interactive by element name or ARIA role (FP-SNAP-11).",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^\\.[A-Za-z_][A-Za-z0-9_-]*$" },
+      "uniqueItems": true
     },
     "snap": {
       "type": "object",

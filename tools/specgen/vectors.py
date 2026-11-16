@@ -14,7 +14,7 @@ def hu1(fr):
     return math.floor(Fraction(fr) * 10 + Fraction(1, 2)) / 10
 
 OUT = sys.argv[1]
-VER = "1.0.0-rc.2"
+VER = "1.0.0-rc.3"
 NAME = "Lyrikai: Fibonacci Protocol for UI/UX Design Agents"
 HOME = "https://www.lyrikai.com"
 PHI = (1 + 5 ** 0.5) / 2
@@ -150,9 +150,7 @@ def snap_table(tokens, cfg):
             row.update(snapped=v, drift=0.0, note="exempt by value")
         else:
             cands = [x for x in RADIUS if x] if row["role"] == "radius" else L
-            if row["role"] != "radius" and v > 1.25 * L[-1]:
-                row.update(snapped=None, drift=None, note="above range: kept unchanged as an exception (snap-drift)")
-            else:
+            if True:
                 r, d = nearest(v, cands)
                 if d > 25:
                     row.update(snapped=None, nearest=r, drift=hu1(d), note="drift over 25%: kept unchanged as an exception (snap-drift)")

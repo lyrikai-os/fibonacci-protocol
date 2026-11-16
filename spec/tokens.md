@@ -1,6 +1,6 @@
 # Tokens
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 These rules apply to token files written in the protocol's format: the protocol's own published tokens, and the tokens of any system that chooses to ship such files. No mode requires them. A system that ships none, in Overlay, Snap or Native, has these rules as `n/a`.
 
@@ -13,7 +13,7 @@ A protocol token file MUST follow the Design Tokens Format Module 2025.10: a tok
 
 ### FP-TOKEN-02 · Types and units
 
-A length is a `dimension` with the value `{ "value": <number>, "unit": "px" }` or `"rem"`. A time is a `duration` with `{ "value": <number>, "unit": "ms" }` or `"s"`. A colour is a colour object with `colorSpace` and `components`. Ratios, opacities and layer values are `number`. Easing is `cubicBezier`.
+A length is a `dimension` with the value `{ "value": <number>, "unit": "px" }` or `"rem"`. A time is a `duration` with `{ "value": <number>, "unit": "ms" }` or `"s"`. A colour is a colour object with `colorSpace` and `components`. Ratios, opacities and layer values are `number`. Easing is `cubicBezier`. The format's `dimension` has only px and rem, so a value in another unit is a `number` whose unit is recorded in `$extensions["com.lyrikai.fp"].unit`: the round radius is 50 with unit `"%"`, and the split tracks are 1.618 and 1 with unit `"fr"`. The generators write the unit back (`50%`, `1.618fr`).
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** protocol token files · **Test:** machine, `token.types` · **Evidence:** cited ([source](https://www.designtokens.org/tr/2025.10/))
 
@@ -55,7 +55,7 @@ The homepage (`https://www.lyrikai.com`), the spec version and the unit u MUST b
 
 ### FP-TOKEN-08 · Generated outputs
 
-From the master, the protocol's generators MUST produce: CSS custom properties (FP-PLAT-02), SCSS variables, a Tailwind preset, and a list-shaped `tokens.json` for design-system tools. Each output is covered by a snapshot test. This rule binds the protocol's own repository; an adopter generates only what it uses.
+From the master, the protocol's generators MUST produce: CSS custom properties (FP-PLAT-02), SCSS variables, a Tailwind preset, and a list-shaped file for design-system tools, named `design-system-tokens.json`. Each output is covered by a snapshot test. This rule binds the protocol's own repository; an adopter generates only what it uses.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** the specification · **Test:** machine, `token.outputs` · **Evidence:** convention (protocol choice)
 
@@ -76,7 +76,7 @@ The master SHOULD build under Style Dictionary 4 and 5. Known gaps (object-form 
 
 ```json
 {
-  "$extensions": { "com.lyrikai.fp": { "homepage": "https://www.lyrikai.com", "spec": "1.0.0-rc.2", "unit": 1 } },
+  "$extensions": { "com.lyrikai.fp": { "homepage": "https://www.lyrikai.com", "spec": "1.0.0-rc.3", "unit": 1 } },
   "space": {
     "$type": "dimension",
     "13": {
@@ -97,4 +97,4 @@ The master SHOULD build under Style Dictionary 4 and 5. Known gaps (object-form 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

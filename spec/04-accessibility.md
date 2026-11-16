@@ -1,6 +1,6 @@
 # 4. Accessibility guardrails
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 These rules are floors. They sit outside the ladder and the type scale, and they always win. Each says when it applies; where it does not, its result is `n/a` (FP-CONF-11).
 
@@ -15,7 +15,7 @@ Where a ladder value, a type step, a φ proportion or a Snap mapping would break
 
 ### FP-A11Y-01 · Contrast floors
 
-Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. Where a host colour fails, the floor wins: the change is reported (FP-AGENT-08) and, in Overlay, needs the user's consent.
+Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. Where a host colour fails, the floor wins in every mode: the colour is changed by the smallest amount that passes, and the change is reported. Who is asked first, and when, is set once in FP-AGENT-03.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** always · **Test:** machine, `a11y.contrast` · **Evidence:** cited ([source](https://www.w3.org/TR/WCAG22/))
 
@@ -29,7 +29,7 @@ Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold. A 
 
 ### FP-A11Y-20 · Every pair in use is declared
 
-The `pairs` list MUST name every combination of text colour and background, and of control edge or meaningful mark and adjacent colour, that the scope uses. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
+The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** always · **Test:** self-report, `a11y.pairs-complete` · **Evidence:** convention (protocol choice)
 
@@ -155,4 +155,4 @@ An interface SHOULD stay usable when the platform forces its own colours. Marks 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

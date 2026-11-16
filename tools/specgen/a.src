@@ -224,8 +224,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 @@
 
 @R FP-MODE-02 | Configuration fields | FP-1 | N | M mode.config-schema | choice
-The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table below is part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `{{ver}}`).
-@@
+The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `{{ver}}`).
 
 | Field | Type | Required | Values and default |
 |---|---|---|---|
@@ -244,12 +243,14 @@ The file MUST validate against [fp.config.schema.json](fp.config.schema.json). T
 | `themes` | array | no | Each: `name`, and where the theme's colour values are found: `selector` (for example `[data-theme="dark"]`), `media` (for example `(prefers-color-scheme: dark)`) or `files` (globs). Default: one unnamed theme read from `:root`. Every theme the product ships MUST be listed, and every pair is tested in every theme. |
 | `pairs` | array | yes | Each: `fg`, `bg` (token addresses or hex colours) and `kind`: `text`, `large-text` or `mark`. Every pair in use in the scope is listed (FP-A11Y-20). |
 | `roles` | array | no | Each: `match` (a token address or glob) and `role`: `icon`, `type`, `breakpoint`, `target`, `drawn` or `micro` (FP-MODE-10). Used in every mode. |
+| `controls` | array of strings | no | Class selectors of interactive elements that are not interactive by their element name or ARIA role, for example `.btn` or `.nav-item` (FP-SNAP-11). |
 | `snap.source` | array of globs | yes in Snap | The files that hold the host's tokens as they are now, after snapping. The original values are kept in the Snap table, which is the record of what changed. |
 | `snap.table` | string | no | Path of the published Snap table. Default `fp-snap.md`. |
 | `snap.overrides` | array | no | Each: `token`, `to` (a rung of the declared unit, or a value of the radius set) and `reason`. |
 | `exceptions` | array | no | Each: `value`, `where`, `reason`, `rule`, `status`; plus `source` when the reason is `data`. `reason` is `floor`, `host-token`, `data`, `content`, `platform` or `snap-drift`. `status` is `accepted` or `pending`. `where` is a file and line, a selector, or a token address; a token address covers every use of that token. |
 
 **Token addresses.** A token is addressed either by its CSS custom property name, starting with `--` (`--color-ink`), or by its path in a tokens file, with dots (`color.ink`). A glob uses `*` only, which matches any run of characters (`--icon-*`, `icon.*`). A file glob uses `*` and `**` as in common build tools.
+@@
 
 ```json
 {
@@ -325,7 +326,7 @@ In Overlay the protocol's tokens (`--fp-*`) MUST be added beside the host's toke
 
 @R FP-MODE-04 | Overlay tests resolved values in the scope | FP-1 | N | M mode.overlay-resolved | choice
 @applies mode: overlay
-Inside the declared scope, every checked declaration (the list is in [03-conformance.md](03-conformance.md)) MUST resolve, after following `var()` references, to a value that is on the ladder, in its fixed set (FP-MATH-07), intrinsic, derived (FP-SPACE-04) or a declared exception. It does not matter whether the value arrives through a protocol token, a host token or a literal: what is tested is the resolved value. A host token whose value is not a rung fails inside the scope unless it has a role that exempts it (FP-MODE-10) or is declared as an exception with the reason `host-token`.
+Inside the declared scope, every checked declaration (the list is in [03-conformance.md](03-conformance.md)) MUST resolve, after following `var()` references, to a value that is on the ladder, in its fixed set (FP-MATH-07), intrinsic, derived (FP-SPACE-04) or a declared exception. It does not matter whether the value arrives through a protocol token, a host token or a literal: what is tested is the resolved value. A host token whose value is not a rung fails inside the scope unless it has a role that exempts it (FP-MODE-10) or is declared as an exception with the reason `host-token`. This rule sets what is read and how it is resolved; each off-ladder value is reported once, under the rule that owns its kind (FP-SPACE-01 for layout lengths, FP-RADIUS-01 for radii, FP-MATH-07 for strokes), never also under this one.
 @@
 
 @R FP-MODE-05 | Overlay coverage and exceptions are reported | FP-1 | N | M mode.overlay-coverage | choice
@@ -337,7 +338,7 @@ An Overlay report MUST state coverage: the checked values inside the scope, divi
 
 Snap maps a host's existing length tokens to the nearest rung, with a published table. It is lossy, and the protocol requires the loss to be shown.
 
-**How Snap is written.** Snap changes the value of the host's token and keeps its name, or points the host's token at a protocol token (`--space-4: var(--fp-space-13)`). Either is allowed. A checker tests the resolved value. Bare literals inside the scope are snapped by the same rules and listed in the table under "literals". Snap needs the host's lengths as tokens (CSS custom properties or a tokens file); where a host has none, the adopter writes that file first. `snap.source` names the files that hold the tokens now; the original values live in the Snap table's "original" column, so the pre-snap files need not be kept.
+**How Snap is written.** Snap changes the value of the host's token and keeps its name, or points the host's token at a protocol token (`--space-4: var(--fp-space-13)`). Either is allowed. A checker tests the resolved value. A bare literal inside the scope is treated exactly like a token: a checker maps it to its rung and lists it in the mapping under "literals", and the adopter changes it to that rung. A length that is still off the ladder after Snap, token or literal, fails FP-SPACE-01 where it is used, unless it is a declared exception; the mapping row is the suggested fix, not a pass. Snap needs the host's lengths as tokens (CSS custom properties or a tokens file); where a host has none, the adopter writes that file first. `snap.source` names the files that hold the tokens now; the original values live in the Snap table's "original" column, so the pre-snap files need not be kept.
 
 @R FP-SNAP-01 | Exemption is by declared role | FP-1 | N | M snap.exempt-by-role | choice
 @applies mode: snap
@@ -351,12 +352,12 @@ Each non-exempt host length MUST map to the rung nearest to it by absolute dista
 
 @R FP-SNAP-03 | Drift limit of 25% | FP-1 | N | M snap.drift | choice
 @applies mode: snap
-Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. At u = 1 the nearest rung meets the limit for every whole value from 2 up to 1.25 times the top rung (1996); the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).
+Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. This is the only definition of the limit: there is no separate range rule. A value above the top rung has the top rung as its nearest and is tested the same way. At u = 1 the worst case among whole values from 2 to the top rung is 4 → 5, at exactly 25%. The limit does not apply to `target` tokens (FP-SNAP-04).
 @@
 
 @R FP-SNAP-10 | Values that cannot be snapped | FP-1 | N | M snap.unsnappable | choice
 @applies mode: snap
-A value whose nearest rung drifts more than 25%, or that lies above 1.25 times the top rung, MUST NOT be snapped. It is kept unchanged and listed as an exception with the reason `snap-drift` (FP-SPACE-05).
+A value whose nearest rung drifts more than 25% MUST NOT be snapped. It is kept unchanged and listed as an exception with the reason `snap-drift` (FP-SPACE-05).
 @@
 
 @R FP-SNAP-04 | Targets never shrink | FP-1 | N | M snap.target-up | choice
@@ -367,7 +368,7 @@ A token with the `target` role MUST end at a value that is at least the larger o
 
 @R FP-SNAP-11 | Control heights never shrink | FP-1 | N | M snap.control-height | choice
 @applies mode: snap
-A token or literal that sets the `height`, `min-height`, `block-size` or `min-block-size` of an interactive element (a button, a link, an input, a select, a textarea, or an element with an interactive role) MUST have the `target` or the `drawn` role, and MUST NOT end smaller than it began. A checker flags such a declaration that has neither role. Without this, nearest-rung mapping would turn a 44 control into 34.
+A token or literal that sets the `height`, `min-height`, `block-size` or `min-block-size` of an interactive element (a button, a link, an input, a select, a textarea, or an element with an interactive role) MUST have the `target` or the `drawn` role, and MUST NOT end smaller than it began. Interactive elements are recognised by element name and ARIA role in the selector, and by the class selectors listed in `controls` in the configuration (for example `.btn`); a class is never guessed to be interactive from its name. A checker flags such a declaration that has neither role. Without this, nearest-rung mapping would turn a 44 control into 34.
 @@
 
 @R FP-SNAP-05 | The mapping keeps order | FP-1 | N | M snap.monotonic | choice
@@ -377,7 +378,7 @@ Order is kept within each group, not across groups. The groups are: spacing and 
 
 @R FP-SNAP-06 | Collisions merge by default | FP-1 | N | M snap.merge-listed | choice
 @applies mode: snap
-When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. A checker for version 1.0 does not read the published table: publishing it is a self-report item, and a Snap claim is valid only when the table is published.
+When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. Where the published table exists at `snap.table`, a checker reads each token's original value from its first four columns (token, role, original, snapped) and computes drift and merges from those originals, so that tokens already snapped in the source are still shown with where they came from. Where the table does not exist, a checker takes the values in `snap.source` as the originals. Publishing the table is a self-report item, and a Snap claim is valid only when the table is published.
 @@
 
 @R FP-SNAP-07 | Overrides | FP-1 | N | M snap.override | choice
@@ -445,7 +446,7 @@ The FP-AGENT rules describe an agent or a skill, not a design system. They MUST 
 
 @R FP-CONF-11 | Not applicable | Guard | N | M conf.not-applicable | choice
 @applies a checker
-Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example "no charts", "platform is web", "mode is overlay"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement.
+Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example "no charts", "platform is web", "mode is overlay"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement, which MUST be honest: `has.states` is true wherever the scope shows status of any kind (badges, alerts, validation messages, progress, online or offline marks).
 @@
 
 The conditions used in this specification are:
@@ -489,7 +490,7 @@ If the machine tests of a level have not been run, each has the result `not-run`
 
 @R FP-CONF-08 | What a checker reads and how it classifies | Guard | N | M conf.classify | choice
 @applies a checker
-A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML files, named by `source` and `scope`; and token files in the protocol's format. It does not read CSS-in-JS, preprocessor source or inline `style` attributes; compile those to CSS first, or report them as `not-run`. It MUST expand shorthands, follow `var()` references within the source to a resolved value, and accept `calc()` only in the two derived patterns (FP-SPACE-04). It MUST classify each value before testing it:
+A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML files, named by `source` and `scope`; and token files in the protocol's format. It does not read CSS-in-JS, preprocessor source or inline `style` attributes. Compile the first two to CSS first, or report them as `not-run`. Lengths in inline `style` attributes are a self-report item: the report lists them with their values, or states that the scope has none. It MUST expand shorthands, follow `var()` references within the source to a resolved value, and accept `calc()` only in the two derived patterns (FP-SPACE-04). It MUST classify each value before testing it:
 
 - **Layout lengths** (tested against the ladder at the declared u): `margin`, `padding`, `gap`, `inset`, `width`, `height`, `inline-size`, `block-size`, their `min-` and `max-` forms, and every longhand and logical form of these (`margin-inline`, `padding-block-start`, `row-gap`, `top`, `inset-inline-end` and so on).
 - **Fine detail** (tested against fixed sets in platform units, whatever u is): `border-radius` and its longhands against the radius set; `border-width`, `outline-width` and `outline-offset` against 0, 1, 2 and 3.
@@ -528,7 +529,7 @@ Where a ladder value, a type step, a φ proportion or a Snap mapping would break
 ## Contrast
 
 @R FP-A11Y-01 | Contrast floors | Guard | N | M a11y.contrast | cited https://www.w3.org/TR/WCAG22/
-Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. Where a host colour fails, the floor wins: the change is reported (FP-AGENT-08) and, in Overlay, needs the user's consent.
+Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. Where a host colour fails, the floor wins in every mode: the colour is changed by the smallest amount that passes, and the change is reported. Who is asked first, and when, is set once in FP-AGENT-03.
 @@
 
 @R FP-A11Y-02 | Large text and no rounding | Guard | N | M a11y.contrast-exact | cited https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html
@@ -536,7 +537,7 @@ Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold. A 
 @@
 
 @R FP-A11Y-20 | Every pair in use is declared | Guard | N | S a11y.pairs-complete | choice
-The `pairs` list MUST name every combination of text colour and background, and of control edge or meaningful mark and adjacent colour, that the scope uses. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
+The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
 @@
 
 ## Text

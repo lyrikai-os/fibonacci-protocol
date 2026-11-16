@@ -1,6 +1,6 @@
 {
   "vector": "04-derived",
-  "spec": "1.0.0-rc.2",
+  "spec": "1.0.0-rc.3",
   "about": "The two derived patterns pass: a φ split of a container, and a container minus one ladder token. Rung arithmetic, chaining, a non-rung operand, a non-φ factor, and a literal 987px in place of the container token fail.",
   "result": "fail",
   "checkedValues": 9,

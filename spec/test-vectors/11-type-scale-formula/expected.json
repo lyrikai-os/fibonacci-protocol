@@ -1,6 +1,6 @@
 {
   "vector": "11-type-scale-formula",
-  "spec": "1.0.0-rc.2",
+  "spec": "1.0.0-rc.3",
   "about": "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, fail; the unused odd step 5 (53) fails the step-range rule (FP-TYPE-02), not the scale rule.",
   "result": "fail",
   "findings": [

@@ -1,6 +1,6 @@
 # 2. Integration modes
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 A system that already exists adopts the protocol in one of three modes. The mode is declared in a file, so that a person, an agent and a checker all read the same thing.
 
@@ -15,10 +15,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 
 ### FP-MODE-02 · Configuration fields
 
-The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table below is part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.2`).
-
-- **Level:** FP-1 · **Status:** normative · **Applies when:** always · **Test:** machine, `mode.config-schema` · **Evidence:** convention (protocol choice)
-
+The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.3`).
 
 | Field | Type | Required | Values and default |
 |---|---|---|---|
@@ -37,6 +34,7 @@ The file MUST validate against [fp.config.schema.json](fp.config.schema.json). T
 | `themes` | array | no | Each: `name`, and where the theme's colour values are found: `selector` (for example `[data-theme="dark"]`), `media` (for example `(prefers-color-scheme: dark)`) or `files` (globs). Default: one unnamed theme read from `:root`. Every theme the product ships MUST be listed, and every pair is tested in every theme. |
 | `pairs` | array | yes | Each: `fg`, `bg` (token addresses or hex colours) and `kind`: `text`, `large-text` or `mark`. Every pair in use in the scope is listed (FP-A11Y-20). |
 | `roles` | array | no | Each: `match` (a token address or glob) and `role`: `icon`, `type`, `breakpoint`, `target`, `drawn` or `micro` (FP-MODE-10). Used in every mode. |
+| `controls` | array of strings | no | Class selectors of interactive elements that are not interactive by their element name or ARIA role, for example `.btn` or `.nav-item` (FP-SNAP-11). |
 | `snap.source` | array of globs | yes in Snap | The files that hold the host's tokens as they are now, after snapping. The original values are kept in the Snap table, which is the record of what changed. |
 | `snap.table` | string | no | Path of the published Snap table. Default `fp-snap.md`. |
 | `snap.overrides` | array | no | Each: `token`, `to` (a rung of the declared unit, or a value of the radius set) and `reason`. |
@@ -44,9 +42,12 @@ The file MUST validate against [fp.config.schema.json](fp.config.schema.json). T
 
 **Token addresses.** A token is addressed either by its CSS custom property name, starting with `--` (`--color-ink`), or by its path in a tokens file, with dots (`color.ink`). A glob uses `*` only, which matches any run of characters (`--icon-*`, `icon.*`). A file glob uses `*` and `**` as in common build tools.
 
+- **Level:** FP-1 · **Status:** normative · **Applies when:** always · **Test:** machine, `mode.config-schema` · **Evidence:** convention (protocol choice)
+
+
 ```json
 {
-  "fp": "1.0.0-rc.2",
+  "fp": "1.0.0-rc.3",
   "mode": "snap",
   "level": "FP-1",
   "platform": "web",
@@ -129,7 +130,7 @@ In Overlay the protocol's tokens (`--fp-*`) MUST be added beside the host's toke
 
 ### FP-MODE-04 · Overlay tests resolved values in the scope
 
-Inside the declared scope, every checked declaration (the list is in [03-conformance.md](03-conformance.md)) MUST resolve, after following `var()` references, to a value that is on the ladder, in its fixed set (FP-MATH-07), intrinsic, derived (FP-SPACE-04) or a declared exception. It does not matter whether the value arrives through a protocol token, a host token or a literal: what is tested is the resolved value. A host token whose value is not a rung fails inside the scope unless it has a role that exempts it (FP-MODE-10) or is declared as an exception with the reason `host-token`.
+Inside the declared scope, every checked declaration (the list is in [03-conformance.md](03-conformance.md)) MUST resolve, after following `var()` references, to a value that is on the ladder, in its fixed set (FP-MATH-07), intrinsic, derived (FP-SPACE-04) or a declared exception. It does not matter whether the value arrives through a protocol token, a host token or a literal: what is tested is the resolved value. A host token whose value is not a rung fails inside the scope unless it has a role that exempts it (FP-MODE-10) or is declared as an exception with the reason `host-token`. This rule sets what is read and how it is resolved; each off-ladder value is reported once, under the rule that owns its kind (FP-SPACE-01 for layout lengths, FP-RADIUS-01 for radii, FP-MATH-07 for strokes), never also under this one.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: overlay · **Test:** machine, `mode.overlay-resolved` · **Evidence:** convention (protocol choice)
 
@@ -145,7 +146,7 @@ An Overlay report MUST state coverage: the checked values inside the scope, divi
 
 Snap maps a host's existing length tokens to the nearest rung, with a published table. It is lossy, and the protocol requires the loss to be shown.
 
-**How Snap is written.** Snap changes the value of the host's token and keeps its name, or points the host's token at a protocol token (`--space-4: var(--fp-space-13)`). Either is allowed. A checker tests the resolved value. Bare literals inside the scope are snapped by the same rules and listed in the table under "literals". Snap needs the host's lengths as tokens (CSS custom properties or a tokens file); where a host has none, the adopter writes that file first. `snap.source` names the files that hold the tokens now; the original values live in the Snap table's "original" column, so the pre-snap files need not be kept.
+**How Snap is written.** Snap changes the value of the host's token and keeps its name, or points the host's token at a protocol token (`--space-4: var(--fp-space-13)`). Either is allowed. A checker tests the resolved value. A bare literal inside the scope is treated exactly like a token: a checker maps it to its rung and lists it in the mapping under "literals", and the adopter changes it to that rung. A length that is still off the ladder after Snap, token or literal, fails FP-SPACE-01 where it is used, unless it is a declared exception; the mapping row is the suggested fix, not a pass. Snap needs the host's lengths as tokens (CSS custom properties or a tokens file); where a host has none, the adopter writes that file first. `snap.source` names the files that hold the tokens now; the original values live in the Snap table's "original" column, so the pre-snap files need not be kept.
 
 ### FP-SNAP-01 · Exemption is by declared role
 
@@ -163,14 +164,14 @@ Each non-exempt host length MUST map to the rung nearest to it by absolute dista
 
 ### FP-SNAP-03 · Drift limit of 25%
 
-Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. At u = 1 the nearest rung meets the limit for every whole value from 2 up to 1.25 times the top rung (1996); the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).
+Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. This is the only definition of the limit: there is no separate range rule. A value above the top rung has the top rung as its nearest and is tested the same way. At u = 1 the worst case among whole values from 2 to the top rung is 4 → 5, at exactly 25%. The limit does not apply to `target` tokens (FP-SNAP-04).
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: snap · **Test:** machine, `snap.drift` · **Evidence:** convention (protocol choice)
 
 
 ### FP-SNAP-10 · Values that cannot be snapped
 
-A value whose nearest rung drifts more than 25%, or that lies above 1.25 times the top rung, MUST NOT be snapped. It is kept unchanged and listed as an exception with the reason `snap-drift` (FP-SPACE-05).
+A value whose nearest rung drifts more than 25% MUST NOT be snapped. It is kept unchanged and listed as an exception with the reason `snap-drift` (FP-SPACE-05).
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: snap · **Test:** machine, `snap.unsnappable` · **Evidence:** convention (protocol choice)
 
@@ -184,7 +185,7 @@ A token with the `target` role MUST end at a value that is at least the larger o
 
 ### FP-SNAP-11 · Control heights never shrink
 
-A token or literal that sets the `height`, `min-height`, `block-size` or `min-block-size` of an interactive element (a button, a link, an input, a select, a textarea, or an element with an interactive role) MUST have the `target` or the `drawn` role, and MUST NOT end smaller than it began. A checker flags such a declaration that has neither role. Without this, nearest-rung mapping would turn a 44 control into 34.
+A token or literal that sets the `height`, `min-height`, `block-size` or `min-block-size` of an interactive element (a button, a link, an input, a select, a textarea, or an element with an interactive role) MUST have the `target` or the `drawn` role, and MUST NOT end smaller than it began. Interactive elements are recognised by element name and ARIA role in the selector, and by the class selectors listed in `controls` in the configuration (for example `.btn`); a class is never guessed to be interactive from its name. A checker flags such a declaration that has neither role. Without this, nearest-rung mapping would turn a 44 control into 34.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: snap · **Test:** machine, `snap.control-height` · **Evidence:** convention (protocol choice)
 
@@ -198,7 +199,7 @@ Order is kept within each group, not across groups. The groups are: spacing and 
 
 ### FP-SNAP-06 · Collisions merge by default
 
-When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. A checker for version 1.0 does not read the published table: publishing it is a self-report item, and a Snap claim is valid only when the table is published.
+When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. Where the published table exists at `snap.table`, a checker reads each token's original value from its first four columns (token, role, original, snapped) and computes drift and merges from those originals, so that tokens already snapped in the source are still shown with where they came from. Where the table does not exist, a checker takes the values in `snap.source` as the originals. Publishing the table is a self-report item, and a Snap claim is valid only when the table is published.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: snap · **Test:** machine, `snap.merge-listed` · **Evidence:** convention (protocol choice)
 
@@ -243,4 +244,4 @@ An adopter MAY change: colour slot values, typefaces and weights, the words show
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

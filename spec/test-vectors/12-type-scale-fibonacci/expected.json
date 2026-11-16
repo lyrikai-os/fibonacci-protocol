@@ -1,6 +1,6 @@
 {
   "vector": "12-type-scale-fibonacci",
-  "spec": "1.0.0-rc.2",
+  "spec": "1.0.0-rc.3",
   "about": "The same input with type.align: fibonacci. Now 21 is the step, and 20, the value it replaced, fails the alignment rule (FP-TYPE-03). 53 still fails the step-range rule.",
   "result": "fail",
   "findings": [

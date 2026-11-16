@@ -1,6 +1,6 @@
 # 9. Agent protocol
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 This section is written for a design agent: any model or tool that makes or edits a design on a person's behalf. It is the source from which the agent pack and the `/lyrikai-fibonacci` skill are generated.
 
@@ -34,7 +34,9 @@ When rules pull in different directions, an agent MUST decide in this order, and
 
 ### FP-AGENT-03 · Consent
 
-A declared `snap` mode, in the configuration or in the user's request, is the user's consent to build and apply the Snap table. An agent MUST ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; and changing the value of any host token in Overlay, including a colour that fails a contrast floor.
+A declared `snap` mode, in the configuration or in the user's request, is the user's consent to build and apply the Snap table. An agent MUST ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; and changing the value of any host token in Overlay.
+
+A host value that fails a Guard floor (a colour pair under its contrast floor, a target under its minimum, text that cannot be resized) is the one case with its own rule, the same in every mode. The floor wins: the value is changed, never left failing. The agent makes the smallest change that meets the floor (for a colour: move its lightness, keep its hue, stop at the first value that passes) and reports it as an `FP-CHANGE` line with `reason=floor`. In an interactive session in Overlay, the agent asks before making the change. In Snap and Native, and in every non-interactive run in any mode, it makes the change without asking and reports it with `status=accepted`.
 
 - **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** self-report, `agent.consent` · **Evidence:** convention (protocol choice)
 
@@ -48,7 +50,7 @@ An agent MAY add `roles` entries for tokens whose role is plain from their name 
 
 ### FP-AGENT-04 · Non-interactive runs do not stall
 
-When no one is available to answer, an agent MUST NOT wait. It applies what it has consent for, leaves anything that needs a yes unchanged, records each such item as an `FP-OFF` or `FP-CHANGE` line with `status=pending`, and continues to the end. The result of such a run is `pending` (FP-CONF-07).
+When no one is available to answer, an agent MUST NOT wait. It applies what it has consent for, makes the floor changes FP-AGENT-03 allows, leaves anything else that needs a yes unchanged, records each such item as an `FP-OFF` or `FP-CHANGE` line with `status=pending`, and continues to the end. The result of such a run is `pending` (FP-CONF-07).
 
 - **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** self-report, `agent.non-interactive` · **Evidence:** convention (protocol choice)
 
@@ -86,7 +88,9 @@ Example: `FP-OFF src/card.css:14 value=44px nearest=34/55 reason=host-token rule
 
 An agent MUST NOT change a value without saying so, and MUST NOT present a snapped design as identical to the original. Snapped lengths are reported in the Snap table (FP-SNAP-08). Every other change to something the host had (a body size raised to the anchor, a colour changed to meet a contrast floor, a type size replaced by a step) MUST be reported on one line in this form:
 
-`FP-CHANGE <where> from=<old> to=<new> reason=<floor|scale|snap> rule=<ID> status=<accepted|pending>`
+`FP-CHANGE <where> from=<old> to=<new> reason=<floor|scale|snap|layout> rule=<ID> status=<accepted|pending>`
+
+The reasons: `floor`, a Guard floor required it; `scale`, a type size or line height was replaced by the protocol's; `snap`, a non-length value changed as part of Snap; `layout`, a layout rule required it (a φ split, a container limit, reflow at 320).
 
 `<where>` is a file and line, a selector or a token address. One line MAY cover several places when `from`, `to`, `reason` and `rule` are the same for all of them: the places are listed, separated by commas.
 
@@ -94,6 +98,13 @@ An agent MUST NOT change a value without saying so, and MUST NOT present a snapp
 
 
 Example: `FP-CHANGE tokens.css:8 from=14px to=1rem reason=floor rule=FP-A11Y-07 status=accepted`
+
+### FP-AGENT-13 · Work in the adopter's files
+
+An agent writes its changes into the adopter's own source files, in place; the original stays in version control, and no parallel copy is made unless the user asks for one. A property the checker does not test (`box-shadow`, `transform`, `letter-spacing`; the list is in FP-CONF-08) is left as it is. `outline-offset` and `border-width` are tested, against 0, 1, 2 and 3. Lengths in inline `style` attributes are outside a checker's reach: the agent moves them into CSS where it can and lists the rest in the report. The agent sets every `has` value truthfully, from what it sees in the scope.
+
+- **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** self-report, `agent.in-place` · **Evidence:** convention (protocol choice)
+
 
 ### FP-AGENT-09 · No aesthetic claims
 
@@ -128,4 +139,4 @@ The skill's output MUST end with a line that names the protocol, the spec versio
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

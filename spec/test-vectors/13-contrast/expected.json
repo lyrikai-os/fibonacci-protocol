@@ -1,6 +1,6 @@
 {
   "vector": "13-contrast",
-  "spec": "1.0.0-rc.2",
+  "spec": "1.0.0-rc.3",
   "about": "Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals.",
   "result": "fail",
   "pairs": [

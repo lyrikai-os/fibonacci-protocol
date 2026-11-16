@@ -1,6 +1,6 @@
 # 5.2 UI: type
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 Type has its own scale. It is not the length ladder, and type sizes are tested by ratio, not as lengths.
 
@@ -97,7 +97,7 @@ The label of a control MUST be at least the larger of step −1 and 13 (px, pt o
 
 ### FP-TYPE-12 · Replacing a host's type sizes
 
-To reach FP-2, each host type size in the scope is replaced by a step. The role fixes or bounds the step, and the ratio chooses within the bound. Body text (paragraphs, and the default text of the page) becomes step 0, whatever its old size. The value typed into an input becomes step 0. Every other text maps to the usable step (FP-TYPE-02) nearest in ratio (the smallest |ln(size ÷ step)|), a tie going to the larger step, and then: a control label (button, link, tab, field label) is raised to step −1 if it fell below it; a heading keeps the step the ratio gives, which may be step 0 or −1 for a small heading. No text maps below step −1 unless it is non-interactive metadata, which MAY become micro. Host line heights are replaced by the leading of FP-TYPE-07. The mapping MUST be listed in the report, one row per host size.
+To reach FP-2, each host type size in the scope is replaced by a step. The role fixes or bounds the step, and the ratio chooses within the bound. Body text (paragraphs, and the default text of the page) becomes step 0, whatever its old size. The value typed into an input becomes step 0. Every other text maps to the usable step (FP-TYPE-02) nearest in ratio (the smallest |ln(size ÷ step)|), a tie going to the larger step, and then: a control label (button, link, tab, field label) is raised to step −1 if it fell below it; a heading keeps the step the ratio gives, which may be step 0 or −1 for a small heading. No text maps below step −1 unless it is non-interactive metadata, which MAY become micro. Host line heights are replaced by the leading of FP-TYPE-07. Only a CSS rule that sets `font-size` is mapped; an element that inherits its size (a table cell, a link inside navigation) follows whatever it inherits from and is not listed. The mapping MUST be listed in the report, one row per host size.
 
 - **Level:** FP-2 · **Status:** normative · **Applies when:** mode: overlay or snap · **Test:** self-report, `type.host-mapping` · **Evidence:** convention (protocol choice)
 
@@ -177,10 +177,10 @@ Running text SHOULD be set at 45 to 75 characters per line; the default is `max-
 
 ### FP-TYPE-11 · No typeface is required
 
-The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices. Where an output format requires a font family or a weight for each type token (the list-shaped `tokens.json`), the protocol's files carry the placeholders `inherit` and `400`. They mean "the adopter's choice" and are not recommendations.
+The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices. Where an output format requires a font family or a weight for each type token (the list-shaped `design-system-tokens.json`), the protocol's files carry the placeholders `inherit` and `400`. They mean "the adopter's choice" and are not recommendations.
 
 - **Level:** FP-2 · **Status:** informative · **Applies when:** always · **Test:** self-report, `type.typeface` · **Evidence:** convention (protocol choice)
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

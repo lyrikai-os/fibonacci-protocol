@@ -1,6 +1,6 @@
 {
   "vector": "16-overlay-coverage",
-  "spec": "1.0.0-rc.2",
+  "spec": "1.0.0-rc.3",
   "about": "Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged.",
   "result": "pass",
   "findings": [],
@@ -9,5 +9,5 @@
     "inSource": 22,
     "percent": 50
   },
-  "claim": "FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.2 · self-assessed"
+  "claim": "FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.3 · self-assessed"
 }

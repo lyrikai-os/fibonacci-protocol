@@ -1,6 +1,6 @@
 {
   "name": "@lyrikai/fibonacci-protocol",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents. Spec, tokens, the /lyrikai-fibonacci skill, the fp-check checker and release guards.",
   "private": true,
   "license": "MIT",

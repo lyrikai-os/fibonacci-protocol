@@ -1,6 +1,6 @@
 {
   "vector": "02-ladder-u1-fail",
-  "spec": "1.0.0-rc.2",
+  "spec": "1.0.0-rc.3",
   "about": "Off-ladder lengths, an off-set radius and an off-set stroke each fail. In a shorthand each value is tested.",
   "result": "fail",
   "checkedValues": 16,

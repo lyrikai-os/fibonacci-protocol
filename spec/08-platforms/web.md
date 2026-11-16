@@ -1,6 +1,6 @@
 # 8.1 Platforms: web
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 ### FP-PLAT-01 · Web units
 
@@ -31,7 +31,7 @@ The protocol's CSS custom properties MUST use the `--fp-` prefix and these names
 | Easing | `--fp-easing-standard`, `--fp-easing-enter`, `--fp-easing-exit` | the role | no |
 | Layer | `--fp-layer-base` (1), `-raised` (2), `-overlay` (3), `-popover` (13), `-toast` (21) | the role | no |
 | Tone | `--fp-tone-1` … `--fp-tone-5` | the power of 1/φ | no |
-| Split | `--fp-split-major` (61.8), `--fp-split-minor` (38.2) | the role; unitless numbers | no |
+| Split | `--fp-split-major` (`1.618fr`), `--fp-split-minor` (`1fr`) | the role; grid tracks, usable directly in `grid-template-columns` | no |
 | Constants | `--fp-math-phi`, `--fp-math-phi-inverse`, `--fp-math-phi-inverse-squared`, `--fp-math-phi-root`, `--fp-math-golden-angle-degrees`, `--fp-math-golden-angle-radians`, `--fp-math-hash-constant` | the constant (FP-MATH-01) | no |
 
 The type tokens for steps 5 and 7 exist so that the list is complete; FP-TYPE-02 does not allow them in use. Two marker properties declare layout intent to a checker and carry no value of their own: `--fp-layout: phi-split` (FP-LAYOUT-01) and `--fp-layout: container` (FP-LAYOUT-05).
@@ -54,4 +54,4 @@ Web values in one place, at u = 1: body 16 px (1rem); micro 11 px; ladder target
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

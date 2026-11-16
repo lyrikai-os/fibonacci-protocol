@@ -1,8 +1,8 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-**Status:** release candidate 1.0.0-rc.2. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
+**Status:** release candidate 1.0.0-rc.3. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
 
 ## What this is
 
@@ -29,7 +29,7 @@ This is the smallest adoption. It changes nothing your system already has.
 **1. Add the tokens.** Copy this block into your CSS.
 
 ```css
-/* Fibonacci Protocol 1.0.0-rc.2 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
+/* Fibonacci Protocol 1.0.0-rc.3 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
 :root {
   --fp-space-1: 1px;
   --fp-space-2: 2px;
@@ -67,7 +67,7 @@ This is the smallest adoption. It changes nothing your system already has.
 
 ```json
 {
-  "fp": "1.0.0-rc.2",
+  "fp": "1.0.0-rc.3",
   "mode": "overlay",
   "level": "FP-1",
   "platform": "web",
@@ -169,7 +169,7 @@ If you later go on to FP-2, note one rule that catches people out: every CSS rul
 
 **5. State the claim**, exactly in this form:
 
-`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.2 · self-assessed`
+`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.3 · self-assessed`
 
 ### Running the checker
 
@@ -209,7 +209,7 @@ In version 1.0 a claim names FP-1 or FP-2 and the platform `web` (FP-CONF-05). O
 1. Write an `fp.config.json` (FP-MODE-01, FP-MODE-02; schema in [fp.config.schema.json](fp.config.schema.json)).
 2. Run the machine tests for the level and answer the self-report items with evidence (FP-CONF-06).
 3. Resolve every pending exception; a result with pending exceptions is not a pass (FP-CONF-07).
-4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.2 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
+4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.3 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
 
 A claim says what was tested. It never says that a design is more beautiful, more natural or better (FP-HONEST-04). A passing run is not a statement that a product is accessible (FP-CONF-10).
 
@@ -235,8 +235,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | FP-3 | 0 | 22 | 22 |
 | FP-4a | 0 | 12 | 12 |
 | FP-4b | 0 | 8 | 8 |
-| Agent | 12 | 0 | 12 |
-| **All** | **125** | **60** | **185** |
+| Agent | 13 | 0 | 13 |
+| **All** | **126** | **60** | **186** |
 
 ## File map
 
@@ -259,7 +259,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [08-platforms/apple.md](08-platforms/apple.md) | 8 | 8.2 Platforms: iOS and macOS | `FP-PLAT` (3) |
 | [08-platforms/android.md](08-platforms/android.md) | 8 | 8.3 Platforms: Android | `FP-PLAT` (2) |
 | [08-platforms/print-slides-email.md](08-platforms/print-slides-email.md) | 8 | 8.4 Platforms: print, slides, email | `FP-PLAT` (3) |
-| [09-agent-protocol.md](09-agent-protocol.md) | 9 | 9. Agent protocol | `FP-AGENT` (12) |
+| [09-agent-protocol.md](09-agent-protocol.md) | 9 | 9. Agent protocol | `FP-AGENT` (13) |
 | [10-evidence-honesty.md](10-evidence-honesty.md) | 10 | 10. Evidence and honesty | `FP-HONEST` (6) |
 | [tokens.md](tokens.md) | deliverable | Tokens | `FP-TOKEN` (10) |
 | [appendix-snap-tables.md](appendix-snap-tables.md) | 2 | Appendix: worked Snap tables | — (0) |
@@ -454,6 +454,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [FP-AGENT-06](09-agent-protocol.md) | Name the rules used | Agent | normative | always | self-report: `agent.rule-ids` | convention (protocol choice) |
 | [FP-AGENT-07](09-agent-protocol.md) | Report every off-ladder value | Agent | normative | always | machine: `agent.fp-off` | convention (protocol choice) |
 | [FP-AGENT-08](09-agent-protocol.md) | Report every change to a host value | Agent | normative | always | machine: `agent.fp-change` | convention (protocol choice) |
+| [FP-AGENT-13](09-agent-protocol.md) | Work in the adopter's files | Agent | normative | always | self-report: `agent.in-place` | convention (protocol choice) |
 | [FP-AGENT-09](09-agent-protocol.md) | No aesthetic claims | Agent | normative | always | self-report: `agent.no-aesthetic-claims` | convention (protocol choice); basis: [cited source](https://pmc.ncbi.nlm.nih.gov/articles/PMC4937063) |
 | [FP-AGENT-10](09-agent-protocol.md) | Skill verbs | Agent | normative | always | self-report: `agent.skill-verbs` | convention (protocol choice) |
 | [FP-AGENT-11](09-agent-protocol.md) | About line | Agent | normative | always | self-report: `agent.about-line` | convention (protocol choice) |
@@ -484,4 +485,4 @@ MIT License. Third-party values used as test fixtures keep their own licences an
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

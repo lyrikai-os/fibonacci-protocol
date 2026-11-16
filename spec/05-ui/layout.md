@@ -1,10 +1,10 @@
 # 5.3 UI: layout
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 ### FP-LAYOUT-01 · The φ split
 
-A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested. A split is declared by writing the custom property `--fp-layout: phi-split` in the same CSS rule as its `grid-template-columns`; nothing else (a ratio that happens to be near φ, a class name) makes a split "declared". A declared split MUST have exactly two tracks whose ratio is 61.8 to 38.2 within 0.1, in either order: `1.618fr 1fr`, `61.8% 38.2%`, or the tokens `--fp-split-major` and `--fp-split-minor`. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.
+A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested. A split is declared by writing the custom property `--fp-layout: phi-split` in the same CSS rule as its `grid-template-columns`; nothing else (a ratio that happens to be near φ, a class name) makes a split "declared". A declared split MUST have exactly two tracks whose ratio is 61.8 to 38.2 within 0.1, in either order: `1.618fr 1fr`, `61.8% 38.2%`, or the tokens `--fp-split-major` (`1.618fr`) and `--fp-split-minor` (`1fr`), as in `grid-template-columns: var(--fp-split-major) var(--fp-split-minor)`. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.
 
 - **Level:** FP-2 · **Status:** normative · **Applies when:** always · **Test:** machine, `layout.phi-split` · **Evidence:** convention
 
@@ -55,4 +55,4 @@ Reflow at 320 CSS px is required in every mode by FP-A11Y-13.
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

@@ -1,6 +1,6 @@
 # 3. Conformance
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 ## Levels
 
@@ -50,7 +50,7 @@ The FP-AGENT rules describe an agent or a skill, not a design system. They MUST 
 
 ### FP-CONF-11 · Not applicable
 
-Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example "no charts", "platform is web", "mode is overlay"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement.
+Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example "no charts", "platform is web", "mode is overlay"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement, which MUST be honest: `has.states` is true wherever the scope shows status of any kind (badges, alerts, validation messages, progress, online or offline marks).
 
 - **Level:** Guard · **Status:** normative · **Applies when:** a checker · **Test:** machine, `conf.not-applicable` · **Evidence:** convention (protocol choice)
 
@@ -102,7 +102,7 @@ If the machine tests of a level have not been run, each has the result `not-run`
 
 ### FP-CONF-08 · What a checker reads and how it classifies
 
-A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML files, named by `source` and `scope`; and token files in the protocol's format. It does not read CSS-in-JS, preprocessor source or inline `style` attributes; compile those to CSS first, or report them as `not-run`. It MUST expand shorthands, follow `var()` references within the source to a resolved value, and accept `calc()` only in the two derived patterns (FP-SPACE-04). It MUST classify each value before testing it:
+A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML files, named by `source` and `scope`; and token files in the protocol's format. It does not read CSS-in-JS, preprocessor source or inline `style` attributes. Compile the first two to CSS first, or report them as `not-run`. Lengths in inline `style` attributes are a self-report item: the report lists them with their values, or states that the scope has none. It MUST expand shorthands, follow `var()` references within the source to a resolved value, and accept `calc()` only in the two derived patterns (FP-SPACE-04). It MUST classify each value before testing it:
 
 - **Layout lengths** (tested against the ladder at the declared u): `margin`, `padding`, `gap`, `inset`, `width`, `height`, `inline-size`, `block-size`, their `min-` and `max-` forms, and every longhand and logical form of these (`margin-inline`, `padding-block-start`, `row-gap`, `top`, `inset-inline-end` and so on).
 - **Fine detail** (tested against fixed sets in platform units, whatever u is): `border-radius` and its longhands against the radius set; `border-width`, `outline-width` and `outline-offset` against 0, 1, 2 and 3.
@@ -139,4 +139,4 @@ A report MUST state which rules were machine-tested, which were self-reported, w
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

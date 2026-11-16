@@ -1,6 +1,6 @@
 {
   "vector": "03-ladder-u4",
-  "spec": "1.0.0-rc.2",
+  "spec": "1.0.0-rc.3",
   "about": "At u = 4 the rungs are F × 4 plus the sub-unit values 1 and 2. Radius, stroke and container widths stay in platform units. 13 and 16 are not rungs; 2440 (610 × 4) is not a rung.",
   "result": "fail",
   "checkedValues": 26,

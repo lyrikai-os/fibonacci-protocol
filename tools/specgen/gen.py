@@ -24,7 +24,7 @@ def hu1(fr):
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
 NAME = "Lyrikai: Fibonacci Protocol for UI/UX Design Agents"
-VER = "1.0.0-rc.2"
+VER = "1.0.0-rc.3"
 HOME = "https://www.lyrikai.com"
 PHI = (1 + 5 ** 0.5) / 2
 FIB = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597]
@@ -91,7 +91,6 @@ def snap(v, u):
     if v == 0: return ("0", "exempt")
     if u > 1 and v in (1, 2): return (str(v), "sub-unit, kept")
     L = rungs(u)
-    if v > 1.25 * L[-1]: return ("—", "above range: exception")
     r = min(L, key=lambda x: (abs(x - v), -x))
     d = Fraction(abs(r - v) * 100, v)
     if d > 25: return ("—", f"not snapped (nearest {r}, drift {hu1(d):.1f}%): exception")
