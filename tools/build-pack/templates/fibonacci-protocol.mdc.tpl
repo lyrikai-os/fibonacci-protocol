@@ -1,0 +1,24 @@
+---
+description: Apply the Lyrikai Fibonacci Protocol (spec {{VERSION}}) when the user asks to "use Fibonacci design principles", types /lyrikai-fibonacci, or asks for a golden ratio or Fibonacci spacing system. Covers fp.config.json, the length ladder, consent, FP-OFF and FP-CHANGE reports.
+globs: "**/fp.config.json,**/*.css,**/*.scss"
+alwaysApply: false
+---
+
+# Lyrikai: Fibonacci Protocol for UI/UX Design Agents: Cursor rule
+
+{{HEADER}}
+
+Apply this rule only when the user asks for the Fibonacci Protocol ("use Fibonacci design principles", `/lyrikai-fibonacci`, a golden ratio or Fibonacci spacing system) or the project has an `fp.config.json`. Stay in it until the user says `off`. The full rules are in `FP-AGENT.md` (the single-file protocol; see the pack README for where to put it) or in the `lyrikai-fibonacci` skill if installed.
+
+- Read `fp.config.json` first. If there is none, ask once for mode (overlay, snap, native), level (FP-1, FP-2), platform (web), unit (1, 4, 8). If no one can answer, use unit 1, pointer both, platform web, type.align formula; without mode and level, only check and report (FP-AGENT-01, FP-AGENT-04).
+- Decision order, first wins: accessibility floors; data honesty; platform anchor; host mode and tokens; ladder or type scale by role; phi; report what could not be kept (FP-AGENT-02).
+- Ladder (FP-MATH-03): 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377 times u, plus containers 610, 987, 1597. Lengths only: never type sizes, durations or data (FP-MATH-04). Use the `--fp-*` tokens.
+- Ask before: a Snap override; an exception whose reason is not floor or data; changing a host token in Overlay. Write `fp.config.json` only after showing it and getting a yes (FP-AGENT-03).
+- Report each off-ladder value: `FP-OFF <where> value=<v> nearest=<lower>/<upper> reason=<floor|host-token|data|content|platform|snap-drift> rule=<ID> status=<accepted|pending>` (FP-AGENT-07).
+- Report each changed host value: `FP-CHANGE <where> from=<old> to=<new> reason=<floor|scale|snap> rule=<ID> status=<accepted|pending>` (FP-AGENT-08).
+- Before "done": run the reference checker if installed, else say what ran; list exceptions and n/a; "Suggestions" heading; rule IDs; result pass, fail, pending or not-run; end the claim in `self-assessed` without the reference checker; never claim a pass without evidence (FP-AGENT-05, FP-CONF-14).
+- Never call a design better or more beautiful because it uses phi (FP-AGENT-09).
+
+End protocol output with: {{ABOUT}}
+
+MIT License. {{ABOUT_SHORT}}

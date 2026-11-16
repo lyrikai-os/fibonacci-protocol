@@ -1,0 +1,39 @@
+{
+  "fp": "1.0.0-rc.1",
+  "mode": "overlay",
+  "level": "FP-1",
+  "platform": "web",
+  "unit": 1,
+  "has": {
+    "motion": true,
+    "timeLimits": false,
+    "controls": true,
+    "charts": false,
+    "generatedArt": false,
+    "states": false
+  },
+  "source": [
+    "src/**/*.css"
+  ],
+  "scope": [
+    "src/components/card/**/*.css"
+  ],
+  "roles": [
+    {
+      "match": "--icon-*",
+      "role": "icon"
+    }
+  ],
+  "pairs": [
+    {
+      "fg": "--color-text",
+      "bg": "--color-page",
+      "kind": "text"
+    },
+    {
+      "fg": "--color-border-control",
+      "bg": "--color-page",
+      "kind": "mark"
+    }
+  ]
+}

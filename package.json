@@ -1,14 +1,19 @@
 {
   "name": "@lyrikai/fibonacci-protocol",
   "version": "1.0.0-rc.1",
-  "description": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents. Token master (W3C DTCG 2025.10) and generators.",
+  "description": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents. Spec, tokens, the /lyrikai-fibonacci skill, the fp-check checker and release guards.",
   "private": true,
   "license": "MIT",
   "homepage": "https://www.lyrikai.com",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build:tokens": "node tools/build-tokens/build.mjs --all",
-    "test": "node --test tools/"
+    "test": "node --test tools/",
+    "build:pack": "node tools/build-pack/build-pack.mjs",
+    "check:pack": "node tools/build-pack/build-pack.mjs --check",
+    "build:spec": "python3 -I tools/specgen/gen.py"
   }
 }
