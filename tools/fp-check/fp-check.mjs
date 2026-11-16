@@ -17,7 +17,7 @@ Usage: fp-check [dir] [--config fp.config.json] [--json] [--expect expected.json
   --expect   compare the report with an expected-results file and report differences
   --spec     folder with rules.json and fp.config.schema.json (default: the repository's spec/)
 
-Exit codes: 0 pass (or --expect matches), 1 fail or pending (or --expect differs), 2 not-run or an input error.`;
+Exit codes: 0 machine pass (claim valid or candidate; see claimState with --json) or --expect matches, 1 fail, pending or an item answered fail (or --expect differs), 2 not-run or an input error.`;
 
 class Done extends Error {}
 

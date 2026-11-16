@@ -156,9 +156,85 @@ test('SKILL.md has the first-run checklist', () => {
   const i = s.indexOf('## First run: checklist');
   assert.ok(i > 0);
   const sec = s.slice(i, s.indexOf('\n## ', i + 5));
-  for (const t of ['fp.config.json', 'in place', 'FP-A11Y-20', 'node tools/fp-check/fp-check.mjs <folder>', 'FP-OFF', 'FP-CHANGE', 'Suggestions', 'exactly as `fp-check` prints it']) {
+  for (const t of ['fp.config.json', 'in place', 'FP-A11Y-20', 'node <repo>/tools/fp-check/fp-check.mjs <folder>', 'FP-OFF', 'FP-CHANGE', 'Suggestions', 'exactly as `fp-check` prints it']) {
     assert.ok(sec.includes(t), `first run lacks ${t}`);
   }
   assert.ok(s.includes('FP-AGENT-13'));
   assert.ok(s.split('\n').length < 350);
+});
+
+const ENTRY = [`${SKILL}/SKILL.md`, 'agent-pack/AGENTS.md', 'agent-pack/cursor/fibonacci-protocol.mdc'];
+const flat = (rel) => read(rel).replace(/\s+/g, ' ');
+
+test('1. fp-report.md: eight sections in order, in every entry point; first run says write it', () => {
+  const order = ['Claim', 'State', 'FP-OFF', 'FP-CHANGE', 'Exemptions added', 'Suggestions', 'Rules', 'About line'];
+  for (const rel of ENTRY) {
+    const s = flat(rel);
+    assert.ok(s.includes('fp-report.md'), `${rel} names fp-report.md`);
+    assert.ok(s.includes('FP-AGENT-14'), `${rel} cites FP-AGENT-14`);
+    let at = s.indexOf('fp-report.md');
+    for (const sec of order) {
+      const i = s.indexOf(sec, at);
+      assert.ok(i >= 0, `${rel}: section "${sec}" missing or out of order`);
+      at = i;
+    }
+    assert.match(s, /Snapped lengths (go|are recorded|are) in (the|that|this) (Snap )?table[^.]*never/i, `${rel}: snapped lengths not FP-CHANGE`);
+  }
+  const s = read(`${SKILL}/SKILL.md`);
+  const sec = s.slice(s.indexOf('## First run: checklist'), s.indexOf('## Check'));
+  assert.match(sec, /Write `fp-report\.md`/);
+  assert.equal(c.spec.rules.find((x) => x.id === 'FP-AGENT-14').title, 'The report file');
+});
+
+test('2. evidence: fp-evidence.json explained, schema bundled, no invented evidence', () => {
+  const src = read('spec/fp-evidence.schema.json');
+  assert.equal(read(`${SKILL}/reference/fp-evidence.schema.json`), src);
+  assert.equal(read('agent-pack/fp-evidence.schema.json'), src);
+  for (const rel of ENTRY) {
+    const s = flat(rel);
+    assert.ok(s.includes('fp-evidence.json'), `${rel} names fp-evidence.json`);
+    assert.ok(s.includes('fp-evidence.schema.json'), `${rel} names the evidence schema`);
+    assert.match(s, /never invent evidence|invent evidence/i, `${rel}: no invented evidence`);
+    assert.match(s, /candidate line/i, `${rel}: candidate line`);
+  }
+  const s = flat(`${SKILL}/SKILL.md`);
+  assert.match(s, /valid only with complete evidence/);
+  assert.match(s, /open/);
+});
+
+test('3. FP-AGENT-13: .fp-original kept when not under version control', () => {
+  for (const rel of ENTRY) assert.ok(read(rel).includes('.fp-original'), rel);
+  assert.match(c.spec.rules.find((x) => x.id === 'FP-AGENT-13').text, /\.fp-original/);
+});
+
+test('4. breakpoints in @media and @container are never an FP-OFF line', () => {
+  for (const rel of ENTRY) {
+    const s = flat(rel);
+    assert.ok(s.includes('@media') && s.includes('@container'), rel);
+    assert.match(s, /never an `FP-OFF` line/, rel);
+  }
+});
+
+test('5. map/Snap table consent agrees with FP-AGENT-03', () => {
+  const s = flat(`${SKILL}/SKILL.md`);
+  assert.ok(!/write it only after consent/.test(s), 'stale map wording');
+  assert.match(s, /A declared `snap` mode[^.]*is the consent to build and apply it/);
+  assert.match(c.spec.rules.find((x) => x.id === 'FP-AGENT-03').text, /declared `snap` mode[^.]*consent to build and apply the Snap table/);
+});
+
+test('6. fp-check path is given from the protocol repository', () => {
+  for (const rel of ENTRY) {
+    const s = flat(rel);
+    assert.ok(s.includes('node <repo>/tools/fp-check/fp-check.mjs <folder>'), `${rel} path`);
+    assert.match(s, /protocol repository/, rel);
+    assert.match(s, /no `tools\/`/, `${rel}: adopter folder has no tools/`);
+    assert.ok(!/run `node tools\/fp-check/.test(s), `${rel}: bare relative path`);
+  }
+});
+
+test('7. the .mdc can be acted on alone', () => {
+  const s = flat('agent-pack/cursor/fibonacci-protocol.mdc');
+  for (const t of ['FP-MODE-02', 'fp.config.schema.json', '`target`', '`drawn`', 'FP-SNAP-11', 'Snap', 'snap.table', 'what breaks', 'fp-report.md', 'fp-evidence.json']) {
+    assert.ok(s.includes(t), `mdc lacks ${t}`);
+  }
 });

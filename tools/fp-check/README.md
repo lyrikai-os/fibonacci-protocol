@@ -21,9 +21,18 @@ node tools/fp-check/fp-check.mjs [dir] [--config fp.config.json] [--json] [--exp
 | `--expect` | Compare the report with an expected-results file (the format of `spec/test-vectors/*/expected.json`) and print the differences. |
 | `--spec` | Folder with `rules.json` and `fp.config.schema.json`. Default: the repository's `spec/` (or `FP_SPEC_DIR`). |
 
-Exit codes: `0` pass (or `--expect` matches), `1` fail or pending (or `--expect` differs), `2` not-run or an input error (no configuration, bad option).
+Exit codes: `0` the machine tests pass (the claim is `valid` or still a `candidate`), or `--expect` matches; `1` fail, pending, or a self-report item answered `fail` (or `--expect` differs); `2` not-run or an input error (no configuration, bad option).
 
-A passing run prints the claim string of FP-CONF-04, for example `FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.3 · self-assessed`. It ends in `self-assessed` for as long as self-report rules remain that people have not answered (FP-CONF-14). A failed, pending or not-run run prints no claim.
+The specification is silent on exit codes, so this is the checker's decision. Basis: FP-CONF-04 and FP-CONF-06 make the machine result (`result`) and the claim state two separate things. A candidate line is "not a claim yet" but the machine tests passed (the vectors give `result: pass` with `claimState: candidate`), so a candidate exits 0; a script must read `claimState` (`valid`, `candidate` or `none`, in `--json`) before it publishes anything. FP-CONF-07 says pending "is not a pass", hence 1; FP-CONF-14 says not-run is not a pass and no claim may be made, hence 2.
+
+### Evidence and the claim state
+
+`fp-evidence.json` beside `fp.config.json` holds the self-report answers (FP-CONF-06); it is validated against `spec/fp-evidence.schema.json`. The checker works out the applicable self-report rules from `rules.json` (normative, within the claim level, applies-when true for the configuration), lists them as `applicableSelfReport`, and reads each entry:
+
+- no entry, or empty `evidence`: the rule is **open** (`openItems`);
+- `result: fail`: the run fails (`conf.evidence`);
+- all machine tests pass, nothing pending, nothing open: `claimState: valid` and the claim is printed. The ` · self-assessed` suffix stays unless every applicable item has `independent: true` and a `by` other than the adopter (FP-CONF-14);
+- machine tests pass but items are open: `claimState: candidate`; the checker prints `candidate · <claim string> · open <n>` and the open rule IDs, and `claim` is null. A candidate line must not be published or quoted as a claim (FP-CONF-04).
 
 ### Tests
 
@@ -70,7 +79,8 @@ Type tests run when `level` is `FP-2`, in every mode (the host's type in an Over
 - Exceptions match by value, by `where` (a selector, a token address, or `file:line`) and by the rule they depart from.
 - Each off-ladder value is reported once, under FP-SPACE-01, FP-RADIUS-01 or FP-MATH-07, never also FP-MODE-04.
 - `pill` is 9999px only; the protocol's own `--fp-*` properties are checked against the FP-PLAT-02 table, including `--fp-target` (coarse outside the pointer query, fine inside) and `--fp-target-coarse`.
-- Token rules apply only when protocol-format token files are in the scope. The claim always ends in `self-assessed` after a clean run (FP-CONF-14); the report names the tool that ran the tests.
+- Token rules apply only when protocol-format token files are in the scope. The report names the tool that ran the tests (`ranBy`); see the evidence section for the `self-assessed` suffix.
+- Widths and heights written inside the condition of `@media` or `@container` (breakpoints) are never read; the declarations inside the block are (FP-CONF-08).
 - Inline `style` attributes are not read; they are listed with their values in `inlineStyles`, or the report states the scope has none (self-report, FP-CONF-08).
 - `em`, `ex`, `lh` and similar units depend on a font size the checker does not compute: they are `not-run` for layout lengths and fail for radius and strokes. Viewport, container and `%` units are intrinsic for layout (FP-CONF-09). A non-zero number with no unit is not a length and fails.
 - `calc()` is allowed for layout lengths only in the derived patterns. `min()`, `max()` and `clamp()` test each length argument.
@@ -78,7 +88,7 @@ Type tests run when `level` is `FP-2`, in every mode (the host's type in an Over
 
 ## What it does not check: self-report rules
 
-These rules are decided by people with evidence (FP-CONF-06). `fp-check` lists the ones that apply to a run and leaves them as `self-report`. It cannot show target sizes, reflow, colour-only states or pause controls (FP-CONF-10), and a passing run is not proof that a product is accessible.
+These rules are decided by people with evidence (FP-CONF-06). `fp-check` lists the ones that apply to a run (`applicableSelfReport`) and reads the answers from `fp-evidence.json`; a rule without an answer stays `self-report` (open). It cannot show target sizes, reflow, colour-only states or pause controls (FP-CONF-10), and a passing run is not proof that a product is accessible.
 
 - Guard: FP-A11Y-03 text resize, FP-A11Y-04 text spacing, FP-A11Y-05 target size, FP-A11Y-06 focus visible, FP-A11Y-09 to 11 motion and flashes, FP-A11Y-12 focus ring, FP-A11Y-13 reflow at 320, FP-A11Y-14, FP-A11Y-16 floors win, FP-A11Y-17, FP-A11Y-18 time limits, FP-A11Y-19, FP-A11Y-20 every pair declared, FP-LINE-02, FP-CTRL-01 to 04 control targets and hit areas, FP-VIZ-01, 04, 05, 06 data honesty, FP-HONEST-03 claims never made, FP-HONEST-05 invent nothing, FP-CONF-06, FP-CONF-10, FP-CONF-12
 - FP-1: FP-MATH-04 ladder scope, FP-MODE-03 Overlay keeps the host, FP-MODE-07 what an adopter may change, FP-SPACE-03 choose by role, FP-RADIUS-02 nested radii, FP-SNAP-08 the published table's "what breaks" block

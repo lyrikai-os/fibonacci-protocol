@@ -6,6 +6,7 @@ export function formatText(r) {
   L.push('');
   L.push(`RESULT: ${r.result.toUpperCase()}`);
   if (r.claim) L.push(`CLAIM:  ${r.claim}`);
+  else if (r.candidate) { L.push(`CANDIDATE (not a claim): ${r.candidate}`); L.push(`  open: ${r.openItems.join(' ')}`); }
   else if (r.claimNote) L.push(`CLAIM:  none. ${r.claimNote}`);
   if (r.configErrors) { L.push('', 'Configuration problems (FP-MODE-02):'); for (const e of r.configErrors) L.push(`  - ${e}`); }
   if (r.coverage) L.push(`Overlay coverage: ${r.coverage.inScope} of ${r.coverage.inSource} checked values in scope (${r.coverage.percent}%); accepted exceptions used: ${r.exceptionsUsed}`);

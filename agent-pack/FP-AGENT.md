@@ -1,16 +1,16 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: FP-AGENT, the protocol in one file
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 This file is the whole protocol for a design agent, for any LLM or tool. It is generated from `spec/rules.json`, so it matches the specification exactly. Normative rules are binding and tested: their ID, title and text are given in full. Informative rules are guidance that binds no claim in this version: they are listed at the end.
 
-Activation: the user types `/lyrikai-fibonacci on` or says "use Fibonacci design principles". The agent rules (FP-AGENT-01 to FP-AGENT-13) come first; they are not part of a system's claim (FP-CONF-12). Version 1.0 claims are FP-1 or FP-2 on the web only (FP-CONF-05).
+Activation: the user types `/lyrikai-fibonacci on` or says "use Fibonacci design principles". The agent rules (FP-AGENT-01 to FP-AGENT-14) come first; they are not part of a system's claim (FP-CONF-12). Version 1.0 claims are FP-1 or FP-2 on the web only (FP-CONF-05).
 
-Counts: 126 normative rules, 60 informative rules, 186 in all.
+Counts: 127 normative rules, 60 informative rules, 187 in all.
 
 ## Normative rules
 
-### Agent rules (how a design agent behaves) (13)
+### Agent rules (how a design agent behaves) (14)
 
 #### FP-AGENT-01 · Read the configuration, or ask once
 
@@ -48,7 +48,7 @@ When no one is available to answer, an agent MUST NOT wait. It applies what it h
 
 #### FP-AGENT-05 · Done-checks
 
-Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires.
+Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires. The agent records each self-report item it assessed in `fp-evidence.json` (FP-CONF-06), with itself and the adopter it works for as `by`; items it could not assess stay open, and the agent then reports a candidate line, not a claim.
 
 - **Applies when:** always · **Test:** self-report, `agent.done-checks` · **Evidence:** convention (protocol choice)
 
@@ -115,9 +115,24 @@ An agent MAY add `roles` entries for tokens whose role is plain from their name 
 
 #### FP-AGENT-13 · Work in the adopter's files
 
-An agent writes its changes into the adopter's own source files, in place; the original stays in version control, and no parallel copy is made unless the user asks for one. A property the checker does not test (`box-shadow`, `transform`, `letter-spacing`; the list is in FP-CONF-08) is left as it is. `outline-offset` and `border-width` are tested, against 0, 1, 2 and 3. Lengths in inline `style` attributes are outside a checker's reach: the agent moves them into CSS where it can and lists the rest in the report. The agent sets every `has` value truthfully, from what it sees in the scope.
+An agent writes its changes into the adopter's own source files, in place; the original stays in version control, and no parallel copy is made unless the user asks for one. Where the adopter's folder is not under version control, the agent first keeps a copy of each file it will change, named `<file>.fp-original` beside it, and says so in the report. Snapped lengths are recorded in the Snap table, and the whole report is written to `fp-report.md` (FP-AGENT-14). A property the checker does not test (`box-shadow`, `transform`, `letter-spacing`; the list is in FP-CONF-08) is left as it is. `outline-offset` and `border-width` are tested, against 0, 1, 2 and 3. Lengths in inline `style` attributes are outside a checker's reach: the agent moves them into CSS where it can and lists the rest in the report. The agent sets every `has` value truthfully, from what it sees in the scope.
 
 - **Applies when:** always · **Test:** self-report, `agent.in-place` · **Evidence:** convention (protocol choice)
+
+#### FP-AGENT-14 · The report file
+
+An agent MUST write its report to a file, `fp-report.md`, beside `fp.config.json`, with these sections in this order, each present even when empty (an empty section says "none"):
+
+1. **Claim**: the claim string, or the candidate line with the open rule IDs, or the result `fail`, `pending` or `not-run`.
+2. **State**: mode, level, unit, platform, what ran the machine tests, and which configuration values were defaults.
+3. **FP-OFF**: one line per off-ladder value (FP-AGENT-07).
+4. **FP-CHANGE**: one line per change to a host value that is not a snapped length (FP-AGENT-08). Snapped lengths are in the Snap table (FP-SNAP-08), not here.
+5. **Exemptions added**: every `roles` entry the agent added (FP-AGENT-12).
+6. **Suggestions**: what the agent would recommend but did not apply.
+7. **Rules**: the rule IDs applied, and each `n/a` with its reason (FP-AGENT-06).
+8. The About line (FP-AGENT-11), last.
+
+- **Applies when:** always · **Test:** machine, `agent.report-file` · **Evidence:** convention (protocol choice)
 
 ### Guard rules (the base of every level) (49)
 
@@ -141,7 +156,7 @@ FP-4a (art and illustration) and FP-4b (data visualisation) each require only th
 
 #### FP-CONF-04 · The claim string
 
-A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped.
+A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped. When the machine tests pass but self-report rules are still open (FP-CONF-06), there is no claim yet. A checker then prints a candidate line instead, in the form `candidate · <the claim string> · open <count>`, and lists the open rule IDs. A candidate line MUST NOT be published or quoted as a claim.
 
 - **Applies when:** the report · **Test:** machine, `conf.claim-format` · **Evidence:** convention (protocol choice)
 
@@ -155,7 +170,7 @@ Under version 1.0 a claim MAY name FP-1 or FP-2 only, and its platform MUST be `
 
 The FP-AGENT rules describe an agent or a skill, not a design system. They MUST NOT be counted in a system's claim. An agent or skill that meets every normative FP-AGENT rule MAY say that it "follows the Fibonacci Protocol agent rules, spec <version>".
 
-- **Applies when:** the report · **Test:** self-report, `conf.agent-separate` · **Evidence:** convention (protocol choice)
+- **Applies when:** a checker · **Test:** self-report, `conf.agent-separate` · **Evidence:** convention (protocol choice)
 
 #### FP-CONF-11 · Not applicable
 
@@ -163,11 +178,19 @@ Every rule states when it applies. Where that condition is false for the system 
 
 - **Applies when:** a checker · **Test:** machine, `conf.not-applicable` · **Evidence:** convention (protocol choice)
 
-#### FP-CONF-06 · Machine tests and self-report
+#### FP-CONF-06 · Machine tests, self-report and the evidence file
 
 Each rule names its test. A machine test is one that can be decided from the inputs listed under "Checker inputs", locally, with no network. A self-report item MUST be answered with evidence: a measurement, a screenshot, a file reference or a recorded check. A self-report item that applies and has no evidence counts as failed. A SHOULD inside a normative rule is a recommendation: not following it is reported as "recommendation not followed", with the reason, and does not fail the rule.
 
-- **Applies when:** the report · **Test:** self-report, `conf.evidence` · **Evidence:** convention (protocol choice)
+Self-report answers are recorded in a file, `fp-evidence.json`, beside `fp.config.json`. It MUST validate against fp-evidence.schema.json. It holds `fp` (the spec version), `adopter` (who is making the claim), and `items`: one entry for each applicable self-report rule, keyed by rule ID, with `result` (`pass`, `fail` or `n/a`), `evidence` (text, a file path or a URL; for `n/a`, the reason) and `by` (who assessed it). An entry MAY add `"independent": true` when `by` is neither the adopter nor a person or agent working for the adopter.
+
+A self-report rule is applicable when it is normative, its level is within the claim (Guard, FP-1, and FP-2 for an FP-2 claim), and its applies-when condition is true for the configuration. A checker works this list out from `rules.json` and the configuration, and reads the file:
+
+- an applicable rule with no entry, or with empty `evidence`, is **open**;
+- an entry with `result` `fail` fails the run;
+- the claim is valid only when the machine tests pass, no exception is pending, and no applicable self-report rule is open.
+
+- **Applies when:** the report · **Test:** machine, `conf.evidence` · **Evidence:** convention (protocol choice)
 
 #### FP-CONF-07 · A pass needs zero pending exceptions
 
@@ -177,7 +200,7 @@ A run passes a level only when every applicable machine test passes, every appli
 
 #### FP-CONF-14 · Machine tests not run, and self-assessment
 
-If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. Words such as "provisional pass" MUST NOT be used.
+If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. A checker decides this from `fp-evidence.json`: the suffix stays if any applicable item's `by` is the adopter or lacks `"independent": true`. Words such as "provisional pass" MUST NOT be used.
 
 - **Applies when:** the report · **Test:** machine, `conf.not-run` · **Evidence:** convention (protocol choice)
 
@@ -189,6 +212,7 @@ A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML f
 - **Fine detail** (tested against fixed sets in platform units, whatever u is): `border-radius` and its longhands against the radius set; `border-width`, `outline-width` and `outline-offset` against 0, 1, 2 and 3.
 - **Type** (`font-size`, `line-height`): tested by FP-TYPE rules at FP-2 and up, never as lengths. A checker does not compute the cascade: it tests a `line-height` against the `font-size` declared in the same rule (FP-TYPE-13).
 - **Not tested in version 1.0:** `box-shadow`, `transform`, `background-position`, `letter-spacing`, SVG geometry, and everything else.
+- **Never lengths under test:** a width or height written inside the condition of `@media` or `@container` (a breakpoint). Hosts keep their breakpoints (FP-LAYOUT-07), so a breakpoint is not checked, not snapped and never reported as an `FP-OFF` line, in any mode. The declarations inside the block are read as usual.
 
 - **Applies when:** a checker · **Test:** machine, `conf.classify` · **Evidence:** convention (protocol choice)
 
@@ -202,7 +226,7 @@ A checker MUST NOT flag: equal-width columns or a host's column grid; equal-widt
 
 A report MUST state which rules were machine-tested, which were self-reported, which were `n/a` and which were `not-run`. Target sizes, reflow, colour-only states and pause controls cannot be proved from source files. A passing run MUST NOT be described as proof that a product is accessible.
 
-- **Applies when:** the report · **Test:** self-report, `conf.limits-stated` · **Evidence:** convention (protocol choice)
+- **Applies when:** a checker · **Test:** self-report, `conf.limits-stated` · **Evidence:** convention (protocol choice)
 
 #### FP-A11Y-16 · Floors win over the ladder
 
@@ -224,7 +248,7 @@ Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold. A 
 
 #### FP-A11Y-20 · Every pair in use is declared
 
-The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
+The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. The marks that count are exactly these: the edge that identifies a control (FP-LINE-02); the focus ring; state marks (FP-STATE-02) and the fill or edge of a state chip; and icons or glyphs that carry meaning without a text label beside them. Decorative hairlines, dividers between sections, shadows and icons that only repeat an adjacent label do not count and are not declared. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
 
 - **Applies when:** always · **Test:** self-report, `a11y.pairs-complete` · **Evidence:** convention (protocol choice)
 
@@ -478,7 +502,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 
 #### FP-MODE-02 · Configuration fields
 
-The file MUST validate against fp.config.schema.json. The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.3`).
+The file MUST validate against fp.config.schema.json. The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.4`).
 
 | Field | Type | Required | Values and default |
 |---|---|---|---|
@@ -606,7 +630,7 @@ Any token of a merged group MAY be moved by hand to another rung, chosen by role
 
 #### FP-SNAP-08 · The published table states what breaks
 
-A Snap table MUST be published with the system, at the path in `snap.table` (default `fp-snap.md`, beside `fp.config.json`). It MUST have one row per token and per in-scope literal, with: name, role, original value, snapped value, drift, the group it merged into, and any override reason. It MUST carry a "what breaks" block that covers at least: additive spacing; a 4-unit baseline rhythm; half device pixels at 1.5× density for odd rungs at u = 1; icons of 16 and 24 inside 13 and 21 boxes; hierarchy lost in merges; and visual-regression snapshots.
+A Snap table MUST be published with the system, at the path in `snap.table` (default `fp-snap.md`, beside `fp.config.json`). It MUST have one row per token and per in-scope literal, with: name, role, original value, snapped value, drift, the group it merged into, and any override reason. It MUST carry a "what breaks" block that covers at least: additive spacing; a 4-unit baseline rhythm; half device pixels at 1.5× density for odd rungs at u = 1; icons of 16 and 24 inside 13 and 21 boxes; hierarchy lost in merges; and visual-regression snapshots. Snapped lengths are recorded in this table and nowhere else: they are not repeated as `FP-CHANGE` lines.
 
 - **Applies when:** mode: snap · **Test:** self-report, `snap.what-breaks` · **Evidence:** convention (protocol choice)
 
@@ -924,4 +948,4 @@ Published as guidance. They bind no claim in this version. A request for a level
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

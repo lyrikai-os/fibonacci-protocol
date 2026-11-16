@@ -1,4 +1,7 @@
 import test from 'node:test';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 import { run, by, HAS_NONE, SPEC } from './helpers.mjs';
 
@@ -107,7 +110,8 @@ test('scope narrows what is tested; Overlay coverage counts both (FP-MODE-05)', 
   const r = run({ 'a.css': '.a{padding:21px}', 'b.css': '.b{padding:20px}' }, { mode: 'overlay', scope: ['a.css'] });
   assert.equal(r.result, 'pass');
   assert.deepEqual(r.coverage, { inScope: 4, inSource: 8, percent: 50 });
-  assert.equal(r.claim, `FP-1 · Overlay · u=1 · web · scope a.css · coverage 50% · exceptions 0 · spec ${SPEC} · self-assessed`);
+  assert.match(r.candidate, new RegExp(`^candidate · FP-1 · Overlay · u=1 · web · scope a\\.css · coverage 50% · exceptions 0 · spec ${SPEC.replace(/\./g, '\\.')} · self-assessed · open \\d+$`));
+  assert.equal(r.claim, null);
   const rounded = run({ 'a.css': '.a{width:1px}', 'b.css': '.b{width:1px;height:1px}' }, { mode: 'overlay', scope: ['a.css'] });
   assert.equal(rounded.coverage.percent, 33);
   const half = run({ 'a.css': '.a{width:1px;height:1px;top:1px}', 'b.css': '.b{width:1px;height:1px;top:1px;left:1px;right:1px}' }, { mode: 'overlay', scope: ['a.css'] });
@@ -121,8 +125,8 @@ test('Overlay: a scope with no checked declarations is not claimed', () => {
 });
 
 test('claim string: Native and Snap forms', () => {
-  assert.equal(run({ 'a.css': '.a{gap:8px}' }).claim, `FP-1 · Native · u=1 · web · spec ${SPEC} · self-assessed`);
-  assert.equal(run({ 'a.css': '.a{gap:8px}' }, { unit: 4 }).claim, `FP-1 · Native · u=4 · web · spec ${SPEC} · self-assessed`);
+  assert.ok(run({ 'a.css': '.a{gap:8px}' }).candidate.startsWith(`candidate · FP-1 · Native · u=1 · web · spec ${SPEC} · self-assessed · open `));
+  assert.ok(run({ 'a.css': '.a{gap:8px}' }, { unit: 4 }).candidate.startsWith(`candidate · FP-1 · Native · u=4 · web · spec ${SPEC} · self-assessed · open `));
 });
 
 test('has.motion and has.controls: contradictions fail; true is not contradicted; other has values are not read', () => {
@@ -188,5 +192,5 @@ test('rules table: n/a with a reason, self-report listed, informative and later 
   assert.equal(get('FP-CONF-01').result, 'n/a');
   assert.equal(get('FP-PLAT-05').result, 'n/a');
   assert.ok(r.rules.every((x) => ['pass', 'fail', 'n/a', 'not-run', 'self-report', 'pending'].includes(x.result)));
-  assert.equal(r.rules.length, 186);
+  assert.equal(r.rules.length, JSON.parse(fs.readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../spec/rules.json'), 'utf8')).rules.length);
 });

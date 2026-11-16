@@ -7,7 +7,7 @@ export const IMPLEMENTED = new Set([
   'mode.overlay-resolved', 'mode.overlay-coverage', 'mode.native',
   'snap.exempt-by-role', 'snap.nearest', 'snap.drift', 'snap.unsnappable', 'snap.target-up', 'snap.control-height',
   'snap.monotonic', 'snap.merge-listed', 'snap.override', 'snap.level-cap',
-  'conf.claim-format', 'conf.v1-levels', 'conf.no-pending', 'conf.not-run', 'conf.not-applicable',
+  'conf.claim-format', 'conf.evidence', 'conf.v1-levels', 'conf.no-pending', 'conf.not-run', 'conf.not-applicable',
   'a11y.contrast', 'a11y.contrast-exact', 'a11y.body-anchor', 'a11y.min-text',
   'space.on-ladder', 'space.derived', 'space.exceptions', 'radius.set', 'radius.pill-round',
   'type.scale', 'type.step-range', 'type.align', 'type.units', 'type.micro', 'type.leading', 'type.leading-unitless',
@@ -24,7 +24,7 @@ const ALIAS = {
   'mode.overlay-resolved': ['space.on-ladder', 'radius.set', 'math.fixed-detail'],
   'mode.native': ['space.on-ladder', 'radius.set', 'math.fixed-detail'],
   'mode.level-ceiling': ['a11y.body-anchor'],
-  'conf.v1-levels': [], 'conf.claim-format': [], 'conf.not-run': [], 'honest.claim-wording': [],
+  'conf.v1-levels': [], 'conf.claim-format': [], 'conf.evidence': [], 'conf.not-run': [], 'honest.claim-wording': [],
 };
 
 const FLAG = { 'has: time limits': 'timeLimits', 'has: generated art': 'generatedArt' };

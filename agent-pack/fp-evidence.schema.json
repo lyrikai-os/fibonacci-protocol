@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:lyrikai:fibonacci-protocol:fp-evidence:1.0.0-rc.4",
+  "title": "fp-evidence.json",
+  "description": "Self-report answers for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.4. Kept beside fp.config.json. MIT License. https://www.lyrikai.com . Defined by rule FP-CONF-06 in spec/03-conformance.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fp", "adopter", "items"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "fp": {
+      "description": "The version string of the specification the answers were given against, in full. It equals fp in fp.config.json.",
+      "type": "string",
+      "pattern": "^1\\.0\\.\\d+(-[0-9A-Za-z.-]+)?$"
+    },
+    "adopter": {
+      "description": "Who is making the claim: a person, a team or an organisation.",
+      "type": "string",
+      "minLength": 1
+    },
+    "items": {
+      "description": "One entry for each applicable self-report rule, keyed by rule ID.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^FP-[A-Z0-9]+-\\d\\d$": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["result", "evidence", "by"],
+          "properties": {
+            "result": {
+              "description": "pass: the rule is met. fail: it is not; the run fails. n/a: the rule does not apply; evidence gives the reason.",
+              "enum": ["pass", "fail", "n/a"]
+            },
+            "evidence": {
+              "description": "Text, a file path or a URL that shows the result. For n/a, the reason. An empty string leaves the rule open.",
+              "type": "string"
+            },
+            "by": {
+              "description": "Who assessed this rule.",
+              "type": "string",
+              "minLength": 1
+            },
+            "independent": {
+              "description": "True only when by is neither the adopter nor a person or agent working for the adopter (FP-CONF-14).",
+              "type": "boolean",
+              "default": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

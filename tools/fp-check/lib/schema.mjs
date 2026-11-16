@@ -1,6 +1,6 @@
 // A small JSON Schema 2020-12 validator covering the keywords fp.config.schema.json uses:
 // $ref (local), type, enum, const, pattern, minLength, minimum, minItems, items, properties,
-// required, additionalProperties, allOf, anyOf, oneOf, not, if/then/else. Annotation keywords
+// required, patternProperties, uniqueItems, additionalProperties, allOf, anyOf, oneOf, not, if/then/else. Annotation keywords
 // ($schema, $id, title, description, default, $defs) are ignored. Unknown keywords are ignored.
 
 const typeOf = (v) => (v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v);
@@ -81,7 +81,10 @@ function walk(schema, data, p, errors, root) {
     }
     const props = schema.properties || {};
     for (const [k, v] of Object.entries(data)) {
+      const pats = Object.entries(schema.patternProperties || {}).filter(([re]) => new RegExp(re, 'u').test(k));
+      for (const [, ps] of pats) walk(ps, v, `${p}/${k}`, errors, root);
       if (k in props) walk(props[k], v, `${p}/${k}`, errors, root);
+      else if (pats.length) continue;
       else if (schema.additionalProperties === false) errors.push({ path: `${p}/${k}`, message: 'is not an allowed property' });
       else if (isType(schema.additionalProperties, 'object')) walk(schema.additionalProperties, v, `${p}/${k}`, errors, root);
     }

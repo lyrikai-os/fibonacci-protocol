@@ -34,6 +34,9 @@ export function compareExpected(report, expected) {
   if ('result' in expected && report.result !== expected.result) diffs.push(`result: expected ${expected.result}, got ${report.result}`);
   if ('checkedValues' in expected && report.checkedValues !== expected.checkedValues) diffs.push(`checkedValues: expected ${expected.checkedValues}, got ${report.checkedValues}`);
   if ('claim' in expected && report.claim !== expected.claim) diffs.push(`claim: expected "${expected.claim}", got "${report.claim}"`);
+  if ('claimState' in expected && report.claimState !== expected.claimState) diffs.push(`claimState: expected ${expected.claimState}, got ${report.claimState}`);
+  if ('candidate' in expected && report.candidate !== expected.candidate) diffs.push(`candidate: expected "${expected.candidate}", got "${report.candidate}"`);
+  for (const k of ['openItems', 'applicableSelfReport']) if (k in expected && JSON.stringify(report[k] ?? null) !== JSON.stringify(expected[k])) diffs.push(`${k}: expected ${JSON.stringify(expected[k])}, got ${JSON.stringify(report[k])}`);
   if ('coverage' in expected && !eq(report.coverage ?? null, expected.coverage)) diffs.push(`coverage: expected ${JSON.stringify(expected.coverage)}, got ${JSON.stringify(report.coverage)}`);
   if ('final' in expected && !Object.entries(expected.final).every(([k, v]) => report.final?.[k] === v)) diffs.push(`final: expected ${JSON.stringify(expected.final)}, got ${JSON.stringify(report.final)}`);
   if ('findings' in expected) compareList('findings', report.findings ?? [], expected.findings, diffs);

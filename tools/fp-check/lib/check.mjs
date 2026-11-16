@@ -23,7 +23,8 @@ export function loadSpec(specDir) {
   for (const d of candidates) {
     const rp = path.join(d, 'rules.json'); const sp = path.join(d, 'fp.config.schema.json');
     if (fs.existsSync(rp) && fs.existsSync(sp)) {
-      return { dir: d, rules: JSON.parse(fs.readFileSync(rp, 'utf8')), schema: JSON.parse(fs.readFileSync(sp, 'utf8')) };
+      const ep = path.join(d, 'fp-evidence.schema.json');
+      return { dir: d, rules: JSON.parse(fs.readFileSync(rp, 'utf8')), schema: JSON.parse(fs.readFileSync(sp, 'utf8')), evidenceSchema: fs.existsSync(ep) ? JSON.parse(fs.readFileSync(ep, 'utf8')) : null };
     }
   }
   throw new UsageError('cannot find the specification (rules.json and fp.config.schema.json); pass --spec <dir> or set FP_SPEC_DIR');
@@ -873,6 +874,36 @@ export function runCheck({ dir, configPath, specDir } = {}) {
   mark('conf.no-pending', pendingDeclared.length ? 'pending' : 'pass');
   for (const [i, e] of (config.exceptions || []).entries()) if (!exceptions.used.has(i) && mode !== 'snap') note(`exception ${i} (${e.value} at ${e.where}) matched no checked value in the scope`);
 
+  // ---- self-report evidence (FP-CONF-06, FP-CONF-14) -----------------------------------------------------------------
+  // A self-report rule is applicable when it is normative, within the claim level, and its applies-when is true for the configuration.
+  const tokenFileCount = protocolTokenFiles.filter((x) => scopeSet.has(x)).length;
+  const applicableSR = spec.rules.rules.filter((r) => r.test.kind === 'self-report' && applicability(r, { config, tokenFiles: tokenFileCount }).applies).map((r) => r.id);
+  const evidencePath = path.join(path.dirname(cfgFile), 'fp-evidence.json');
+  let evidence = null;
+  const evFail = (message, extra = {}) => { mark('conf.evidence', 'fail', message); report.findings.push({ check: 'conf.evidence', rule: 'FP-CONF-06', result: 'fail', message, ...extra }); };
+  mark('conf.evidence', 'pass');
+  if (fs.existsSync(evidencePath)) {
+    try { evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8')); } catch (e) { evFail(`fp-evidence.json is not valid JSON: ${e.message}`); }
+    if (evidence) {
+      const errs = spec.evidenceSchema ? validate(spec.evidenceSchema, evidence) : [];
+      if (errs.length) { for (const e of errs.slice(0, 10)) evFail(`fp-evidence.json ${e.path} ${e.message}`); evidence = null; }
+      else if (evidence.fp !== SPEC_VERSION) { evFail(`fp-evidence.json fp "${evidence.fp}" does not equal the specification version "${SPEC_VERSION}"`); evidence = null; }
+    }
+    report.evidenceFile = posix(path.relative(dir, evidencePath));
+  }
+  const items = evidence?.items ?? {};
+  const openItems = []; const answered = [];
+  for (const id of applicableSR) {
+    const it = items[id];
+    if (!it || typeof it.evidence !== 'string' || it.evidence.trim() === '') { openItems.push(id); continue; }
+    answered.push(id);
+    if (it.result === 'fail') evFail(`${id}: the self-report item is answered "fail" by ${it.by}: ${it.evidence}`, { selfReport: id });
+  }
+  for (const id of Object.keys(items)) if (!applicableSR.includes(id)) note(`fp-evidence.json has an entry for ${id}, which is not an applicable self-report rule here`);
+  report.applicableSelfReport = applicableSR;
+  report.openItems = openItems;
+  const allIndependent = Boolean(evidence) && applicableSR.length > 0 && applicableSR.every((id) => { const it = items[id]; return it && it.independent === true && it.by.trim().toLowerCase() !== String(evidence.adopter).trim().toLowerCase() && it.by.trim().toLowerCase() !== 'adopter'; });
+
   // ---- result ----------------------------------------------------------------------------------------------------
   let result = 'pass';
   let hasFail = false; let hasNotRun = false; let hasPending = false;
@@ -894,20 +925,32 @@ export function runCheck({ dir, configPath, specDir } = {}) {
 
   finalizeRules(report, spec, config, checkRes, { tokenFiles: protocolTokenFiles.filter((x) => scopeSet.has(x)).length });
 
-  // ---- claim (FP-CONF-04, FP-CONF-14) --------------------------------------------------------------------------------
-  const selfReport = report.rules.filter((r) => r.result === 'self-report').length;
+  // ---- claim (FP-CONF-04, FP-CONF-06, FP-CONF-14) ---------------------------------------------------------------------
+  for (const r of report.rules) {
+    if (r.result !== 'self-report') continue;
+    if (openItems.includes(r.id)) { r.reason = 'open: no evidence in fp-evidence.json (FP-CONF-06)'; continue; }
+    const it = items[r.id];
+    r.result = it.result === 'n/a' ? 'n/a' : it.result; r.reason = `${it.by}: ${it.evidence}`; r.independent = it.independent === true;
+  }
+  report.ranBy = `fp-check ${TOOL_VERSION} (reference checker)`;
+  report.claimState = 'none';
   if (result === 'pass') {
     const parts = [level, modeName(mode), `u=${u}`, config.platform];
     if (mode === 'overlay') parts.push(`scope ${scopeGlobs.join(', ')}`, `coverage ${report.coverage.percent}%`, `exceptions ${exceptionsUsed()}`);
     parts.push(`spec ${SPEC_VERSION}`);
-    // FP-CONF-14: the suffix stays unless another named party assessed every self-report item; the report names who ran the tests.
-    parts.push('self-assessed');
-    report.claim = parts.join(' · ');
+    // FP-CONF-14: the suffix stays unless every applicable item was assessed by an independent party who is not the adopter.
+    if (!allIndependent) parts.push('self-assessed');
+    const claimString = parts.join(' · ');
+    if (openItems.length === 0) { report.claim = claimString; report.claimState = 'valid'; }
+    else {
+      report.claim = null; report.claimState = 'candidate';
+      report.candidate = `candidate · ${claimString} · open ${openItems.length}`;
+      report.claimNote = `Candidate only, not a claim: ${openItems.length} applicable self-report item(s) are open (FP-CONF-06, FP-CONF-04).`;
+    }
   } else {
     report.claim = null;
     report.claimNote = result === 'pending' ? 'No claim: pending exceptions (FP-CONF-07).' : result === 'not-run' ? 'No claim: machine tests did not run (FP-CONF-14).' : 'No claim: the run failed.';
   }
-  report.ranBy = `fp-check ${TOOL_VERSION} (reference checker)`;
   report.exceptionsUsed = exceptionsUsed();
   return report;
 }

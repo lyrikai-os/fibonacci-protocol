@@ -22,7 +22,7 @@ function project(css, cfg = {}) {
 test('exit 0 on a pass, 1 on a fail', () => {
   const ok = project('.a{gap:8px}'); const bad = project('.a{gap:7px}');
   try {
-    const a = fp(ok); assert.equal(a.status, 0); assert.match(a.stdout, /RESULT: PASS/); assert.ok(a.stdout.includes(`CLAIM:  FP-1 · Native · u=1 · web · spec ${SPEC} · self-assessed`));
+    const a = fp(ok); assert.equal(a.status, 0); assert.match(a.stdout, /RESULT: PASS/); assert.match(a.stdout, /CANDIDATE \(not a claim\): candidate · FP-1 · Native/); assert.equal(JSON.parse(fp(ok, '--json').stdout).claimState, 'candidate');
     const b = fp(bad); assert.equal(b.status, 1); assert.match(b.stdout, /RESULT: FAIL/); assert.match(b.stdout, /FP-SPACE-01/);
   } finally { fs.rmSync(ok, { recursive: true }); fs.rmSync(bad, { recursive: true }); }
 });

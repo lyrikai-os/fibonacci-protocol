@@ -1,13 +1,13 @@
 ---
 name: lyrikai-fibonacci
-description: Turns on the Lyrikai Fibonacci Protocol for UI/UX design agents (spec 1.0.0-rc.3) for a conversation, so that every length, radius, type size and target an agent writes or edits comes from one small set of numbers (the Fibonacci ladder times a base unit) while accessibility floors and data honesty always win. Use when the user types "/lyrikai-fibonacci" (verbs on, off, init, check, explain, map), says "use Fibonacci design principles", mentions "Fibonacci Protocol", or asks for a "golden ratio design system", Fibonacci spacing scale or phi-based tokens. It reads or creates fp.config.json, applies the protocol in Overlay, Snap or Native mode, and reports every off-ladder value and every changed host value with rule IDs. Works offline from bundled rules.
+description: Turns on the Lyrikai Fibonacci Protocol for UI/UX design agents (spec 1.0.0-rc.4) for a conversation, so that every length, radius, type size and target an agent writes or edits comes from one small set of numbers (the Fibonacci ladder times a base unit) while accessibility floors and data honesty always win. Use when the user types "/lyrikai-fibonacci" (verbs on, off, init, check, explain, map), says "use Fibonacci design principles", mentions "Fibonacci Protocol", or asks for a "golden ratio design system", Fibonacci spacing scale or phi-based tokens. It reads or creates fp.config.json, applies the protocol in Overlay, Snap or Native mode, and reports every off-ladder value and every changed host value with rule IDs. Works offline from bundled rules.
 ---
 
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: the `/lyrikai-fibonacci` skill
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-This file is the operating guide. Detail lives in the bundled files at the end. Everything below is generated from the specification, spec 1.0.0-rc.3, so it cannot drift from it. The protocol is a convention for internal consistency. It is not an aesthetic law, and you never say it makes a design better (FP-AGENT-09).
+This file is the operating guide. Detail lives in the bundled files at the end. Everything below is generated from the specification, spec 1.0.0-rc.4, so it cannot drift from it. The protocol is a convention for internal consistency. It is not an aesthetic law, and you never say it makes a design better (FP-AGENT-09).
 
 ## Verbs
 
@@ -22,7 +22,7 @@ This file is the operating guide. Detail lives in the bundled files at the end. 
 | `explain <rule-ID>` | Print the rule's text, level, status, applies-when, test and evidence from `reference/rules.json`. |
 | `map` | Print the Snap table for the user's tokens, with merges, drift and the "what breaks" block. Changes nothing. |
 
-A request for a level that is informative in this version (FP-3, FP-4a, FP-4b) is answered with that fact: it is published as guidance and cannot be claimed in 1.0.0-rc.3 (FP-CONF-05). Version 1.0 claims are FP-1 or FP-2 on the web only. For any other platform, say the same.
+A request for a level that is informative in this version (FP-3, FP-4a, FP-4b) is answered with that fact: it is published as guidance and cannot be claimed in 1.0.0-rc.4 (FP-CONF-05). Version 1.0 claims are FP-1 or FP-2 on the web only. For any other platform, say the same.
 
 ## State: sticky until `off`
 
@@ -74,7 +74,8 @@ Use these every time you write a length or a type size. Look the details up in `
 - **Overlay.** Keep the host system. Use protocol tokens only inside the declared `scope`. A host token that is used in the scope and is not a rung is replaced there by a protocol token, or declared once as an exception. Icons, type, breakpoints, drawn heights and micro type stay when given a role in `roles` (FP-MODE-10). Roles are declared, never inferred from a value.
 - **Snap.** Host lengths move to the nearest rung (see `map`). Type is never snapped (FP-SNAP-09).
 - **Native.** Build everything on the ladder and the type scale.
-- **Work in the adopter's files (FP-AGENT-13).** Edit the project's own source in place; the original stays in version control; make no parallel copy unless asked. Leave untested properties (`box-shadow`, `transform`, `letter-spacing`; list in FP-CONF-08) as they are. `outline-offset` and `border-width` are tested against 0, 1, 2, 3. Move lengths in inline `style` attributes into CSS where you can and list the rest in the report. Set every `has` value truthfully from what you see in the scope.
+- **Work in the adopter's files (FP-AGENT-13).** Edit the project's own source in place; the original stays in version control; make no parallel copy unless asked. If the folder is not under version control, first keep `<file>.fp-original` beside each file you change and say so in the report. Leave untested properties (`box-shadow`, `transform`, `letter-spacing`; list in FP-CONF-08) as they are. `outline-offset` and `border-width` are tested against 0, 1, 2, 3. Move lengths in inline `style` attributes into CSS where you can and list the rest in the report. Set every `has` value truthfully from what you see in the scope.
+- **Breakpoints are not lengths under test.** A width in `@media` or `@container` is a breakpoint: keep the host's (FP-LAYOUT-07, FP-CONF-09) and it is never an `FP-OFF` line.
 - **Name the rules.** Name the rule IDs you applied so a person can look each one up (FP-AGENT-06).
 - **Words.** Never describe phi, Fibonacci numbers or a design that uses them as sacred, divine, perfect, magic, nature's code, a universal law, the most beautiful or scientifically proven (FP-HONEST-02). Say the design is consistent and which rules it meets (FP-AGENT-09). Invent nothing: no sources, no measurements (FP-HONEST-05).
 
@@ -82,16 +83,17 @@ Use these every time you write a length or a type size. Look the details up in `
 
 When the protocol is turned on for a project for the first time, do these in order.
 
-1. Write `fp.config.json` (see "Start"), valid against `reference/fp.config.schema.json`. Validate it with `node tools/fp-check/fp-check.mjs <folder>`; a rejected configuration is exit 2 with the reason.
-2. Edit the adopter's own files in place (FP-AGENT-13). Do not write a copy.
+1. Write `fp.config.json` (see "Start"), valid against `reference/fp.config.schema.json`. Validate it with fp-check (`node <repo>/tools/fp-check/fp-check.mjs <folder>`, run from the protocol repository; the adopter's folder has no `tools/`); a rejected configuration is exit 2 with the reason.
+2. Edit the adopter's own files in place (FP-AGENT-13). Do not write a parallel copy. If the folder is not under version control, first keep `<file>.fp-original` beside each file you will change, and say so in the report.
 3. Declare every colour pair in use in `pairs` (FP-A11Y-20), each as `fg`, `bg` and `kind` (`text` or `mark`). A pair that is used and not declared is not tested.
-4. Run `node tools/fp-check/fp-check.mjs <folder>`. Fix what fails (floors first, per the decision order) and run it again. If the tool is absent, follow "Check" below and say so.
-5. Write the report with `FP-OFF` lines, `FP-CHANGE` lines and a "Suggestions" heading (see "Reports").
-6. Print the claim exactly as `fp-check` prints it, then the About line.
+4. Answer every applicable self-report rule with evidence you gathered, in `fp-evidence.json` beside `fp.config.json` (see "Evidence").
+5. Run fp-check from the protocol repository: `node <repo>/tools/fp-check/fp-check.mjs <folder>`. Fix what fails (floors first, per the decision order) and run it again. If the tool is absent, follow "Check" below and say so.
+6. **Write `fp-report.md`** beside `fp.config.json` (FP-AGENT-14; see "Reports"). `FP-OFF`, `FP-CHANGE` and Suggestions go in that file, not only in chat. Snapped lengths go in the Snap table, never as `FP-CHANGE` lines.
+7. Print the claim, or the candidate line, exactly as `fp-check` prints it, then the About line.
 
 ## Check (`check`, and before saying "done": FP-AGENT-05)
 
-1. **Run the machine tests.** If the reference checker is present, run `node tools/fp-check/fp-check.mjs <folder>` (add `--json` for the full report) and say which tool and version ran. Exit 0 is pass; 1 is fail or pending; 2 is not-run or an input error. Also check an installed `fp-check` if there is no `tools/fp-check/`. If it is absent, run your own script or check by hand against `reference/rules.json` (each rule with `"test": {"kind": "machine"}` names its check), and say which.
+1. **Run the machine tests.** If the reference checker is present, run `node <repo>/tools/fp-check/fp-check.mjs <folder>` from the protocol repository (add `--json` for the full report) and say which tool and version ran. Exit 0 is pass; 1 is fail or pending; 2 is not-run or an input error. Look for an installed `fp-check` if you do not have the repository. If it is absent, run your own script or check by hand against `reference/rules.json` (each rule with `"test": {"kind": "machine"}` names its check), and say which.
 2. **Answer the self-report items** that apply (`"kind": "self-report"`), each with evidence: a file and line, a command and its output, a screenshot, or a measured value. An answer with no evidence is `not-run`.
 3. **Mark non-applicable rules** `n/a` with a one-line reason (FP-CONF-11), from the `has` block of the configuration. Never mark `n/a` a rule whose condition is true.
 4. **State** mode, level, unit and platform, and list every exception and every `n/a` with its reason.
@@ -105,13 +107,24 @@ When the protocol is turned on for a project for the first time, do these in ord
 
 Claim string (FP-CONF-04): `<level> · <mode> · u=<unit> · <platform> · spec <version>`. Overlay adds `scope <globs> · coverage <percent> · exceptions <count>` before the version. Example:
 
-`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.3 · self-assessed`
+`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed`
 
-A skill or agent that meets every normative FP-AGENT rule may say it "follows the Fibonacci Protocol agent rules, spec 1.0.0-rc.3". The FP-AGENT rules are not counted in a system's claim (FP-CONF-12).
+A skill or agent that meets every normative FP-AGENT rule may say it "follows the Fibonacci Protocol agent rules, spec 1.0.0-rc.4". The FP-AGENT rules are not counted in a system's claim (FP-CONF-12).
 
 ## Reports
 
-Report in this order: state (mode, level, unit, platform, which values were defaults); rules applied (IDs); `FP-OFF` lines; `FP-CHANGE` lines; Snap table (if Snap); "Exemptions added"; "Suggestions"; result and claim string.
+**Write the report to `fp-report.md`, beside `fp.config.json` (FP-AGENT-14).** Eight sections, in this order, each present even when empty (an empty section says "none"):
+
+1. **Claim**: the claim string, or the candidate line with the open rule IDs, or the result `fail`, `pending` or `not-run`.
+2. **State**: mode, level, unit, platform, what ran the machine tests, which configuration values were defaults.
+3. **FP-OFF**: one line per off-ladder value.
+4. **FP-CHANGE**: one line per change to a host value that is not a snapped length. Snapped lengths are in the Snap table (FP-SNAP-08), never here.
+5. **Exemptions added**: every `roles` entry you added.
+6. **Suggestions**: what you would recommend but did not apply.
+7. **Rules**: the rule IDs applied, and each `n/a` with its reason.
+8. The About line, last.
+
+Then give the user the same claim or candidate line in chat, and the path of the file.
 
 **Off-ladder values (FP-AGENT-07).** One line per length or type size you could not keep on the ladder or scale:
 
@@ -127,9 +140,18 @@ Reasons: `floor`, a Guard floor required it; `scale`, a type size or line height
 
 `<where>` is a file and line, a selector or a token address. One line may cover several places when `from`, `to`, `reason` and `rule` are the same; list the places, comma-separated. Example: `FP-CHANGE tokens.css:8 from=14px to=1rem reason=floor rule=FP-A11Y-07 status=accepted`
 
+## Evidence (`fp-evidence.json`)
+
+Self-report answers are recorded in `fp-evidence.json` beside `fp.config.json`, valid against `reference/fp-evidence.schema.json` (FP-CONF-06). It holds `fp` (the spec version), `adopter` (who makes the claim) and `items`: one entry per applicable self-report rule, keyed by rule ID, each with `result` (`pass`, `fail` or `n/a`), `evidence` (text, a file path or a URL; for `n/a`, the reason) and `by` (who assessed it). Applicable means: normative, within the claim's level, and its applies-when condition true.
+
+- A claim is valid only with complete evidence: an applicable rule with no entry or empty `evidence` is open, an entry with `result` `fail` fails the run, and the claim needs the machine tests to pass with no exception pending.
+- **Never invent evidence.** Record only what you gathered: a measurement, a file and line, a command and its output. If you did not check it, leave it open.
+- With evidence missing, report the **candidate line** exactly as `fp-check` prints it, with the open rule IDs, and do not call it a claim.
+- The `self-assessed` suffix stays when you, or the adopter, assessed the items; only an independent party named in `by` with `"independent": true` removes it (FP-CONF-14).
+
 ## `explain <rule-ID>`
 
-Read `reference/rules.json` (offline copy, spec 1.0.0-rc.3). Find the entry whose `id` matches (case-insensitive). Print: ID and title; text; level; status; applies when; test (`kind`, `check`); evidence (`label`, and `url` or basis if present); the spec file it came from. If the status is `informative`, say it binds no claim in this version. If the ID is unknown, say so and suggest the closest IDs by prefix; never invent a rule. A shell one-liner: `node -e 'const r=require("./reference/rules.json").rules.find(x=>x.id===process.argv[1]);console.log(r||"unknown rule")' FP-SPACE-01`, run from the skill folder.
+Read `reference/rules.json` (offline copy, spec 1.0.0-rc.4). Find the entry whose `id` matches (case-insensitive). Print: ID and title; text; level; status; applies when; test (`kind`, `check`); evidence (`label`, and `url` or basis if present); the spec file it came from. If the status is `informative`, say it binds no claim in this version. If the ID is unknown, say so and suggest the closest IDs by prefix; never invent a rule. A shell one-liner: `node -e 'const r=require("./reference/rules.json").rules.find(x=>x.id===process.argv[1]);console.log(r||"unknown rule")' FP-SPACE-01`, run from the skill folder.
 
 ## `map`: the Snap table
 
@@ -142,20 +164,21 @@ Read the user's tokens and `fp.config.json` (`roles`, `unit`, `snap.overrides`).
 5. **Order is kept** within each group: spacing and size lengths; radii; targets (FP-SNAP-05).
 6. **Merges.** Tokens that land on one rung become one value; list each merged group by token name (FP-SNAP-06). An override moves one token of a group to another rung by role, at most 38.2% drift, order kept, with a reason in `snap.overrides`, and needs a yes first (FP-SNAP-07).
 
-Print one row per token and per in-scope literal: name, role, original, snapped, drift, merged group, override reason. Then print the **what breaks** block, covering at least (FP-SNAP-08): additive spacing; a 4-unit baseline rhythm; half device pixels at 1.5x density for odd rungs at u = 1; icons of 16 and 24 inside 13 and 21 boxes; hierarchy lost in merges; visual-regression snapshots. The published table lives at `snap.table` (default `fp-snap.md`, beside `fp.config.json`); write it only after consent.
+Print one row per token and per in-scope literal: name, role, original, snapped, drift, merged group, override reason. Then print the **what breaks** block, covering at least (FP-SNAP-08): additive spacing; a 4-unit baseline rhythm; half device pixels at 1.5x density for odd rungs at u = 1; icons of 16 and 24 inside 13 and 21 boxes; hierarchy lost in merges; visual-regression snapshots. The published table lives at `snap.table` (default `fp-snap.md`, beside `fp.config.json`). A declared `snap` mode, in the configuration or the request, is the consent to build and apply it (FP-AGENT-03), so write it. `map` itself changes nothing: only the Snap run writes the table. Snapped lengths go in this table, never in `FP-CHANGE` lines.
 
 ## About line (FP-AGENT-11)
 
 When `on` runs, and at the end of every output this skill produces, the last line is exactly:
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.3 · MIT License · https://www.lyrikai.com
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.4 · MIT License · https://www.lyrikai.com
 
 ## Bundled files (work offline)
 
 - `reference/FP-AGENT.md`: the single-file protocol: every normative rule's ID and text, grouped by level; informative rules as a short list.
 - `reference/rules.json`: every rule with id, title, level, status, text, test, evidence, applies-when and source file. Used by `explain` and `check`.
 - `reference/fp.config.schema.json`: the JSON Schema for `fp.config.json`. The field table is FP-MODE-02 in `FP-AGENT.md`.
+- `reference/fp-evidence.schema.json`: the JSON Schema for `fp-evidence.json`.
 - `reference/fp.css`: the ready `--fp-*` tokens at u = 1.
 - `reference/fp.config.example.json`: the quick-start `fp.config.json`.
 
-MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.3. https://www.lyrikai.com
+MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.4. https://www.lyrikai.com
