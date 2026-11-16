@@ -4,6 +4,27 @@
 
 This file lists what changed between release candidates of the specification, the tokens and the tools. The specification is proposed for release as 1.0.0 and is published for final review; none of the entries below is a release. Rule IDs are never reused, and a change to what a rule means is listed here.
 
+## 1.0.0-rc.4
+
+The fourth release candidate. A claim now needs evidence, not only machine tests.
+
+### Specification
+
+- **Evidence file.** The self-report answers live in `fp-evidence.json` beside `fp.config.json`, validated by the new `spec/fp-evidence.schema.json` (FP-CONF-06, FP-CONF-14). A claim is valid only when every applicable self-report item has a `pass` or `n/a` answer with evidence; the `self-assessed` suffix is dropped only when every item was assessed independently.
+- **Candidate claims.** With machine tests passing and items still open, the output is a candidate line (`candidate · <claim> · open <n>`), which must not be published as a claim.
+- **Agent report.** FP-AGENT-14 requires an agent to write its report to `fp-report.md` beside `fp.config.json`, in a fixed section order.
+- Breakpoint conditions are not lengths under test. There are now 21 test vectors and 187 rules (127 normative, 60 informative).
+
+### Checker and agent pack
+
+- `fp-check` reads and validates `fp-evidence.json`, reports `claimState` (`valid` or `candidate`) and `openItems`, and exits 0 for a candidate whose machine tests pass, 1 for a failed rule, a pending exception or an item answered `fail`, and 2 when the tests cannot run. A Snap literal that is not on a rung fails FP-SPACE-01 where it is used (from rc.3 follow-up).
+- The pack and the skill carry the report file and the evidence file.
+
+### Repository
+
+- `showcase/` gains `fp-evidence.json`, with answers for 22 of its 27 applicable self-report items, each from a measurement made in a browser; five stay open, so the page is a candidate. The measurements found three controls below the target size (a standalone link, the navigation links and the skip link); they were fixed.
+- `README.md` and `CONTRIBUTING.md` describe the evidence step, valid claims against candidates, and the report file.
+
 ## 1.0.0-rc.3
 
 The third release candidate. It follows the fixtures, a pilot of agents using the skill, and a hardening review of the checker.

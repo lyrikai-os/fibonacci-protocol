@@ -1,6 +1,6 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Version 1.0.0-rc.3 · release candidate · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Version 1.0.0-rc.4 · release candidate · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 One small set of numbers and one ratio, used the same way everywhere in a design system, so that a person or an agent reaching for a value always reaches for the same few. This repository holds the specification, the design tokens, a checker, and a skill that makes a design agent follow the protocol.
 
@@ -56,7 +56,7 @@ What changes between versions is how much of this is normative, that is, binding
 | iOS, macOS and Android | informative; body anchors and target floors are stated | normative | |
 | Print, slides and email | informative | informative | normative |
 
-In version 1.0 a claim names **FP-1 or FP-2** and the platform **web**. Everything else is published as guidance and cannot be claimed yet. There are 186 rules (126 normative, 60 informative); [spec/index.md](spec/index.md) lists them all.
+In version 1.0 a claim names **FP-1 or FP-2** and the platform **web**. Everything else is published as guidance and cannot be claimed yet. There are 187 rules (127 normative, 60 informative); [spec/index.md](spec/index.md) lists them all.
 
 ## Quick start: five minutes, Overlay or Native on the web
 
@@ -68,7 +68,7 @@ You need Node.js 20 or later. There are no packages to install.
 
 ```json
 {
-  "fp": "1.0.0-rc.3",
+  "fp": "1.0.0-rc.4",
   "mode": "native",
   "level": "FP-1",
   "platform": "web",
@@ -91,7 +91,27 @@ For Overlay, set `"mode": "overlay"` and add `"scope"`, the part of the source w
 node tools/fp-check/fp-check.mjs path/to/your/project
 ```
 
-It runs the machine tests locally, with no network, and prints one result per rule plus the claim. Exit code 0 is a pass, 1 a fail or a pending exception, 2 a run that could not happen. See [tools/fp-check/README.md](tools/fp-check/README.md) for options and for what it does not check. Check contrast on its own with `node tools/contrast/contrast.mjs '#fg' '#bg'`.
+It runs the machine tests locally, with no network, and prints one result per rule. With no evidence file yet, a clean run ends in a **candidate** line, not a claim:
+
+```text
+CANDIDATE (not a claim): candidate · FP-1 · Native · u=1 · web · spec 1.0.0-rc.4 · self-assessed · open 21
+```
+
+**5. Answer the self-report items.** Some rules only people can decide (target sizes, reflow, colour-only states and the like). The run lists the ones that apply. Write your answers in `fp-evidence.json`, beside `fp.config.json` ([schema](spec/fp-evidence.schema.json)):
+
+```json
+{
+  "fp": "1.0.0-rc.4",
+  "adopter": "Your team or name",
+  "items": {
+    "FP-A11Y-13": { "result": "pass", "evidence": "Measured at 320 px: no horizontal scroll outside the data table.", "by": "Your name" }
+  }
+}
+```
+
+Each item is `pass`, `fail` or `n/a` (with the reason), with evidence that says what was measured and what was found, and who assessed it. An item with no entry, or with empty evidence, is **open**. Never answer an item you did not check. When every applicable item is answered and the machine tests pass, the run prints the claim and `claimState` is `valid`.
+
+Exit codes: `0` the machine tests pass (the claim is valid or still a candidate), `1` a rule failed, an exception is pending or an item was answered `fail`, `2` the tests could not run (bad input, nothing to check). With `--json`, read `claimState` (`valid` or `candidate`), `claim` (null for a candidate) and `openItems`. See [tools/fp-check/README.md](tools/fp-check/README.md) for options and for what it does not check. Check contrast on its own with `node tools/contrast/contrast.mjs '#fg' '#bg'`.
 
 ## Install the `/lyrikai-fibonacci` skill
 
@@ -131,23 +151,29 @@ Check the install by asking `/lyrikai-fibonacci explain FP-SPACE-01`: it should 
 npm test
 ```
 
-This runs `node --test tools/`, which covers the checker (265 tests, including all 18 published test vectors), the fixtures suite (each sample system must pass and each seeded fault must fail; run with `node --test fixtures/`), the token and pack generators, the contrast tool and the release guard. No dependencies are needed. Other scripts are in [package.json](package.json): `npm run build:spec`, `build:tokens`, `build:pack`, `check:pack` and `fp-check`. To propose a change to a rule, read [CONTRIBUTING.md](CONTRIBUTING.md).
+This runs `node --test tools/`, which covers the checker (278 tests, including all 21 published test vectors), the fixtures suite (each sample system must pass and each seeded fault must fail; run with `node --test fixtures/`), the token and pack generators, the contrast tool and the release guard. No dependencies are needed. Other scripts are in [package.json](package.json): `npm run build:spec`, `build:tokens`, `build:pack`, `check:pack` and `fp-check`. To propose a change to a rule, read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## How to claim conformance
 
-1. Write an `fp.config.json`.
-2. Run the machine tests for your level and answer the self-report items with evidence.
-3. Resolve every pending exception; a result with pending exceptions is not a pass.
-4. State the claim in the fixed form, as printed by `fp-check`:
+1. Write an `fp.config.json`, declaring every colour pair in use.
+2. Run `fp-check`. Fix every fail and resolve every pending exception; a result with pending exceptions is not a pass.
+3. Answer every applicable self-report item in `fp-evidence.json`, with evidence you gathered (see the quick start).
+4. Run `fp-check` again. A **valid claim** is printed only when the machine tests pass and no item is open:
 
 ```text
-FP-2 · Snap · u=1 · web · spec 1.0.0-rc.3 · self-assessed
-FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.3 · self-assessed
+FP-2 · Native · u=1 · web · spec 1.0.0-rc.4 · self-assessed
+FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed
 ```
 
-The format is `<level> · <mode> · u=<unit> · <platform> · spec <version>`, with `scope <globs> · coverage <percent> · exceptions <count>` added before the version in Overlay. The claim ends in `self-assessed` unless someone other than the adopter assessed the self-report items and is named in the report.
+If items are open the checker prints `candidate · <claim string> · open <n>` and lists the open rule IDs. A candidate line is not a claim: do not publish it or quote it as one.
+
+The claim format is `<level> · <mode> · u=<unit> · <platform> · spec <version>`, with `scope <globs> · coverage <percent> · exceptions <count>` added before the version in Overlay. The claim ends in `self-assessed` unless every applicable item was assessed by someone other than the adopter (marked `"independent": true` in `fp-evidence.json`, with a different `by`).
 
 A claim says what was tested. It never says that a design is more beautiful, more natural or better, and a passing run is not a statement that a product is accessible. A system's claim and an agent's claim are separate: the agent rules do not count toward a system's claim.
+
+### Reports by an agent
+
+An agent that uses the skill writes its report to `fp-report.md` beside `fp.config.json`: the claim (or the candidate line and the open rule IDs, or the result), the state (mode, level, unit, platform, what ran the tests), every off-ladder value (`FP-OFF`), every change to a host value (`FP-CHANGE`), exemptions added, suggestions, the rules used, and the About line (FP-AGENT-14).
 
 ## Licence
 
@@ -159,4 +185,4 @@ The protocol grew out of design systems built in-house at Lyrikai during 2026; s
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

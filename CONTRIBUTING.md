@@ -1,6 +1,6 @@
 # Contributing
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 Thank you for reading the protocol closely. This guide is about changing a rule, because that is where care is needed: the specification is generated, other files are generated from it, and the protocol's honesty rules are part of what it promises. Fixes to a tool, a typo in a README or a clearer sentence follow the same path in a smaller form: change the source, regenerate, run the tests.
 
@@ -69,7 +69,7 @@ The protocol makes three promises: every rule is cited or labelled, accessibilit
 
 - **Checker changes.** `tools/fp-check/` is built from the specification text. Behaviour the text does not decide belongs in the text first. Add a unit test next to the change in `tools/fp-check/test/`.
 - **Fixtures.** `fixtures/` holds one sample system per mode and a `faults/` folder of copies with exactly one seeded fault each. A fixture that uses third-party values keeps that source's licence and notice in its own folder; see `fixtures/README.md`.
-- **The showcase.** `showcase/index.html` must stay a single static page with no external scripts, no autoplay and sample content labelled as sample, and `node tools/fp-check/fp-check.mjs showcase` must pass. If you change its colours, change the pairs in `showcase/fp.config.json` and check them with `node tools/contrast/contrast.mjs`.
+- **The showcase.** `showcase/index.html` must stay a single static page with no external scripts, no autoplay and sample content labelled as sample, `node tools/fp-check/fp-check.mjs showcase` must pass, and every answer in `showcase/fp-evidence.json` must come from a measurement you made: if you change the page, re-measure the items it touches, or remove those answers so they are open again. If you change its colours, change the pairs in `showcase/fp.config.json` and check them with `node tools/contrast/contrast.mjs`.
 
 ## Licence
 
@@ -77,4 +77,4 @@ By contributing you agree that your contribution is offered under the MIT Licens
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

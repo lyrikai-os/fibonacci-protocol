@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fibonacci Protocol showcase 1.0.0-rc.3</title>
-<meta name="description" content="A static demonstration of Lyrikai: Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.3, built on dist/fp.css. Sample content throughout.">
+<title>Fibonacci Protocol showcase 1.0.0-rc.4</title>
+<meta name="description" content="A static demonstration of Lyrikai: Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.4, built on dist/fp.css. Sample content throughout.">
 <link rel="stylesheet" href="../dist/fp.css">
 <style>
 /* Lyrikai: Fibonacci Protocol for UI/UX Design Agents, showcase page.
-   Version 1.0.0-rc.3 - MIT License - https://www.lyrikai.com
+   Version 1.0.0-rc.4 - MIT License - https://www.lyrikai.com
    Native mode, FP-2, web. Lengths are rungs of dist/fp.css; colour values are this page's own. */
 
 :root {
@@ -102,7 +102,10 @@ a { color: var(--c-link); text-decoration: underline; text-underline-offset: var
   position: absolute;
   inset-inline-start: var(--fp-space-8);
   inset-block-start: var(--fp-space-8);
-  padding: var(--fp-space-13) var(--fp-space-21);
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--fp-target);
+  padding-inline: var(--fp-space-21);
   background: var(--c-raised);
   color: var(--c-ink);
   font-size: var(--fp-type-0);
@@ -121,6 +124,8 @@ a { color: var(--c-link); text-decoration: underline; text-underline-offset: var
   display: inline-flex;
   align-items: center;
   min-block-size: var(--fp-target);
+  min-inline-size: var(--fp-target);
+  justify-content: center;
   font-size: var(--fp-type-0);
   line-height: var(--fp-leading-small);
 }
@@ -226,6 +231,14 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
   cursor: pointer;
 }
 .btn-primary { background: var(--c-accent); color: var(--c-on-accent); }
+.linkbtn {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--fp-target);
+  min-inline-size: var(--fp-target);
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-small);
+}
 .btn:hover { background: var(--c-raised); }
 .btn-primary:hover { background: var(--c-accent); text-decoration: underline; }
 .field { display: grid; gap: var(--fp-space-5); max-inline-size: var(--fp-space-377); flex: 1 1 var(--fp-space-233); }
@@ -330,7 +343,7 @@ caption { text-align: start; padding-block: var(--fp-space-8); color: var(--c-mu
 
 <header class="top">
   <div class="wrap">
-    <p class="kicker">Showcase · version 1.0.0-rc.3 (release candidate) · MIT License · <a href="https://www.lyrikai.com">www.lyrikai.com</a></p>
+    <p class="kicker">Showcase · version 1.0.0-rc.4 (release candidate) · MIT License · <a href="https://www.lyrikai.com">www.lyrikai.com</a></p>
     <h1>Lyrikai: Fibonacci Protocol for UI/UX Design Agents</h1>
     <p class="lede">One small set of numbers and one ratio, used the same way everywhere. This page is built on <code>dist/fp.css</code> and shows each area of the protocol in use.</p>
     <p class="sample-note"><strong>Demonstration content.</strong> Every name, figure and state on this page is a sample made for the demonstration. None of it is real data. The protocol is a convention for internal consistency; φ is a design convention here, not a law, and nothing on this page shows that a design using it is better. See <a href="../spec/10-evidence-honesty.md">the evidence page</a>.</p>
@@ -436,7 +449,7 @@ caption { text-align: start; padding-block: var(--fp-space-8); color: var(--c-mu
   <div class="row">
     <button class="btn btn-primary" type="button">Sample primary</button>
     <button class="btn" type="button">Sample secondary</button>
-    <a href="#controls">Sample link</a>
+    <a class="linkbtn" href="#controls">Sample link</a>
   </div>
   <div class="row">
     <div class="field">
@@ -695,7 +708,7 @@ caption { text-align: start; padding-block: var(--fp-space-8); color: var(--c-mu
   <p>The ladder is in platform units: 1 u is 1 CSS px, 1 pt or 1 dp. Platform defaults and accessibility floors sit outside the scale and always win. In version 1.0 only the web is normative; the others are published as guidance with their anchors and floors stated.</p>
   <div class="table-scroll" role="region" aria-label="Platform anchors, scrollable on narrow screens" tabindex="0">
     <table>
-      <caption>Anchors by platform (spec 1.0.0-rc.3)</caption>
+      <caption>Anchors by platform (spec 1.0.0-rc.4)</caption>
       <thead>
         <tr><th scope="col">Platform</th><th scope="col">1 u</th><th scope="col">Body</th><th scope="col">Smallest text</th><th scope="col">Target floor</th><th scope="col">Ladder target</th><th scope="col">Status in 1.0</th></tr>
       </thead>
@@ -716,8 +729,8 @@ caption { text-align: start; padding-block: var(--fp-space-8); color: var(--c-mu
 
 <footer class="foot">
   <div class="wrap">
-    <p>This page's claim, as run by <code>node tools/fp-check/fp-check.mjs showcase</code>: <strong>FP-2 · Native · u=1 · web · spec 1.0.0-rc.3 · self-assessed</strong>. It says what the machine tests covered. It does not say that this page is accessible or that its design is better.</p>
-    <p>Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 (release candidate) · MIT License · <a href="https://www.lyrikai.com">www.lyrikai.com</a> · <a href="../README.md">README</a> · <a href="../spec/index.md">Specification</a></p>
+    <p>As run by <code>node tools/fp-check/fp-check.mjs showcase</code>, the machine tests pass and this page is a <strong>candidate</strong>, not a claim: <code>candidate · FP-2 · Native · u=1 · web · spec 1.0.0-rc.4 · self-assessed · open 5</code>. The answers to the self-report items are in <code>fp-evidence.json</code>; five are still open. Passing machine tests do not say that this page is accessible or that its design is better.</p>
+    <p>Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 (release candidate) · MIT License · <a href="https://www.lyrikai.com">www.lyrikai.com</a> · <a href="../README.md">README</a> · <a href="../spec/index.md">Specification</a></p>
     <p>No animation, no autoplay and no ambient loops on this page; it respects prefers-reduced-motion by having nothing to reduce.</p>
   </div>
 </footer>

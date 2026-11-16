@@ -1,0 +1,116 @@
+{
+  "fp": "1.0.0-rc.4",
+  "adopter": "Lyrikai (showcase authors)",
+  "items": {
+    "FP-A11Y-13": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane at a 320 px viewport (light): document scrollWidth 320, 0 elements wider than the viewport outside the labelled scroll regions. The sample chart and the platform table scroll inside regions (role=region, tabindex=0) by design. Not measured: dark theme, other browsers.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-03": {
+      "result": "pass",
+      "evidence": "Measured at 320 px by setting the root font size to 200% (body 32 px, h1 84 px): scrollWidth stayed 320, 0 overflowing elements, text sizes are rem-based. Browser zoom and other browsers not tested.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-04": {
+      "result": "pass",
+      "evidence": "Measured at 320 px by injecting line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em and paragraph spacing 2em with !important: scrollWidth stayed 320, 0 overflowing elements, 0 clipped text boxes; no element has a fixed height.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-05": {
+      "result": "pass",
+      "evidence": "Measured with computed boxes. Coarse pointer (any-pointer: coarse true, --fp-target 55): 18 targets (buttons, input, standalone links, nav links, checkbox/radio labels), none smaller than 55 in either dimension, none overlapping. Fine pointer only (--fp-target 34): the same 18, none smaller than 34, none overlapping. Inline links inside sentences are not counted (inline exception). A first run found the standalone 'Sample link' (26 high), the nav links (22 wide) and the skip link (48 high) below target; they were fixed and re-measured.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-06": {
+      "result": "pass",
+      "evidence": "Observed both states in the Browser pane: with a coarse pointer present --fp-target resolved to 55px; with only a fine pointer (desktop pane) it resolved to 34px. The page does not redefine --fp-target; the query is in dist/fp.css (FP-PLAT-03 passes).",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-12": {
+      "result": "pass",
+      "evidence": "Pressed Tab 32 times at 320 px (light). All 32 focus stops matched :focus-visible and showed a 3 px solid outline with a 2 px offset in the focus colour (rgb(11, 63, 191), 8.12:1 on the ground, declared pair). Dark theme and other browsers not tested.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-17": {
+      "result": "pass",
+      "evidence": "The page has no fixed or sticky elements. At each of the 32 Tab stops at 320 px, the element at the centre of the focused element's box was the element itself (or its own label): nothing covered it.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-14": {
+      "result": "pass",
+      "evidence": "With 'Show states without hue' ticked, all 8 state marks resolved to one colour and the 8 SVG silhouettes were all different (21 x 21, one per state); each mark has its word beside it (Open, Attention, Active, Waiting, Review, Done, Blocked, Quiet). The chart bars carry value labels and category names. Checked in the DOM and in screenshots; not tested with a colour-vision simulator.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-19": {
+      "result": "n/a",
+      "evidence": "No status messages exist on the page: no form submission, toast, live region (no aria-live, role=status or role=alert; grep count 0) and no content that changes after an action except the theme button's own label.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-A11Y-20": {
+      "result": "pass",
+      "evidence": "In the light theme, every distinct text, border, outline and mark colour against its effective background was read from computed styles (26 combinations) and compared with the 20 declared light pairs; all were declared, apart from three that are not separate pairs (the primary button's border on its own fill, unfilled ring marks, and a filled state mark read against the page instead of its chip, which is declared). The dark themes use the same tokens in the same rules but were not re-scanned.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-LINE-02": {
+      "result": "pass",
+      "evidence": "Computed border width of the buttons and the text input is 2 px, in the edge or accent colour (declared pairs, at least 4.67:1). Checkboxes and radios are the browser's own controls. Chips and tables use hairlines, but they are not controls.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-TYPE-06": {
+      "result": "pass",
+      "evidence": "Smallest computed font size among buttons, the input, field and checkbox labels and nav links is 16 px (step 0), above the 13 px minimum.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-LAYOUT-02": {
+      "result": "pass",
+      "evidence": "The three sample cards of equal weight sit in equal columns (301, 301 and 301 px measured at 1024 px); chart bars are equal width (81.6 each). The declared phi split holds two unequal parts and measured 1.618:1 at a 1024 px viewport.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-CTRL-01": {
+      "result": "pass",
+      "evidence": "Protocol controls take --fp-target as their minimum block and inline size. Measured 55 (coarse) and 34 (fine only); see FP-A11Y-05 for counts and the first-run failures that were fixed.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-CTRL-02": {
+      "result": "pass",
+      "evidence": "Controls are drawn at the target size, so drawn size and hit area coincide. Hit areas of the 18 neighbouring targets were tested pairwise for overlap at 55 and at 34: 0 overlaps.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-CTRL-03": {
+      "result": "pass",
+      "evidence": "The checkboxes and radios are drawn 21 x 21 inside a label that is a full target (at least 55 x 55 coarse, 34 fine) including its text; those labels are among the 18 targets measured with none below target.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-VIZ-01": {
+      "result": "pass",
+      "evidence": "Read from the SVG: the frame is 610 x 377 with margins on rungs (55, 21, 21, 55); the value scale is one linear 3.01 px per unit for all four bars (measured 3.010 each); ticks 0, 20, 40, 60, 80, 100 are on 2 x 10^n; bar width 81.6 comes from the band scale. No φ or Fibonacci value sets a scale, tick, length or baseline. The sample values 42, 67, 28 and 91 are not Fibonacci numbers.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-VIZ-04": {
+      "result": "pass",
+      "evidence": "Measured from the SVG: every bar's bottom is at y 322.00, the zero baseline (the axis is at 322.00); the four bars are each 81.6 wide; heights are proportional to value (3.010 px per unit for each).",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-VIZ-05": {
+      "result": "pass",
+      "evidence": "One measure on one linear axis from 0 to 100; no break, truncation or log scale; no blended measures. Read from the SVG.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-VIZ-06": {
+      "result": "pass",
+      "evidence": "Sample E is shown as the words 'not measured' and has no bar and no zero label; the figure caption and the data table say the same. Confirmed in the rendered text.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-HONEST-03": {
+      "result": "pass",
+      "evidence": "Scanned the page's rendered text for the banned claims (Parthenon, Pyramid, Mona Lisa, logos, 'wired', universal in nature) and the banned words of FP-HONEST-02: none present. The page says φ is a convention, that preference research is mixed, and that the sunflower study found 18% non-Fibonacci counts.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-HONEST-05": {
+      "result": "pass",
+      "evidence": "A visible banner at the top reads 'Demonstration content', and says every name, figure and state is a sample and none is real data; the chart has a 'Sample data' caption and 'Sample' labels; the art is captioned as sample art with its real count (144 placed of 144). Confirmed in the rendered text.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    }
+  }
+}
