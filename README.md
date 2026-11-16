@@ -1,0 +1,162 @@
+# Lyrikai: Fibonacci Protocol for UI/UX Design Agents
+
+*Version 1.0.0-rc.2 · release candidate · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+
+One small set of numbers and one ratio, used the same way everywhere in a design system, so that a person or an agent reaching for a value always reaches for the same few. This repository holds the specification, the design tokens, a checker, and a skill that makes a design agent follow the protocol.
+
+**Status: release candidate.** The text is proposed for release as 1.0.0 and is published for final review. It is not yet a release. See [CHANGELOG.md](CHANGELOG.md).
+
+See it working: [showcase/index.html](showcase/index.html) is a static page built on `dist/fp.css`, in light and dark, with sample content labelled as sample. Open the file in a browser; it needs no server and loads no external scripts.
+
+## What it is, and what it is not
+
+The Fibonacci Protocol is a **convention for internal consistency**. It gives a design system the Fibonacci numbers times a base unit for lengths, a type scale stepped by φ (about 1.618), and a few proportions and timings. That is the whole claim: one set of numbers used everywhere makes a system easier to keep consistent and easier for an agent to follow.
+
+It is **not an aesthetic law.** φ is a design convention here, not a law of beauty. The evidence that people prefer φ is weak and contested: a 2016 review finds a universal preference weak and likely to vanish under bias-free methods, and the usual famous examples do not hold up. The protocol therefore makes three promises and no others:
+
+1. Every rule is cited, or labelled "convention" or "contested".
+2. Accessibility floors and platform defaults sit outside the scale and always win.
+3. φ may frame data but never shape it.
+
+The evidence, with the null and mixed results beside the positive ones, is in [spec/10-evidence-honesty.md](spec/10-evidence-honesty.md). Out of scope in every version: brand colours, typefaces, logos, components, and any claim that a design is better because it uses φ.
+
+## Who it is for
+
+- **Design systems.** Add the protocol to a system you already have, or build a new one on it, and get machine checks that say what was and was not tested.
+- **Design agents.** The `/lyrikai-fibonacci` skill makes Claude Code, Codex, Cursor or any other agent use the same numbers, report every off-ladder value and every changed host value by rule ID, and never claim that the result is better.
+
+## Three modes
+
+| You have | Use | You change | Highest level |
+|---|---|---|---|
+| A design system you want to keep as it is | **Overlay** | Nothing. You add `--fp-*` tokens and use them in a scope you choose. | FP-1; FP-2 only if the scope's type is replaced |
+| A 4- or 8-based spacing scale you are willing to move | **Snap** | Your spacing and radius values move to the nearest rung, by a published table. | FP-1 by snapping; FP-2 when type is replaced |
+| A new system, or one you will rebuild | **Native** | Everything is built on the ladder and the type scale. | FP-2 |
+
+## Conformance levels and the version ladder
+
+Levels are cumulative. A **Guard** rule (accessibility, data honesty, the claim itself) is the base of every level: one applicable Guard rule that fails voids the claim.
+
+| Level | Covers |
+|---|---|
+| FP-1 | Space and radius |
+| FP-2 | FP-1 plus type, layout and grids |
+| FP-3 | FP-2 plus motion and the state grammar |
+| FP-4a, FP-4b | Art and illustration; data visualisation. Separate badges. |
+
+What changes between versions is how much of this is normative, that is, binding and tested:
+
+| Area | 1.0 | 1.1 | 1.2 |
+|---|---|---|---|
+| Core math, modes, conformance, accessibility guardrails, data-honesty guard, evidence rules | normative | | |
+| FP-1 space and radius; FP-2 type, layout and grids; on the web | normative | | |
+| Tokens (format, CSS, SCSS, Tailwind); agent protocol; checker definitions | normative | | |
+| FP-3 motion and the state grammar | informative | normative | |
+| FP-4a art; FP-4b data visualisation | informative | normative (the checker reads SVG) | |
+| iOS, macOS and Android | informative; body anchors and target floors are stated | normative | |
+| Print, slides and email | informative | informative | normative |
+
+In version 1.0 a claim names **FP-1 or FP-2** and the platform **web**. Everything else is published as guidance and cannot be claimed yet. There are 185 rules (125 normative, 60 informative); [spec/index.md](spec/index.md) lists them all.
+
+## Quick start: five minutes, Overlay or Native on the web
+
+You need Node.js 20 or later. There are no packages to install.
+
+**1. Copy the tokens.** Copy [`dist/fp.css`](dist/fp.css) into your project and load it. It defines the `--fp-*` custom properties at u = 1. For a 4- or 8-based grid use `dist/u4/` or `dist/u8/` instead. The same tokens come as SCSS (`_fp.scss`), a Tailwind preset (`fp.tailwind.cjs`) and a design-tool list (`design-system-tokens.json`).
+
+**2. Write `fp.config.json`** at the root of your project. Here is a small Native FP-1 example; `source` is everything the product ships, and `pairs` lists every text and mark colour pair in use.
+
+```json
+{
+  "fp": "1.0.0-rc.2",
+  "mode": "native",
+  "level": "FP-1",
+  "platform": "web",
+  "unit": 1,
+  "has": { "motion": false, "timeLimits": false, "controls": true, "charts": false, "generatedArt": false, "states": false },
+  "source": ["src/**/*.css"],
+  "pairs": [
+    { "fg": "#1b1a17", "bg": "#fbfaf7", "kind": "text" }
+  ]
+}
+```
+
+For Overlay, set `"mode": "overlay"` and add `"scope"`, the part of the source where you will keep to the ladder. [spec/index.md](spec/index.md#fp-1-overlay-in-five-steps) walks through it step by step, and [spec/fp.config.schema.json](spec/fp.config.schema.json) is the schema.
+
+**3. Use the tokens.** In your CSS, take every margin, padding, gap, size and radius from the ladder: `padding: var(--fp-space-21)`, `gap: var(--fp-space-8)`, `border-radius: var(--fp-radius-13)`, `min-block-size: var(--fp-target)`.
+
+**4. Run the checker.** From a clone of this repository, pass the folder that holds your `fp.config.json`:
+
+```sh
+node tools/fp-check/fp-check.mjs path/to/your/project
+```
+
+It runs the machine tests locally, with no network, and prints one result per rule plus the claim. Exit code 0 is a pass, 1 a fail or a pending exception, 2 a run that could not happen. See [tools/fp-check/README.md](tools/fp-check/README.md) for options and for what it does not check. Check contrast on its own with `node tools/contrast/contrast.mjs '#fg' '#bg'`.
+
+## Install the `/lyrikai-fibonacci` skill
+
+The skill makes a design agent follow the protocol when asked. It works offline from bundled rules. Switch it on with `/lyrikai-fibonacci on` (or say "use Fibonacci design principles") and off with `/lyrikai-fibonacci off`. Folder paths come from each tool's own documentation as read in November 2026; if a path no longer works, follow the linked page. The full install notes are in [agent-pack/README.md](agent-pack/README.md).
+
+**Claude Code.** Copy `skills/lyrikai-fibonacci/` to `~/.claude/skills/lyrikai-fibonacci/` for all your projects, or to `.claude/skills/lyrikai-fibonacci/` inside a repository to share it with the team. Keep the `reference/` folder beside `SKILL.md`. Source: https://code.claude.com/docs/en/skills
+
+**Codex.** Copy `skills/lyrikai-fibonacci/` to `.agents/skills/lyrikai-fibonacci/` in the repository, or to `~/.agents/skills/lyrikai-fibonacci/` for all projects; invoke it with `$lyrikai-fibonacci`. Or place `agent-pack/AGENTS.md` at the repository root (append it if you already have one) and keep `FP-AGENT.md` beside it. Sources: https://developers.openai.com/codex/skills and https://developers.openai.com/codex/guides/agents-md
+
+**Cursor.** Copy `agent-pack/cursor/fibonacci-protocol.mdc` to `.cursor/rules/fibonacci-protocol.mdc` and `agent-pack/FP-AGENT.md` into the project, or copy the skill folder to `.cursor/skills/` or `~/.cursor/skills/`. Sources: https://cursor.com/docs/context/rules and https://cursor.com/docs/context/skills
+
+**Any other tool.** Give the agent `agent-pack/FP-AGENT.md` as context (a rules file, a system prompt, an attachment). It holds the whole protocol for an agent in one file.
+
+Check the install by asking `/lyrikai-fibonacci explain FP-SPACE-01`: it should print the rule's text, level, status, test and evidence.
+
+## Repository layout
+
+| Path | What |
+|---|---|
+| [`spec/`](spec/index.md) | The specification, `rules.json` (every rule in machine-readable form), the `fp.config.json` schema and [test vectors](spec/test-vectors/README.md). Generated from `tools/specgen/`. |
+| [`tokens/`](tokens/fp.tokens.json) | The token master, in the W3C Design Tokens Format (2025.10). |
+| [`dist/`](dist/fp.css) | Generated tokens: CSS, SCSS, Tailwind preset and design-tool list, at u = 1, 4 (`u4/`) and 8 (`u8/`). |
+| [`skills/lyrikai-fibonacci/`](skills/lyrikai-fibonacci/SKILL.md) | The `/lyrikai-fibonacci` skill (Agent Skills format) with its offline reference. |
+| [`agent-pack/`](agent-pack/README.md) | `AGENTS.md`, a Cursor rule and `FP-AGENT.md`, for tools that do not read skills. |
+| [`showcase/`](showcase/index.html) | A static demonstration page that passes `fp-check` as a self-assessed FP-2 Native claim. |
+| [`fixtures/`](fixtures/README.md) | Three sample systems, one per mode, with seeded-fault copies the checker must catch. |
+| [`tools/fp-check/`](tools/fp-check/README.md) | The reference conformance checker. |
+| [`tools/contrast/`](tools/contrast/README.md) | A WCAG 2.x contrast checker. |
+| [`tools/build-tokens/`](tools/build-tokens/README.md) | Generates `dist/` from the token master. |
+| [`tools/build-pack/`](tools/build-pack/build-pack.mjs) | Generates the skill and the agent pack from the specification. |
+| [`tools/specgen/`](tools/specgen/gen.py) | The sources of the specification text, and its generators. |
+| [`tools/check-public/`](tools/check-public/README.md) | The release guard: links, secrets, banned claims, licence. |
+
+## Tests
+
+```sh
+npm test
+```
+
+This runs `node --test tools/`, which covers the checker (against all 18 published test vectors), the token and pack generators, the contrast tool and the release guard. No dependencies are needed. Other scripts are in [package.json](package.json): `npm run build:spec`, `build:tokens`, `build:pack`, `check:pack` and `fp-check`. To propose a change to a rule, read [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## How to claim conformance
+
+1. Write an `fp.config.json`.
+2. Run the machine tests for your level and answer the self-report items with evidence.
+3. Resolve every pending exception; a result with pending exceptions is not a pass.
+4. State the claim in the fixed form, as printed by `fp-check`:
+
+```text
+FP-2 · Snap · u=1 · web · spec 1.0.0-rc.2 · self-assessed
+FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.2 · self-assessed
+```
+
+The format is `<level> · <mode> · u=<unit> · <platform> · spec <version>`, with `scope <globs> · coverage <percent> · exceptions <count>` added before the version in Overlay. The claim ends in `self-assessed` unless someone other than the adopter assessed the self-report items and is named in the report.
+
+A claim says what was tested. It never says that a design is more beautiful, more natural or better, and a passing run is not a statement that a product is accessible. A system's claim and an agent's claim are separate: the agent rules do not count toward a system's claim.
+
+## Licence
+
+MIT License; see [LICENSE](LICENSE). Third-party values used as test fixtures keep their own licences and notices in their own folders: a fixture under `fixtures/` carries its own Apache-2.0 notice, and another keeps its own MIT notice.
+
+## Lineage
+
+The protocol grew out of design systems built in-house at Lyrikai during 2026; see [Lineage in spec/index.md](spec/index.md#lineage).
+
+---
+
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

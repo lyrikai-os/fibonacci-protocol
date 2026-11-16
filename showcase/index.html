@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fibonacci Protocol showcase 1.0.0-rc.2</title>
+<meta name="description" content="A static demonstration of Lyrikai: Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.2, built on dist/fp.css. Sample content throughout.">
+<link rel="stylesheet" href="../dist/fp.css">
+<style>
+/* Lyrikai: Fibonacci Protocol for UI/UX Design Agents, showcase page.
+   Version 1.0.0-rc.2 - MIT License - https://www.lyrikai.com
+   Native mode, FP-2, web. Lengths are rungs of dist/fp.css; colour values are this page's own. */
+
+/* Mirror of the dist/fp.css values this page uses (same names, same values), so that
+   fp-check can resolve them from inside this folder. The linked ../dist/fp.css is the source of truth. */
+:root {
+  --fp-line-hairline: 1px;
+  --fp-line-stroke-2: 2px;
+  --fp-line-stroke-3: 3px;
+  --fp-focus-gap: 2px;
+  --fp-focus-ring: 3px;
+  --fp-target: 55px;
+  --fp-type-0: 1rem;
+  --fp-type-1: 1.25rem;
+  --fp-type-2: 1.625rem;
+  --fp-type-3: 2.0625rem;
+  --fp-type-4: 2.625rem;
+  --fp-type-6: 4.25rem;
+  --fp-type-n1: 0.8125rem;
+  --fp-type-micro: 0.6875rem;
+  --fp-leading-body: 1.618;
+  --fp-leading-dense: 1.5;
+  --fp-leading-small: 1.382;
+  --fp-leading-heading: 1.236;
+  --fp-leading-display: 1.146;
+}
+@media (pointer: fine) and (not (any-pointer: coarse)) {
+  :root { --fp-target: 34px; }
+}
+
+:root {
+  color-scheme: light;
+  --c-ground: #fbfaf7;
+  --c-raised: #eeebe3;
+  --c-ink: #1b1a17;
+  --c-muted: #58554c;
+  --c-link: #1d4ed8;
+  --c-accent: #1d4ed8;
+  --c-on-accent: #ffffff;
+  --c-edge: #6a665c;
+  --c-focus: #0b3fbf;
+  --c-bar: #3b5bb0;
+  --c-art: #8a4b12;
+  --c-s-attention: #8a5a00;
+  --c-s-active: #1d4ed8;
+  --c-s-waiting: #6b4fa3;
+  --c-s-review: #0f6b66;
+  --c-s-blocked: #b3261e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --c-ground: #14130f;
+    --c-raised: #23211b;
+    --c-ink: #f1eee6;
+    --c-muted: #b4afa3;
+    --c-link: #8fb0ff;
+    --c-accent: #8fb0ff;
+    --c-on-accent: #0d1a3f;
+    --c-edge: #8f8a7d;
+    --c-focus: #ffd166;
+    --c-bar: #7f9fe8;
+    --c-art: #e0a15c;
+    --c-s-attention: #f0b84a;
+    --c-s-active: #8fb0ff;
+    --c-s-waiting: #b9a2f0;
+    --c-s-review: #5fcfc6;
+    --c-s-blocked: #ff8a80;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --c-ground: #14130f;
+  --c-raised: #23211b;
+  --c-ink: #f1eee6;
+  --c-muted: #b4afa3;
+  --c-link: #8fb0ff;
+  --c-accent: #8fb0ff;
+  --c-on-accent: #0d1a3f;
+  --c-edge: #8f8a7d;
+  --c-focus: #ffd166;
+  --c-bar: #7f9fe8;
+  --c-art: #e0a15c;
+  --c-s-attention: #f0b84a;
+  --c-s-active: #8fb0ff;
+  --c-s-waiting: #b9a2f0;
+  --c-s-review: #5fcfc6;
+  --c-s-blocked: #ff8a80;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--c-ground);
+  color: var(--c-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-body);
+  overflow-wrap: break-word;
+}
+.wrap {
+  max-inline-size: var(--fp-container-987);
+  margin-inline: auto;
+  padding-inline: var(--fp-space-21);
+}
+p, li, dd { max-inline-size: 66ch; }
+p { margin-block: 0 var(--fp-space-13); }
+
+h1 { margin: 0 0 var(--fp-space-21); font-size: var(--fp-type-4); line-height: var(--fp-leading-display); }
+h2 { margin: 0 0 var(--fp-space-21); font-size: var(--fp-type-3); line-height: var(--fp-leading-heading); }
+h3 { margin: var(--fp-space-34) 0 var(--fp-space-13); font-size: var(--fp-type-1); line-height: var(--fp-leading-heading); }
+
+a { color: var(--c-link); text-decoration: underline; text-underline-offset: var(--fp-space-3); }
+:focus-visible { outline: var(--fp-focus-ring) solid var(--c-focus); outline-offset: var(--fp-focus-gap); }
+
+.skip {
+  position: absolute;
+  inset-inline-start: var(--fp-space-8);
+  inset-block-start: var(--fp-space-8);
+  padding: var(--fp-space-13) var(--fp-space-21);
+  background: var(--c-raised);
+  color: var(--c-ink);
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-small);
+  transform: translateY(-300%);
+}
+.skip:focus { transform: none; }
+
+/* header and footer */
+.top { padding-block: var(--fp-space-34) var(--fp-space-21); }
+.kicker { margin: 0 0 var(--fp-space-8); color: var(--c-muted); font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+.lede { font-size: var(--fp-type-1); line-height: var(--fp-leading-heading); max-inline-size: 66ch; margin-block-end: var(--fp-space-21); }
+.bar-row { display: flex; flex-wrap: wrap; gap: var(--fp-space-13); align-items: center; margin-block-end: var(--fp-space-21); }
+.nav { display: flex; flex-wrap: wrap; gap: var(--fp-space-8) var(--fp-space-21); list-style: none; margin: 0; padding: 0; max-inline-size: none; }
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--fp-target);
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-small);
+}
+.sample-note {
+  margin: 0 0 var(--fp-space-21);
+  padding: var(--fp-space-13) var(--fp-space-21);
+  background: var(--c-raised);
+  border: var(--fp-line-stroke-2) solid var(--c-edge);
+  border-radius: var(--fp-radius-8);
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-dense);
+}
+.foot { padding-block: var(--fp-space-55); border-block-start: var(--fp-line-hairline) solid var(--c-edge); }
+.foot p { font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); color: var(--c-muted); }
+.foot a { color: var(--c-link); }
+
+/* sections */
+.sec { padding-block: var(--fp-space-55); border-block-start: var(--fp-line-hairline) solid var(--c-edge); }
+.meta { margin-block-start: var(--fp-space-21); color: var(--c-muted); font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+.small { color: var(--c-muted); font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+
+.split { display: grid; align-items: start; gap: var(--fp-space-21); grid-template-columns: 1fr; margin-block: var(--fp-space-21); }
+@media (min-width: 987px) {
+  .split { grid-template-columns: 1.618fr 1fr; --fp-layout: phi-split; }
+}
+.panel {
+  padding: var(--fp-space-21);
+  background: var(--c-raised);
+  border-radius: var(--fp-radius-13);
+  min-inline-size: 0;
+}
+.panel h3 { margin-block-start: 0; }
+.panel p:last-child { margin-block-end: 0; }
+.equal { display: grid; gap: var(--fp-space-21); grid-template-columns: 1fr; margin-block: var(--fp-space-21); }
+@media (min-width: 610px) {
+  .equal { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ladder and radius */
+.ladder { list-style: none; margin: 0 0 var(--fp-space-34); padding: 0; max-inline-size: none; }
+.ladder li { display: flex; align-items: center; gap: var(--fp-space-13); min-block-size: var(--fp-space-21); max-inline-size: none; font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+.ladder .n { flex: none; min-inline-size: var(--fp-space-89); color: var(--c-muted); }
+.ladder .run { flex: 1; min-inline-size: 0; }
+.rung { display: block; block-size: var(--fp-space-8); max-inline-size: 100%; background: var(--c-accent); }
+.w1 { inline-size: var(--fp-space-1); }
+.w2 { inline-size: var(--fp-space-2); }
+.w3 { inline-size: var(--fp-space-3); }
+.w5 { inline-size: var(--fp-space-5); }
+.w8 { inline-size: var(--fp-space-8); }
+.w13 { inline-size: var(--fp-space-13); }
+.w21 { inline-size: var(--fp-space-21); }
+.w34 { inline-size: var(--fp-space-34); }
+.w55 { inline-size: var(--fp-space-55); }
+.w89 { inline-size: var(--fp-space-89); }
+.w144 { inline-size: var(--fp-space-144); }
+.w233 { inline-size: var(--fp-space-233); }
+.w377 { inline-size: var(--fp-space-377); }
+.radii { display: flex; flex-wrap: wrap; gap: var(--fp-space-21); list-style: none; margin: 0; padding: 0; max-inline-size: none; }
+.radii li { display: flex; flex-direction: column; gap: var(--fp-space-8); align-items: flex-start; max-inline-size: none; font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); color: var(--c-muted); }
+.rad { display: block; inline-size: var(--fp-space-89); block-size: var(--fp-space-89); background: var(--c-raised); border: var(--fp-line-stroke-3) solid var(--c-accent); }
+.rad-wide { inline-size: var(--fp-space-144); block-size: var(--fp-space-55); }
+.r0 { border-radius: 0; }
+.r2 { border-radius: var(--fp-radius-2); }
+.r3 { border-radius: var(--fp-radius-3); }
+.r5 { border-radius: var(--fp-radius-5); }
+.r8 { border-radius: var(--fp-radius-8); }
+.r13 { border-radius: var(--fp-radius-13); }
+.r21 { border-radius: var(--fp-radius-21); }
+.rpill { border-radius: var(--fp-radius-pill); }
+.rround { border-radius: var(--fp-radius-round); }
+
+/* type scale */
+.steps { margin: 0; padding: 0; list-style: none; max-inline-size: none; }
+.steps li { max-inline-size: none; padding-block: var(--fp-space-13); border-block-end: var(--fp-line-hairline) solid var(--c-edge); }
+.step-meta { margin: 0 0 var(--fp-space-5); color: var(--c-muted); font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+.ts-n1 { margin: 0; font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+.ts-0 { margin: 0; font-size: var(--fp-type-0); line-height: var(--fp-leading-body); }
+.ts-0d { margin: 0; font-size: var(--fp-type-0); line-height: var(--fp-leading-dense); }
+.ts-1 { margin: 0; font-size: var(--fp-type-1); line-height: var(--fp-leading-heading); }
+.ts-2 { margin: 0; font-size: var(--fp-type-2); line-height: var(--fp-leading-heading); }
+.ts-3 { margin: 0; font-size: var(--fp-type-3); line-height: var(--fp-leading-heading); }
+.ts-4 { margin: 0; font-size: var(--fp-type-4); line-height: var(--fp-leading-display); }
+.ts-6 { margin: 0; font-size: var(--fp-type-6); line-height: var(--fp-leading-display); }
+.ts-micro { margin: 0; font-size: var(--fp-type-micro); line-height: var(--fp-leading-small); }
+
+/* controls */
+.row { display: flex; flex-wrap: wrap; gap: var(--fp-space-21); align-items: center; margin-block: var(--fp-space-21); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--fp-target);
+  min-inline-size: var(--fp-target);
+  padding-inline: var(--fp-space-21);
+  border: var(--fp-line-stroke-2) solid var(--c-accent);
+  border-radius: var(--fp-radius-8);
+  background: var(--c-ground);
+  color: var(--c-link);
+  font-family: inherit;
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-small);
+  cursor: pointer;
+}
+.btn-primary { background: var(--c-accent); color: var(--c-on-accent); }
+.btn:hover { background: var(--c-raised); }
+.btn-primary:hover { background: var(--c-accent); text-decoration: underline; }
+.field { display: grid; gap: var(--fp-space-5); max-inline-size: var(--fp-space-377); flex: 1 1 var(--fp-space-233); }
+.field label { font-size: var(--fp-type-0); line-height: var(--fp-leading-small); }
+.input {
+  inline-size: 100%;
+  min-block-size: var(--fp-target);
+  padding-inline: var(--fp-space-13);
+  border: var(--fp-line-stroke-2) solid var(--c-edge);
+  border-radius: var(--fp-radius-5);
+  background: var(--c-ground);
+  color: var(--c-ink);
+  font-family: inherit;
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-small);
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: var(--fp-space-13);
+  min-block-size: var(--fp-target);
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-small);
+  cursor: pointer;
+}
+.check input { flex: none; inline-size: var(--fp-space-21); block-size: var(--fp-space-21); margin: 0; accent-color: var(--c-accent); }
+.guide {
+  display: grid;
+  place-items: center;
+  inline-size: var(--fp-target);
+  block-size: var(--fp-target);
+  border: var(--fp-line-stroke-2) dashed var(--c-edge);
+  border-radius: var(--fp-radius-5);
+  color: var(--c-muted);
+  font-size: var(--fp-type-n1);
+  line-height: var(--fp-leading-small);
+}
+.readout::after { content: "55 (touch, coarse or unknown pointer)"; }
+@media (pointer: fine) and (not (any-pointer: coarse)) {
+  .readout::after { content: "34 (fine pointer only)"; }
+}
+
+/* eight-state grammar */
+.states-box { margin-block: var(--fp-space-21); }
+.states { display: grid; gap: var(--fp-space-13) var(--fp-space-21); grid-template-columns: repeat(auto-fit, minmax(var(--fp-space-233), 1fr)); list-style: none; margin: var(--fp-space-21) 0 0; padding: 0; max-inline-size: none; }
+.state { display: flex; flex-direction: column; gap: var(--fp-space-5); align-items: flex-start; max-inline-size: none; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fp-space-8);
+  min-block-size: var(--fp-space-34);
+  padding: var(--fp-space-5) var(--fp-space-13);
+  background: var(--c-raised);
+  border: var(--fp-line-hairline) solid var(--c-edge);
+  border-radius: var(--fp-radius-pill);
+  color: var(--c-ink);
+}
+.mark { flex: none; inline-size: var(--fp-space-21); block-size: var(--fp-space-21); }
+.mark .check { stroke: var(--c-raised); }
+.chip-word { font-size: var(--fp-type-0); line-height: var(--fp-leading-small); }
+.state-note { color: var(--c-muted); font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+.s-open .mark, .s-quiet .mark { color: var(--c-muted); }
+.s-attention .mark { color: var(--c-s-attention); }
+.s-active .mark { color: var(--c-s-active); }
+.s-waiting .mark { color: var(--c-s-waiting); }
+.s-review .mark { color: var(--c-s-review); }
+.s-blocked .mark { color: var(--c-s-blocked); }
+.s-done .mark { color: var(--c-ink); }
+.states-box:has(#nohue:checked) .mark { color: var(--c-ink); }
+
+/* figures */
+.viz, .artfig { margin: var(--fp-space-21) 0; }
+.viz { max-inline-size: var(--fp-container-610); }
+.scroll { overflow-x: auto; }
+.chart { display: block; inline-size: 100%; min-inline-size: var(--fp-container-610); block-size: auto; }
+.chart .grid { stroke: var(--c-edge); stroke-width: 1; stroke-dasharray: 2 5; }
+.chart .axis { stroke: var(--c-ink); stroke-width: 2; }
+.chart .bar { fill: var(--c-bar); }
+.t { fill: var(--c-ink); font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+.t-end { text-anchor: end; }
+.t-mid { text-anchor: middle; }
+figcaption { margin-block-start: var(--fp-space-8); color: var(--c-muted); font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); max-inline-size: 66ch; }
+.art-svg { display: block; inline-size: 100%; max-inline-size: var(--fp-space-377); block-size: auto; fill: var(--c-art); }
+
+/* tables */
+.table-scroll { overflow-x: auto; margin-block: var(--fp-space-21); }
+table { border-collapse: collapse; inline-size: 100%; font-size: var(--fp-type-0); line-height: var(--fp-leading-dense); }
+.table-scroll table { min-inline-size: var(--fp-container-610); }
+.table-scroll.narrow table { min-inline-size: 0; }
+th, td { padding: var(--fp-space-8) var(--fp-space-13); text-align: start; vertical-align: top; border-block-end: var(--fp-line-hairline) solid var(--c-edge); }
+th { font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); color: var(--c-muted); }
+caption { text-align: start; padding-block: var(--fp-space-8); color: var(--c-muted); font-size: var(--fp-type-n1); line-height: var(--fp-leading-small); }
+.claim { margin-block: var(--fp-space-21); padding: var(--fp-space-13) var(--fp-space-21); background: var(--c-raised); border-radius: var(--fp-radius-8); font-size: var(--fp-type-0); line-height: var(--fp-leading-dense); max-inline-size: none; }
+
+@media (forced-colors: active) {
+  .rung, .chart .bar, .art-svg circle { forced-color-adjust: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the showcase</a>
+
+<header class="top">
+  <div class="wrap">
+    <p class="kicker">Showcase · version 1.0.0-rc.2 (release candidate) · MIT License · <a href="https://www.lyrikai.com">www.lyrikai.com</a></p>
+    <h1>Lyrikai: Fibonacci Protocol for UI/UX Design Agents</h1>
+    <p class="lede">One small set of numbers and one ratio, used the same way everywhere. This page is built on <code>dist/fp.css</code> and shows each area of the protocol in use.</p>
+    <p class="sample-note"><strong>Demonstration content.</strong> Every name, figure and state on this page is a sample made for the demonstration. None of it is real data. The protocol is a convention for internal consistency; φ is a design convention here, not a law, and nothing on this page shows that a design using it is better. See <a href="../spec/10-evidence-honesty.md">the evidence page</a>.</p>
+    <div class="bar-row">
+      <button class="btn" id="theme" type="button" hidden>Theme: auto</button>
+      <ul class="nav" aria-label="Sections">
+        <li><a href="#ladder">Ladder</a></li>
+        <li><a href="#split">φ split</a></li>
+        <li><a href="#type">Type</a></li>
+        <li><a href="#controls">Controls</a></li>
+        <li><a href="#states">States</a></li>
+        <li><a href="#viz">Data</a></li>
+        <li><a href="#art">Art</a></li>
+        <li><a href="#platforms">Platforms</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+<section class="sec" id="ladder" aria-labelledby="h-ladder">
+  <h2 id="h-ladder">The ladder and the radius set</h2>
+  <p>Every margin, padding, gap and size on this page is one of these rungs: the Fibonacci numbers from 1 to 377 times the base unit u, here u = 1 px. Radii come from a smaller set. Sample bars, drawn at their true width.</p>
+  <ul class="ladder" aria-label="Length ladder, bars drawn at true width">
+    <li><span class="n">space-1</span><span class="run"><span class="rung w1"></span></span></li>
+    <li><span class="n">space-2</span><span class="run"><span class="rung w2"></span></span></li>
+    <li><span class="n">space-3</span><span class="run"><span class="rung w3"></span></span></li>
+    <li><span class="n">space-5</span><span class="run"><span class="rung w5"></span></span></li>
+    <li><span class="n">space-8</span><span class="run"><span class="rung w8"></span></span></li>
+    <li><span class="n">space-13</span><span class="run"><span class="rung w13"></span></span></li>
+    <li><span class="n">space-21</span><span class="run"><span class="rung w21"></span></span></li>
+    <li><span class="n">space-34</span><span class="run"><span class="rung w34"></span></span></li>
+    <li><span class="n">space-55</span><span class="run"><span class="rung w55"></span></span></li>
+    <li><span class="n">space-89</span><span class="run"><span class="rung w89"></span></span></li>
+    <li><span class="n">space-144</span><span class="run"><span class="rung w144"></span></span></li>
+    <li><span class="n">space-233</span><span class="run"><span class="rung w233"></span></span></li>
+    <li><span class="n">space-377</span><span class="run"><span class="rung w377"></span></span></li>
+  </ul>
+  <p class="small">On a narrow screen the longest bars are cut to the column width; the name is the value.</p>
+  <h3>Radius set</h3>
+  <ul class="radii" aria-label="Radius set">
+    <li><span class="rad r0"></span>0</li>
+    <li><span class="rad r2"></span>radius-2</li>
+    <li><span class="rad r3"></span>radius-3</li>
+    <li><span class="rad r5"></span>radius-5</li>
+    <li><span class="rad r8"></span>radius-8</li>
+    <li><span class="rad r13"></span>radius-13</li>
+    <li><span class="rad r21"></span>radius-21</li>
+    <li><span class="rad rad-wide rpill"></span>radius-pill</li>
+    <li><span class="rad rad-wide rround"></span>radius-round (50%)</li>
+  </ul>
+  <p class="meta">Rules: <a href="../spec/01-core-math.md">FP-MATH-03</a>, <a href="../spec/05-ui/space-radius.md">FP-SPACE-01, FP-RADIUS-01</a>. Evidence: convention (protocol choice). The ladder is a way to keep values few and consistent; no study shows these particular numbers are better than a 4 or 8 grid.</p>
+</section>
+
+<section class="sec" id="split" aria-labelledby="h-split">
+  <h2 id="h-split">The φ split</h2>
+  <p>A two-part layout whose parts have unequal weight and both hold content may split 61.8 to 38.2, written <code>1.618fr 1fr</code> and declared with <code>--fp-layout: phi-split</code>. From 987 px wide the two panels below use it; below that they stack in one column.</p>
+  <div class="split">
+    <div class="panel">
+      <h3>Main part, 61.8%</h3>
+      <p>Sample text. This is the part that carries the reading: an article, a form, a figure. The ratio is a convention for giving two unequal parts a fixed, repeatable relation. It is not claimed to be the most pleasing proportion; the research on that is mixed.</p>
+    </div>
+    <div class="panel">
+      <h3>Detail, 38.2%</h3>
+      <p>Sample text. Notes, metadata or a list that supports the main part.</p>
+    </div>
+  </div>
+  <p>Content of equal weight is never forced into a φ split. These three sample cards sit in equal columns, which is correct and is never flagged.</p>
+  <div class="equal">
+    <div class="panel"><p>Sample card one.</p></div>
+    <div class="panel"><p>Sample card two.</p></div>
+    <div class="panel"><p>Sample card three.</p></div>
+  </div>
+  <p class="meta">Rules: <a href="../spec/05-ui/layout.md">FP-LAYOUT-01, FP-LAYOUT-02, FP-LAYOUT-05, FP-LAYOUT-06</a>. Evidence: convention. The page container is limited with <code>max-inline-size: var(--fp-container-987)</code> so that it shrinks and still reflows at 320.</p>
+</section>
+
+<section class="sec" id="type" aria-labelledby="h-type">
+  <h2 id="h-type">Type scale and leading</h2>
+  <p>Body is 16 px (1rem), the web default and a minimum. Each step is the body size times φ<sup>k/2</sup>, rounded, written in rem, so it follows the reader's text size. Leading follows the role of the text first and its size second, and is unitless.</p>
+  <ul class="steps">
+    <li><p class="step-meta">Step −1 · <code>--fp-type-n1</code> · 13 px · leading 1.382 · small text and control labels</p><p class="ts-n1">Sample small text, also used for single-line labels.</p></li>
+    <li><p class="step-meta">Step 0 · <code>--fp-type-0</code> · 16 px · leading 1.618 · running text only</p><p class="ts-0">Sample running text: paragraphs of prose at body size take the loosest leading, and nothing else does. The longest line is held to 66 characters.</p></li>
+    <li><p class="step-meta">Step 0 · 16 px · leading 1.5 · dense body in tables, lists and forms</p><p class="ts-0d">Sample dense text, as in a table cell or a list item.</p></li>
+    <li><p class="step-meta">Step 1 · <code>--fp-type-1</code> · 20 px · leading 1.236 · heading</p><p class="ts-1">Sample heading at step 1</p></li>
+    <li><p class="step-meta">Step 2 · <code>--fp-type-2</code> · 26 px · leading 1.236 · heading</p><p class="ts-2">Sample heading at step 2</p></li>
+    <li><p class="step-meta">Step 3 · <code>--fp-type-3</code> · 33 px · leading 1.236 · heading</p><p class="ts-3">Sample heading, step 3</p></li>
+    <li><p class="step-meta">Step 4 · <code>--fp-type-4</code> · 42 px · leading 1.146 · largest heading and display</p><p class="ts-4">Sample display at step 4</p></li>
+    <li><p class="step-meta">Step 6 · <code>--fp-type-6</code> · 68 px · leading 1.146 · display (even steps from 4 upward; steps 5 and 7 are not used)</p><p class="ts-6">Phi</p></li>
+    <li><p class="step-meta">Micro · <code>--fp-type-micro</code> · 11 px · leading 1.382 · non-interactive metadata only</p><p class="ts-micro">Sample metadata: sample, not real, 2026</p></li>
+  </ul>
+  <p class="meta">Rules: <a href="../spec/05-ui/type.md">FP-TYPE-01 to FP-TYPE-13</a>, <a href="../spec/04-accessibility.md">FP-A11Y-07, FP-A11Y-08</a>. Evidence: convention (protocol choice). The protocol names no typeface; this page uses the system font.</p>
+</section>
+
+<section class="sec" id="controls" aria-labelledby="h-controls">
+  <h2 id="h-controls">Controls, targets and focus</h2>
+  <p>Protocol controls are at least the ladder target: 55 px for touch and for any coarse or unknown pointer, 34 px where the only pointer is fine. The floor behind this is 44 px (a protocol choice) or WCAG's 24 px at AA. The dashed square below is <code>--fp-target</code> at its true size. Press Tab to see the focus ring: a gap of 2 and a ring of 3, never removed.</p>
+  <div class="row">
+    <span class="guide" aria-hidden="true"></span>
+    <p>Target under your pointer: <strong class="readout"></strong>.</p>
+  </div>
+  <div class="row">
+    <button class="btn btn-primary" type="button">Sample primary</button>
+    <button class="btn" type="button">Sample secondary</button>
+    <a href="#controls">Sample link</a>
+  </div>
+  <div class="row">
+    <div class="field">
+      <label for="sample-input">Sample field label</label>
+      <input class="input" id="sample-input" type="text" value="Sample value" autocomplete="off">
+    </div>
+    <div>
+      <label class="check"><input type="checkbox" checked> Sample checkbox, drawn 21, hit area 55 with its label</label>
+      <label class="check"><input type="radio" name="sample-radio" checked> Sample radio, option one</label>
+      <label class="check"><input type="radio" name="sample-radio"> Sample radio, option two</label>
+    </div>
+  </div>
+  <p class="meta">Rules: <a href="../spec/05-ui/controls.md">FP-CTRL-01 to FP-CTRL-05</a>, <a href="../spec/04-accessibility.md">FP-A11Y-05, FP-A11Y-06, FP-A11Y-12, FP-A11Y-17</a>. Evidence: cited for the accessibility floors, convention (protocol choice) for the ladder target. A control's edge is 2 px, never a hairline alone.</p>
+</section>
+
+<section class="sec" id="states" aria-labelledby="h-states">
+  <h2 id="h-states">The eight-state grammar</h2>
+  <p>A state is shown by a form first, then a word, then optionally a hue. The forms differ by silhouette (what is filled, what is open, how many parts), so they can be told apart at small sizes and without colour. Every mark here has its word beside it. Tick the box to remove all hue and check this for yourself.</p>
+  <div class="states-box">
+    <label class="check"><input type="checkbox" id="nohue"> Show states without hue</label>
+    <ul class="states" aria-label="The eight states">
+<li class="state"><span class="chip s-open"><svg class="mark" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/></svg><span class="chip-word">Open</span></span><span class="state-note">available, nothing happening. Form: hollow ring.</span></li>
+<li class="state"><span class="chip s-attention"><svg class="mark" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10.5" cy="10.5" r="4" fill="currentColor"/></svg><span class="chip-word">Attention</span></span><span class="state-note">waiting on the person. Form: solid disc inside a ring.</span></li>
+<li class="state"><span class="chip s-active"><svg class="mark" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="9.5" fill="currentColor"/></svg><span class="chip-word">Active</span></span><span class="state-note">in progress. Form: solid disc.</span></li>
+<li class="state"><span class="chip s-waiting"><svg class="mark" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="8.5" fill="none" stroke="currentColor" stroke-width="2" pathLength="100" stroke-dasharray="17 8" stroke-dashoffset="-4"/></svg><span class="chip-word">Waiting</span></span><span class="state-note">waiting on something else. Form: ring broken into 4 arcs.</span></li>
+<li class="state"><span class="chip s-review"><svg class="mark" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><rect x="1" y="7.5" width="19" height="6" rx="2" fill="currentColor"/></svg><span class="chip-word">Review</span></span><span class="state-note">ready to be checked. Form: horizontal bar.</span></li>
+<li class="state"><span class="chip s-done"><svg class="mark" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="9.5" fill="currentColor"/><path class="check" d="M6 10.8 L9.4 14 L15.2 7.4" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="chip-word">Done</span></span><span class="state-note">finished and accepted. Form: solid disc with a check, in ink.</span></li>
+<li class="state"><span class="chip s-blocked"><svg class="mark" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="0.5" y="9" width="20" height="3" rx="1.5" fill="currentColor"/></svg><span class="chip-word">Blocked</span></span><span class="state-note">cannot continue. Form: ring with a bar struck through.</span></li>
+<li class="state"><span class="chip s-quiet"><svg class="mark" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="3" fill="currentColor"/></svg><span class="chip-word">Quiet</span></span><span class="state-note">off or dormant. Form: small centred dot, no ring.</span></li>
+    </ul>
+  </div>
+  <p class="meta">Rules: <a href="../spec/05-ui/layers-colour-state.md">FP-STATE-01 to FP-STATE-09</a>, <a href="../spec/04-accessibility.md">FP-A11Y-14</a>. Evidence: convention (protocol choice). In version 1.0 this grammar is informative guidance, not a tested claim. Marks are 21 with a stroke of 2; chips grow with their text.</p>
+</section>
+
+<section class="sec" id="viz" aria-labelledby="h-viz">
+  <h2 id="h-viz">Data visualisation</h2>
+  <p>In a chart the data decides. φ and the ladder may shape the frame, never the data. This sample bar chart has a frame of 610 by 377 (two rungs) and margins on rungs. The scale starts at zero, bars are equally wide and their width comes from the plot size, and the ticks fall on 1, 2 or 5 times a power of ten (here steps of 20), not on Fibonacci numbers.</p>
+  <figure class="viz">
+    <div class="scroll" role="region" aria-label="Sample bar chart, scrollable on narrow screens" tabindex="0">
+<svg class="chart" viewBox="0 0 610 377" role="img" aria-labelledby="chart-t chart-d">
+<title id="chart-t">Sample bar chart</title>
+<desc id="chart-d">Sample data, invented for this page. Four bars on a value axis from 0 to 100: Sample A 42, Sample B 67, Sample C 28, Sample D 91. Sample E was not measured and has no bar.</desc>
+<line class="grid" x1="55" x2="589" y1="322.00" y2="322.00"/>
+<text class="t t-end" x="47" y="326.00">0</text>
+<line class="grid" x1="55" x2="589" y1="261.80" y2="261.80"/>
+<text class="t t-end" x="47" y="265.80">20</text>
+<line class="grid" x1="55" x2="589" y1="201.60" y2="201.60"/>
+<text class="t t-end" x="47" y="205.60">40</text>
+<line class="grid" x1="55" x2="589" y1="141.40" y2="141.40"/>
+<text class="t t-end" x="47" y="145.40">60</text>
+<line class="grid" x1="55" x2="589" y1="81.20" y2="81.20"/>
+<text class="t t-end" x="47" y="85.20">80</text>
+<line class="grid" x1="55" x2="589" y1="21.00" y2="21.00"/>
+<text class="t t-end" x="47" y="25.00">100</text>
+<line class="axis" x1="55" x2="589" y1="322.00" y2="322.00"/>
+<rect class="bar" x="76.00" y="195.58" width="81.60" height="126.42"/>
+<text class="t t-mid" x="116.80" y="187.58">42</text>
+<text class="t t-mid" x="116.80" y="343.00">Sample A</text>
+<rect class="bar" x="178.60" y="120.33" width="81.60" height="201.67"/>
+<text class="t t-mid" x="219.40" y="112.33">67</text>
+<text class="t t-mid" x="219.40" y="343.00">Sample B</text>
+<rect class="bar" x="281.20" y="237.72" width="81.60" height="84.28"/>
+<text class="t t-mid" x="322.00" y="229.72">28</text>
+<text class="t t-mid" x="322.00" y="343.00">Sample C</text>
+<rect class="bar" x="383.80" y="48.09" width="81.60" height="273.91"/>
+<text class="t t-mid" x="424.60" y="40.09">91</text>
+<text class="t t-mid" x="424.60" y="343.00">Sample D</text>
+<text class="t t-mid" x="527.20" y="314.00">not measured</text>
+<text class="t t-mid" x="527.20" y="343.00">Sample E</text>
+</svg>
+    </div>
+    <figcaption>Sample data. All values are invented for the demonstration. Sample E was not measured: it is shown as words, not as a zero bar (FP-VIZ-06).</figcaption>
+  </figure>
+  <div class="table-scroll narrow" role="region" aria-label="The same sample data as a table" tabindex="0">
+    <table>
+      <caption>The same sample data as a table</caption>
+      <thead><tr><th scope="col">Category</th><th scope="col">Sample value</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Sample A</th><td>42</td></tr>
+        <tr><th scope="row">Sample B</th><td>67</td></tr>
+        <tr><th scope="row">Sample C</th><td>28</td></tr>
+        <tr><th scope="row">Sample D</th><td>91</td></tr>
+        <tr><th scope="row">Sample E</th><td>not measured</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="meta">Rules: <a href="../spec/07-data-viz.md">FP-VIZ-01, FP-VIZ-04, FP-VIZ-05, FP-VIZ-06</a> (Guard, normative), FP-VIZ-02, FP-VIZ-03, FP-VIZ-09 (informative). Evidence: cited for bars from zero and nice-number ticks, contested for chart aspect. The frame ratio here is a choice; where the data needs another aspect, the data wins.</p>
+</section>
+
+<section class="sec" id="art" aria-labelledby="h-art">
+  <h2 id="h-art">Generated art</h2>
+  <p>The golden angle and Fibonacci spiral counts are measured in plant growth, but they are not universal: in one study of 657 sunflowers, 74% of spiral counts were Fibonacci numbers and about 18% were not.</p>
+  <div class="split">
+    <div class="panel">
+      <h3>How this was made</h3>
+      <p>A Vogel spiral: the n-th dot sits at radius 14 × √n and at angle n × 137.50776°, the golden angle computed from its closed form. 144 dots placed, from 144 asked for. The same inputs give the same file; nothing here is random and nothing moves.</p>
+      <p>The spiral arms you can see are a result of the placement. They are not drawn. This is sample art, not evidence about nature.</p>
+    </div>
+    <figure class="artfig">
+<svg class="art-svg" viewBox="0 0 377 377" role="img" aria-labelledby="art-t art-d">
+<title id="art-t">Sample generated art: a Vogel spiral of 144 dots</title>
+<desc id="art-d">144 dots placed by Vogel's model: dot n at radius 14 times the square root of n and at angle n times 137.50776 degrees. Sample art; the spiral arms are produced by the placement and are not drawn.</desc>
+<circle cx="178.18" cy="197.96" r="4"/>
+<circle cx="190.23" cy="168.78" r="4"/>
+<circle cx="203.25" cy="207.74" r="4"/>
+<circle cx="160.93" cy="183.62" r="4"/>
+<circle cx="214.91" cy="171.70" r="4"/>
+<circle cx="179.60" cy="221.62" r="4"/>
+<circle cx="171.43" cy="155.63" r="4"/>
+<circle cx="225.70" cy="202.08" r="4"/>
+<circle cx="149.68" cy="204.53" r="4"/>
+<circle cx="207.26" cy="148.40" r="4"/>
+<circle cx="202.40" cy="232.80" r="4"/>
+<circle cx="146.54" cy="164.18" r="4"/>
+<circle cx="237.80" cy="177.66" r="4"/>
+<circle cx="158.37" cy="231.35" r="4"/>
+<circle cx="181.53" cy="134.73" r="4"/>
+<circle cx="231.32" cy="224.59" r="4"/>
+<circle cx="130.83" cy="190.89" r="4"/>
+<circle cx="230.60" cy="146.60" r="4"/>
+<circle cx="185.68" cy="249.46" r="4"/>
+<circle cx="148.39" cy="140.43" r="4"/>
+<circle cx="252.08" cy="197.06" r="4"/>
+<circle cx="134.60" cy="226.00" r="4"/>
+<circle cx="203.24" cy="123.00" r="4"/>
+<circle cx="222.60" cy="248.01" r="4"/>
+<circle cx="121.81" cy="167.22" r="4"/>
+<circle cx="253.30" cy="158.56" r="4"/>
+<circle cx="160.42" cy="255.61" r="4"/>
+<circle cx="163.43" cy="118.79" r="4"/>
+<circle cx="255.24" cy="223.57" r="4"/>
+<circle cx="114.35" cy="208.05" r="4"/>
+<circle cx="230.66" cy="122.94" r="4"/>
+<circle cx="201.91" cy="266.55" r="4"/>
+<circle cx="124.92" cy="139.26" r="4"/>
+<circle cx="269.85" cy="181.76" r="4"/>
+<circle cx="132.26" cy="249.30" r="4"/>
+<circle cx="188.91" cy="104.50" r="4"/>
+<circle cx="245.72" cy="251.57" r="4"/>
+<circle cx="102.57" cy="180.54" r="4"/>
+<circle cx="258.14" cy="135.64" r="4"/>
+<circle cx="172.65" cy="275.61" r="4"/>
+<circle cx="140.76" cy="112.63" r="4"/>
+<circle cx="276.00" cy="212.48" r="4"/>
+<circle cx="106.82" cy="230.42" r="4"/>
+<circle cx="220.78" cy="101.43" r="4"/>
+<circle cx="223.91" cy="275.48" r="4"/>
+<circle cx="102.70" cy="147.84" r="4"/>
+<circle cx="280.22" cy="160.22" r="4"/>
+<circle cx="139.46" cy="272.18" r="4"/>
+<circle cx="167.92" cy="92.68" r="4"/>
+<circle cx="269.21" cy="245.83" r="4"/>
+<circle cx="89.29" cy="200.86" r="4"/>
+<circle cx="253.94" cy="111.62" r="4"/>
+<circle cx="192.21" cy="290.35" r="4"/>
+<circle cx="116.29" cy="115.22" r="4"/>
+<circle cx="292.19" cy="193.80" r="4"/>
+<circle cx="107.74" cy="255.23" r="4"/>
+<circle cx="203.11" cy="83.82" r="4"/>
+<circle cx="248.97" cy="276.32" r="4"/>
+<circle cx="83.70" cy="164.39" r="4"/>
+<circle cx="282.85" cy="135.04" r="4"/>
+<circle cx="154.76" cy="292.51" r="4"/>
+<circle cx="142.75" cy="88.20" r="4"/>
+<circle cx="290.80" cy="231.90" r="4"/>
+<circle cx="82.93" cy="225.89" r="4"/>
+<circle cx="241.50" cy="88.84" r="4"/>
+<circle cx="216.95" cy="298.62" r="4"/>
+<circle cx="92.41" cy="126.05" r="4"/>
+<circle cx="302.37" cy="169.50" r="4"/>
+<circle cx="116.85" cy="280.10" r="4"/>
+<circle cx="179.40" cy="71.72" r="4"/>
+<circle cx="274.70" cy="269.03" r="4"/>
+<circle cx="69.71" cy="187.34" r="4"/>
+<circle cx="277.49" cy="108.56" r="4"/>
+<circle cx="176.80" cy="308.36" r="4"/>
+<circle cx="115.67" cy="91.57" r="4"/>
+<circle cx="308.47" cy="210.93" r="4"/>
+<circle cx="84.21" cy="253.42" r="4"/>
+<circle cx="221.76" cy="69.41" r="4"/>
+<circle cx="244.77" cy="299.48" r="4"/>
+<circle cx="71.30" cy="144.40" r="4"/>
+<circle cx="305.43" cy="141.56" r="4"/>
+<circle cx="133.65" cy="302.80" r="4"/>
+<circle cx="151.52" cy="66.43" r="4"/>
+<circle cx="298.88" cy="253.92" r="4"/>
+<circle cx="62.17" cy="214.98" r="4"/>
+<circle cx="264.20" cy="83.02" r="4"/>
+<circle cx="204.02" cy="318.16" r="4"/>
+<circle cx="88.91" cy="102.89" r="4"/>
+<circle cx="320.51" cy="184.33" r="4"/>
+<circle cx="93.45" cy="281.26" r="4"/>
+<circle cx="195.97" cy="55.16" r="4"/>
+<circle cx="273.53" cy="292.44" r="4"/>
+<circle cx="54.88" cy="169.19" r="4"/>
+<circle cx="300.67" cy="112.07" r="4"/>
+<circle cx="157.25" cy="321.33" r="4"/>
+<circle cx="121.47" cy="68.82" r="4"/>
+<circle cx="319.45" cy="231.69" r="4"/>
+<circle cx="62.13" cy="245.40" r="4"/>
+<circle cx="243.53" cy="60.53" r="4"/>
+<circle cx="234.60" cy="320.69" r="4"/>
+<circle cx="64.60" cy="121.83" r="4"/>
+<circle cx="325.57" cy="153.80" r="4"/>
+<circle cx="110.49" cy="307.26" r="4"/>
+<circle cx="165.69" cy="47.56" r="4"/>
+<circle cx="301.06" cy="277.44" r="4"/>
+<circle cx="44.74" cy="199.00" r="4"/>
+<circle cx="287.87" cy="83.16" r="4"/>
+<circle cx="186.37" cy="333.98" r="4"/>
+<circle cx="91.36" cy="79.29" r="4"/>
+<circle cx="334.57" cy="203.48" r="4"/>
+<circle cx="70.14" cy="276.52" r="4"/>
+<circle cx="216.44" cy="43.00" r="4"/>
+<circle cx="266.53" cy="315.22" r="4"/>
+<circle cx="44.73" cy="147.59" r="4"/>
+<circle cx="322.73" cy="121.26" r="4"/>
+<circle cx="134.71" cy="329.36" r="4"/>
+<circle cx="132.77" cy="47.69" r="4"/>
+<circle cx="325.29" cy="254.97" r="4"/>
+<circle cx="42.12" cy="232.07" r="4"/>
+<circle cx="267.33" cy="56.95" r="4"/>
+<circle cx="219.36" cy="339.38" r="4"/>
+<circle cx="63.31" cy="97.72" r="4"/>
+<circle cx="342.76" cy="170.80" r="4"/>
+<circle cx="86.30" cy="306.22" r="4"/>
+<circle cx="184.32" cy="32.03" r="4"/>
+<circle cx="297.71" cy="301.50" r="4"/>
+<circle cx="31.02" cy="178.91" r="4"/>
+<circle cx="311.58" cy="88.81" r="4"/>
+<circle cx="164.99" cy="345.76" r="4"/>
+<circle cx="99.26" cy="56.15" r="4"/>
+<circle cx="344.30" cy="225.95" r="4"/>
+<circle cx="47.79" cy="266.42" r="4"/>
+<circle cx="239.82" cy="35.42" r="4"/>
+<circle cx="254.31" cy="336.60" r="4"/>
+<circle cx="39.38" cy="123.51" r="4"/>
+<circle cx="342.92" cy="135.50" r="4"/>
+<circle cx="110.15" cy="332.42" r="4"/>
+<circle cx="148.91" cy="28.87" r="4"/>
+<circle cx="326.01" cy="279.79" r="4"/>
+<circle cx="24.85" cy="214.17" r="4"/>
+<circle cx="292.20" cy="58.57" r="4"/>
+<circle cx="199.84" cy="354.94" r="4"/>
+<circle cx="67.28" cy="73.03" r="4"/>
+<circle cx="356.47" cy="191.78" r="4"/>
+</svg>
+      <figcaption>Sample art: 144 placed, Vogel model, golden angle 137.50776°.</figcaption>
+    </figure>
+  </div>
+  <p class="meta">Rules: <a href="../spec/06-art.md">FP-ART-01 to FP-ART-11</a> (informative in 1.0). Evidence: cited for the golden angle and Vogel's model. The SVG has a viewBox, an accessible name, no script and no external files.</p>
+</section>
+
+<section class="sec" id="platforms" aria-labelledby="h-platforms">
+  <h2 id="h-platforms">Platform anchors</h2>
+  <p>The ladder is in platform units: 1 u is 1 CSS px, 1 pt or 1 dp. Platform defaults and accessibility floors sit outside the scale and always win. In version 1.0 only the web is normative; the others are published as guidance with their anchors and floors stated.</p>
+  <div class="table-scroll" role="region" aria-label="Platform anchors, scrollable on narrow screens" tabindex="0">
+    <table>
+      <caption>Anchors by platform (spec 1.0.0-rc.2)</caption>
+      <thead>
+        <tr><th scope="col">Platform</th><th scope="col">1 u</th><th scope="col">Body</th><th scope="col">Smallest text</th><th scope="col">Target floor</th><th scope="col">Ladder target</th><th scope="col">Status in 1.0</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Web</th><td>1 CSS px</td><td>16 px (1rem)</td><td>11 px (micro)</td><td>44 coarse, 24 fine</td><td>55 coarse, 34 fine</td><td>normative</td></tr>
+        <tr><th scope="row">iOS and iPadOS</th><td>1 pt</td><td>17 pt</td><td>11 pt</td><td>44 pt</td><td>55 pt</td><td>informative</td></tr>
+        <tr><th scope="row">Android</th><td>1 dp</td><td>16 sp</td><td>11 sp</td><td>48 dp</td><td>55 dp</td><td>informative</td></tr>
+        <tr><th scope="row">macOS</th><td>1 pt</td><td>13 pt</td><td>10 pt</td><td>28 pt</td><td>34 pt</td><td>informative</td></tr>
+        <tr><th scope="row">Print</th><td>1 pt</td><td>the adopter's</td><td>the adopter's</td><td>not applicable</td><td>not applicable</td><td>informative; φ sets the type area and margins, not the sheet</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="meta">Rules: <a href="../spec/08-platforms/web.md">web</a>, <a href="../spec/08-platforms/apple.md">Apple</a>, <a href="../spec/08-platforms/android.md">Android</a>, <a href="../spec/08-platforms/print-slides-email.md">print, slides, email</a>. Evidence: convention (protocol choice), with the platforms' own documentation as basis.</p>
+</section>
+
+</div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>This page's claim, as run by <code>node tools/fp-check/fp-check.mjs showcase</code>: <strong>FP-2 · Native · u=1 · web · spec 1.0.0-rc.2 · self-assessed</strong>. It says what the machine tests covered. It does not say that this page is accessible or that its design is better.</p>
+    <p>Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 (release candidate) · MIT License · <a href="https://www.lyrikai.com">www.lyrikai.com</a> · <a href="../README.md">README</a> · <a href="../spec/index.md">Specification</a></p>
+    <p>No animation, no autoplay and no ambient loops on this page; it respects prefers-reduced-motion by having nothing to reduce.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement, btn = document.getElementById('theme');
+  if (!btn) { return; }
+  var order = ['auto', 'light', 'dark'], key = 'fp-showcase-theme';
+  function read() { try { var v = localStorage.getItem(key); return order.indexOf(v) > -1 ? v : 'auto'; } catch (e) { return 'auto'; } }
+  function apply(v) {
+    if (v === 'auto') { root.removeAttribute('data-theme'); } else { root.setAttribute('data-theme', v); }
+    btn.textContent = 'Theme: ' + v;
+    try { localStorage.setItem(key, v); } catch (e) {}
+  }
+  var cur = read();
+  apply(cur);
+  btn.hidden = false;
+  btn.addEventListener('click', function () { cur = order[(order.indexOf(cur) + 1) % order.length]; apply(cur); });
+})();
+</script>
+</body>
+</html>

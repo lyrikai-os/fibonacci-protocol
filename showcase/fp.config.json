@@ -1,0 +1,144 @@
+{
+  "fp": "1.0.0-rc.2",
+  "mode": "native",
+  "level": "FP-2",
+  "platform": "web",
+  "unit": 1,
+  "has": {
+    "motion": false,
+    "timeLimits": false,
+    "controls": true,
+    "charts": true,
+    "generatedArt": true,
+    "states": true
+  },
+  "source": [
+    "index.html"
+  ],
+  "themes": [
+    {
+      "name": "light",
+      "selector": ":root"
+    },
+    {
+      "name": "dark",
+      "selector": ":root[data-theme=\"dark\"]"
+    },
+    {
+      "name": "dark-system",
+      "media": "(prefers-color-scheme: dark)"
+    }
+  ],
+  "pairs": [
+    {
+      "fg": "--c-ink",
+      "bg": "--c-ground",
+      "kind": "text"
+    },
+    {
+      "fg": "--c-ink",
+      "bg": "--c-raised",
+      "kind": "text"
+    },
+    {
+      "fg": "--c-muted",
+      "bg": "--c-ground",
+      "kind": "text"
+    },
+    {
+      "fg": "--c-muted",
+      "bg": "--c-raised",
+      "kind": "text"
+    },
+    {
+      "fg": "--c-link",
+      "bg": "--c-ground",
+      "kind": "text"
+    },
+    {
+      "fg": "--c-link",
+      "bg": "--c-raised",
+      "kind": "text"
+    },
+    {
+      "fg": "--c-on-accent",
+      "bg": "--c-accent",
+      "kind": "text"
+    },
+    {
+      "fg": "--c-edge",
+      "bg": "--c-ground",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-edge",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-focus",
+      "bg": "--c-ground",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-focus",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-accent",
+      "bg": "--c-ground",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-accent",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-bar",
+      "bg": "--c-ground",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-art",
+      "bg": "--c-ground",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-ink",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-s-attention",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-s-active",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-s-waiting",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-s-review",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-s-blocked",
+      "bg": "--c-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--c-muted",
+      "bg": "--c-raised",
+      "kind": "mark"
+    }
+  ]
+}
