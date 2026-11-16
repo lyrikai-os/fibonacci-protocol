@@ -23,6 +23,7 @@ module.exports = {
       "377": "377px"
     },
     "borderRadius": {
+      "0": "0px",
       "2": "2px",
       "3": "3px",
       "5": "5px",
@@ -104,7 +105,8 @@ module.exports = {
       "89": "89ms",
       "144": "144ms",
       "233": "233ms",
-      "377": "377ms"
+      "377": "377ms",
+      "DEFAULT": "233ms"
     },
     "extend": {
       "zIndex": {

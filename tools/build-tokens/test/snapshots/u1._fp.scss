@@ -33,6 +33,7 @@ $fp-line-stroke-3: 3px;
 $fp-focus-gap: 2px;
 $fp-focus-ring: 3px;
 $fp-target-coarse: 55px;
+// Valid only inside the pointer query (FP-PLAT-03): (pointer: fine) and (not (any-pointer: coarse)).
 $fp-target-fine: 34px;
 $fp-target-floor-coarse: 44px;
 $fp-target-floor-fine: 24px;
@@ -76,8 +77,8 @@ $fp-math-phi-root: 1.272019649514;
 $fp-math-golden-angle-degrees: 137.507764050038;
 $fp-math-golden-angle-radians: 2.399963229729;
 $fp-math-hash-constant: 2654435769;
-$fp-split-major: 61.8;
-$fp-split-minor: 38.2;
+$fp-split-major: 1.618fr;
+$fp-split-minor: 1fr;
 
 $fp-tokens: (
   "space-1": $fp-space-1,

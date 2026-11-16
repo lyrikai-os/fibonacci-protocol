@@ -17,7 +17,7 @@ This file is the operating guide. Detail lives in the bundled files at the end. 
 |---|---|
 | `on [FP-1\|FP-2\|FP-3\|FP-4a\|FP-4b] [overlay\|snap\|native]` | Turn the protocol on for this conversation. With no arguments, print the current state. If there is no `fp.config.json`, follow "Start" below. The phrase "use Fibonacci design principles" is the same as `on`. |
 | `off` | Turn it off. Stop applying the rules. Say what was left in place (written files stay). |
-| `init` | Show a starter `fp.config.json`; write it only after the user says yes. |
+| `init` | Show a starter `fp.config.json`; write it only after the user says yes (interactive session). |
 | `check` | Run the checks; report rule IDs, `FP-OFF` and `FP-CHANGE` lines, and the result. See "Check". |
 | `explain <rule-ID>` | Print the rule's text, level, status, applies-when, test and evidence from `reference/rules.json`. |
 | `map` | Print the Snap table for the user's tokens, with merges, drift and the "what breaks" block. Changes nothing. |
@@ -33,8 +33,9 @@ After `on`, the protocol stays on for the rest of the conversation. Every design
 1. Look for `fp.config.json` at the project root. If it exists, read it and decide what to apply from it alone (FP-MODE-01). Check it against `fp.config.schema.json` if the project has it.
 2. If there is none, ask the user once, in one message, for mode (`overlay`, `snap`, `native`), level (`FP-1` or `FP-2`), platform (`web`) and unit (`1`, `4` or `8`). Proceed with the answer. Do not ask again.
 3. If you cannot ask (a non-interactive run, a pipeline), use what the request states and these defaults: unit `1`, pointer `both`, platform `web`, `type.align` `formula`. Mode and level have no default: without them, run the checks, change nothing, and report (FP-AGENT-01). Record each default you used in the report.
-4. A request to apply the protocol is consent to write a configuration that records exactly the values used. In a non-interactive run, write it and list which values were defaults. In an interactive run, `init` still shows the file first (see "Consent").
-5. You may suggest another unit, for example u = 4 for a 4-based grid. You must not apply a unit the user did not state or accept. Put the suggestion under "Suggestions".
+4. Writing the configuration depends on whether anyone can answer (FP-AGENT-01). In an interactive session, show the configuration and wait for a yes before writing it (this is what `init` does). In a non-interactive run, a request to apply the protocol is itself the consent to write a configuration that records exactly the values used; the report lists which were defaults.
+5. The file must validate against `reference/fp.config.schema.json`. The field table (every field, type, default) is in FP-MODE-02 in `reference/FP-AGENT.md`; `reference/fp.config.example.json` is a working example. Do not guess the shape.
+6. You may suggest another unit, for example u = 4 for a 4-based grid. You must not apply a unit the user did not state or accept. Put the suggestion under "Suggestions".
 
 Choosing a mode: keep an existing design system as it is, use **Overlay** (add `--fp-*` tokens and use them in a scope; change nothing else). A 4- or 8-based scale the user is willing to move: **Snap** (spacing and radius move to the nearest rung by a published table). A new or rebuilt system: **Native**. Highest level: Overlay and Snap claim FP-1 by default and FP-2 only when the scope's type is replaced (FP-MODE-09); Native claims FP-1 or FP-2.
 
@@ -55,8 +56,9 @@ Never let the ladder shrink a target, drop a body size below the anchor, or bend
 ## Consent (FP-AGENT-03, FP-AGENT-04)
 
 - A declared `snap` mode, in the configuration or in the user's request, is consent to build and apply the Snap table.
-- Ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; changing the value of any host token in Overlay, including a colour that fails a contrast floor.
-- `init` writes a file only after you have shown its full content and received a yes. Never overwrite an existing `fp.config.json` without showing the difference and getting a yes.
+- Ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; changing the value of any host token in Overlay.
+- **Floors win, the same in every mode.** A host value that fails a Guard floor (a colour pair under its contrast floor, a target under its minimum, text that cannot be resized) is changed, never left failing. Make the smallest change that meets the floor (for a colour: move its lightness, keep its hue, stop at the first value that passes) and report it as an `FP-CHANGE` line with `reason=floor`. In an interactive session in Overlay, ask before making the change. In Snap and Native, and in every non-interactive run in any mode, make it without asking and report it with `status=accepted` (FP-AGENT-03).
+- In an interactive session `init` writes a file only after you have shown its full content and received a yes. Never overwrite an existing `fp.config.json` without showing the difference and getting a yes. In a non-interactive run, a request to apply the protocol is the consent to write it (FP-AGENT-01).
 - Never wait when no one can answer (FP-AGENT-04). Apply what you have consent for, leave anything that needs a yes unchanged, record each such item as an `FP-OFF` or `FP-CHANGE` line with `status=pending`, and continue to the end. The result of such a run is `pending` (FP-CONF-07).
 - You may add `roles` entries for tokens whose role is plain from their name and use. List every one you add, with the token and the role, under the heading "Exemptions added" (FP-AGENT-12). An exemption reduces what is tested, so never add one to hide a failure.
 
@@ -72,12 +74,24 @@ Use these every time you write a length or a type size. Look the details up in `
 - **Overlay.** Keep the host system. Use protocol tokens only inside the declared `scope`. A host token that is used in the scope and is not a rung is replaced there by a protocol token, or declared once as an exception. Icons, type, breakpoints, drawn heights and micro type stay when given a role in `roles` (FP-MODE-10). Roles are declared, never inferred from a value.
 - **Snap.** Host lengths move to the nearest rung (see `map`). Type is never snapped (FP-SNAP-09).
 - **Native.** Build everything on the ladder and the type scale.
+- **Work in the adopter's files (FP-AGENT-13).** Edit the project's own source in place; the original stays in version control; make no parallel copy unless asked. Leave untested properties (`box-shadow`, `transform`, `letter-spacing`; list in FP-CONF-08) as they are. `outline-offset` and `border-width` are tested against 0, 1, 2, 3. Move lengths in inline `style` attributes into CSS where you can and list the rest in the report. Set every `has` value truthfully from what you see in the scope.
 - **Name the rules.** Name the rule IDs you applied so a person can look each one up (FP-AGENT-06).
 - **Words.** Never describe phi, Fibonacci numbers or a design that uses them as sacred, divine, perfect, magic, nature's code, a universal law, the most beautiful or scientifically proven (FP-HONEST-02). Say the design is consistent and which rules it meets (FP-AGENT-09). Invent nothing: no sources, no measurements (FP-HONEST-05).
 
+## First run: checklist
+
+When the protocol is turned on for a project for the first time, do these in order.
+
+1. Write `fp.config.json` (see "Start"), valid against `reference/fp.config.schema.json`. Validate it with `node tools/fp-check/fp-check.mjs <folder>`; a rejected configuration is exit 2 with the reason.
+2. Edit the adopter's own files in place (FP-AGENT-13). Do not write a copy.
+3. Declare every colour pair in use in `pairs` (FP-A11Y-20), each as `fg`, `bg` and `kind` (`text` or `mark`). A pair that is used and not declared is not tested.
+4. Run `node tools/fp-check/fp-check.mjs <folder>`. Fix what fails (floors first, per the decision order) and run it again. If the tool is absent, follow "Check" below and say so.
+5. Write the report with `FP-OFF` lines, `FP-CHANGE` lines and a "Suggestions" heading (see "Reports").
+6. Print the claim exactly as `fp-check` prints it, then the About line.
+
 ## Check (`check`, and before saying "done": FP-AGENT-05)
 
-1. **Run the machine tests.** If the reference checker is present (`tools/fp-check/` in the project, or an installed `fp-check`), run it as its README says, and say which tool and version ran. If it is absent, run your own script or check by hand against `reference/rules.json` (each rule with `"test": {"kind": "machine"}` names its check), and say which.
+1. **Run the machine tests.** If the reference checker is present, run `node tools/fp-check/fp-check.mjs <folder>` (add `--json` for the full report) and say which tool and version ran. Exit 0 is pass; 1 is fail or pending; 2 is not-run or an input error. Also check an installed `fp-check` if there is no `tools/fp-check/`. If it is absent, run your own script or check by hand against `reference/rules.json` (each rule with `"test": {"kind": "machine"}` names its check), and say which.
 2. **Answer the self-report items** that apply (`"kind": "self-report"`), each with evidence: a file and line, a command and its output, a screenshot, or a measured value. An answer with no evidence is `not-run`.
 3. **Mark non-applicable rules** `n/a` with a one-line reason (FP-CONF-11), from the `has` block of the configuration. Never mark `n/a` a rule whose condition is true.
 4. **State** mode, level, unit and platform, and list every exception and every `n/a` with its reason.
@@ -86,7 +100,7 @@ Use these every time you write a length or a type size. Look the details up in `
    - `pass` only when every applicable machine test passed, every applicable self-report item has evidence, and no exception is `pending` (FP-CONF-07).
    - If the machine tests were not run, the result is `not-run` and no claim may be made. Never write "provisional pass" (FP-CONF-14).
    - **Never claim a pass without evidence.** If you did not run it, say you did not.
-7. **Self-assessed.** If the reference checker did not run the machine tests, the claim ends with ` · self-assessed` and the report says what ran them (FP-CONF-04, FP-CONF-14).
+7. **Self-assessed.** If the reference checker did not run the machine tests, the claim ends with ` · self-assessed` and the report says what ran them (FP-CONF-04, FP-CONF-14). When `fp-check` ran, print the claim exactly as it prints it, character for character. Do not reword or shorten it.
 8. **State the limits** (FP-CONF-10): which rules were machine-tested, self-reported, `n/a` and `not-run`. A passing run is not proof that a product is accessible.
 
 Claim string (FP-CONF-04): `<level> · <mode> · u=<unit> · <platform> · spec <version>`. Overlay adds `scope <globs> · coverage <percent> · exceptions <count>` before the version. Example:
@@ -107,7 +121,9 @@ Report in this order: state (mode, level, unit, platform, which values were defa
 
 **Changed host values (FP-AGENT-08).** Never change a value without saying so and never present a snapped design as identical to the original. Snapped lengths go in the Snap table. Every other change, one line each:
 
-`FP-CHANGE <where> from=<old> to=<new> reason=<floor|scale|snap> rule=<ID> status=<accepted|pending>`
+`FP-CHANGE <where> from=<old> to=<new> reason=<floor|scale|snap|layout> rule=<ID> status=<accepted|pending>`
+
+Reasons: `floor`, a Guard floor required it; `scale`, a type size or line height was replaced by the protocol's; `snap`, a non-length value changed as part of Snap; `layout`, a layout rule required it (a phi split, a container limit, reflow at 320).
 
 `<where>` is a file and line, a selector or a token address. One line may cover several places when `from`, `to`, `reason` and `rule` are the same; list the places, comma-separated. Example: `FP-CHANGE tokens.css:8 from=14px to=1rem reason=floor rule=FP-A11Y-07 status=accepted`
 
@@ -138,6 +154,7 @@ When `on` runs, and at the end of every output this skill produces, the last lin
 
 - `reference/FP-AGENT.md`: the single-file protocol: every normative rule's ID and text, grouped by level; informative rules as a short list.
 - `reference/rules.json`: every rule with id, title, level, status, text, test, evidence, applies-when and source file. Used by `explain` and `check`.
+- `reference/fp.config.schema.json`: the JSON Schema for `fp.config.json`. The field table is FP-MODE-02 in `FP-AGENT.md`.
 - `reference/fp.css`: the ready `--fp-*` tokens at u = 1.
 - `reference/fp.config.example.json`: the quick-start `fp.config.json`.
 

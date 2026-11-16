@@ -257,7 +257,7 @@ test('CSS: targets, pointer query, durations, easing, layers, tone (FP-CTRL-01, 
   assert.equal(v['--fp-easing-exit'], 'cubic-bezier(0.4, 0, 1, 1)');
   assert.deepEqual([v['--fp-layer-base'], v['--fp-layer-raised'], v['--fp-layer-overlay'], v['--fp-layer-popover'], v['--fp-layer-toast']], ['1', '2', '3', '13', '21']);
   assert.deepEqual([1, 2, 3, 4, 5].map((i) => v[`--fp-tone-${i}`]), ['0.618', '0.382', '0.236', '0.146', '0.09']);
-  assert.deepEqual([v['--fp-split-major'], v['--fp-split-minor']], ['61.8', '38.2']);
+  assert.deepEqual([v['--fp-split-major'], v['--fp-split-minor']], ['1.618fr', '1fr']);
 });
 
 test('constants match the closed forms (FP-MATH-01)', () => {
@@ -297,6 +297,7 @@ test('Tailwind preset: ladder, radius, type with leading, durations, z-index, wi
   fs.rmSync(file);
   for (const n of FIB) assert.equal(theme.spacing[n], `${n}px`);
   assert.equal(theme.spacing[0], '0px');
+  assert.equal(theme.borderRadius[0], '0px');
   assert.equal(theme.borderRadius[13], '13px');
   assert.equal(theme.borderRadius.pill, '9999px');
   assert.equal(theme.borderRadius.round, '50%');
@@ -305,9 +306,36 @@ test('Tailwind preset: ladder, radius, type with leading, durations, z-index, wi
     assert.deepEqual(theme.fontSize[k], [`${px / 16}rem`, { lineHeight: String(lead) }], `fontSize ${k}`);
   }
   assert.deepEqual(theme.fontSize.micro, ['0.6875rem', { lineHeight: '1.382' }]);
-  assert.deepEqual(theme.transitionDuration, { 89: '89ms', 144: '144ms', 233: '233ms', 377: '377ms' });
+  assert.deepEqual(theme.transitionDuration, { DEFAULT: '233ms', 89: '89ms', 144: '144ms', 233: '233ms', 377: '377ms' });
   assert.equal(theme.extend.zIndex.toast, '21');
   assert.deepEqual(theme.extend.maxWidth, { 610: '610px', 987: '987px', 1597: '1597px' });
+});
+
+test('fine target is documented as pointer-query only (FP-PLAT-03)', () => {
+  assert.match(outputs(1)['_fp.scss'], /\/\/ Valid only inside the pointer query[^\n]*\n\$fp-target-fine: 34px;/);
+  const d = JSON.parse(outputs(1)['design-system-tokens.json']);
+  assert.match(d.target.tokens.find((x) => x.name === 'target-fine').usage, /only inside the pointer query/);
+});
+
+test('Tailwind u = 4 and u = 8 keep the sub-unit 1 and 2 (FP-MATH-06)', () => {
+  for (const u of [4, 8]) {
+    const file = path.join(os.tmpdir(), `fp-tw${u}-${process.pid}.cjs`);
+    fs.writeFileSync(file, outputs(u)['fp.tailwind.cjs']);
+    const { theme } = require(file);
+    fs.rmSync(file);
+    assert.equal(theme.spacing['sub-1'], '1px');
+    assert.equal(theme.spacing['sub-2'], '2px');
+    assert.equal(theme.spacing[13], `${13 * u}px`);
+  }
+});
+
+test('units outside px/rem are numbers with the unit in $extensions (FP-TOKEN-02)', () => {
+  const t = byId(tokensAt(1));
+  assert.equal(t['radius.round'].type, 'number');
+  assert.equal(t['radius.round'].ext.unit, '%');
+  assert.equal(t['split.major'].value, 1.618);
+  assert.equal(t['split.major'].ext.unit, 'fr');
+  assert.equal(t['split.minor'].value, 1);
 });
 
 test('list format values match the spec tables', () => {

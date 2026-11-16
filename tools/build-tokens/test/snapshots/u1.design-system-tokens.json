@@ -1,6 +1,6 @@
 {
   "name": "Lyrikai Fibonacci Protocol",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "color": {
     "themes": [
       {
@@ -215,7 +215,7 @@
       {
         "name": "radius-round",
         "value": "50%",
-        "usage": "Round: 50 percent, on an element of equal width and height. Written as 50%."
+        "usage": "Round: 50 percent, on an element of equal width and height. A number with its unit in $extensions, because the format has no percent dimension."
       }
     ]
   },
@@ -281,7 +281,7 @@
       {
         "name": "target-fine",
         "value": "34px",
-        "usage": "Ladder target where the pointer is fine only."
+        "usage": "Ladder target where the pointer is fine only. Valid only inside the pointer query (FP-PLAT-03); outside it the target is the coarse value."
       },
       {
         "name": "target-floor-coarse",
@@ -468,13 +468,13 @@
     "tokens": [
       {
         "name": "split-major",
-        "value": "61.8",
-        "usage": "Major part of a φ split."
+        "value": "1.618fr",
+        "usage": "Major track of a φ split: 1.618fr."
       },
       {
         "name": "split-minor",
-        "value": "38.2",
-        "usage": "Minor part of a φ split."
+        "value": "1fr",
+        "usage": "Minor track of a φ split: 1fr."
       }
     ]
   }

@@ -48,6 +48,7 @@ export function context(root) {
     version,
     url,
     rulesJson,
+    schema: readFileSync(join(root, 'spec', 'fp.config.schema.json'), 'utf8'),
     css: readFileSync(join(root, 'dist', 'fp.css'), 'utf8'),
     configExample: JSON.stringify(config, null, 2) + '\n',
     name: spec.name,
@@ -79,7 +80,7 @@ export function buildAgentMd(c) {
   L.push(
     'This file is the whole protocol for a design agent, for any LLM or tool. It is generated from `spec/rules.json`, so it matches the specification exactly. Normative rules are binding and tested: their ID, title and text are given in full. Informative rules are guidance that binds no claim in this version: they are listed at the end.',
     '',
-    `Activation: the user types \`/lyrikai-fibonacci on\` or says "use Fibonacci design principles". The agent rules (FP-AGENT-01 to FP-AGENT-12) come first; they are not part of a system's claim (FP-CONF-12). Version 1.0 claims are FP-1 or FP-2 on the web only (FP-CONF-05).`,
+    `Activation: the user types \`/lyrikai-fibonacci on\` or says "use Fibonacci design principles". The agent rules (FP-AGENT-01 to FP-AGENT-13) come first; they are not part of a system's claim (FP-CONF-12). Version 1.0 claims are FP-1 or FP-2 on the web only (FP-CONF-05).`,
     '',
     `Counts: ${norm.length} normative rules, ${info.length} informative rules, ${rules.length} in all.`,
     '',
@@ -131,11 +132,13 @@ export function generate(root) {
     [`${S}/SKILL.md`]: fill(t('SKILL.md.tpl'), c),
     [`${S}/reference/FP-AGENT.md`]: agentMd,
     [`${S}/reference/rules.json`]: c.rulesJson,
+    [`${S}/reference/fp.config.schema.json`]: c.schema,
     [`${S}/reference/fp.css`]: c.css,
     [`${S}/reference/fp.config.example.json`]: c.configExample,
     [`${A}/AGENTS.md`]: fill(t('AGENTS.md.tpl'), c),
     [`${A}/cursor/fibonacci-protocol.mdc`]: fill(t('fibonacci-protocol.mdc.tpl'), c),
     [`${A}/FP-AGENT.md`]: agentMd,
+    [`${A}/fp.config.schema.json`]: c.schema,
     [`${A}/README.md`]: fill(t('README.md.tpl'), c),
   };
 }

@@ -3,7 +3,7 @@
   "$extensions": {
     "com.lyrikai.fp": {
       "homepage": "https://www.lyrikai.com",
-      "spec": "1.0.0-rc.2",
+      "spec": "1.0.0-rc.3",
       "unit": 1
     }
   },
@@ -382,13 +382,14 @@
     "round": {
       "$type": "number",
       "$value": 50,
-      "$description": "Round: 50 percent, on an element of equal width and height. Written as 50%.",
+      "$description": "Round: 50 percent, on an element of equal width and height. A number with its unit in $extensions, because the format has no percent dimension.",
       "$extensions": {
         "com.lyrikai.fp": {
           "rule": "FP-RADIUS-03",
           "level": "FP-1",
           "status": "normative",
-          "evidence": "convention"
+          "evidence": "convention",
+          "unit": "%"
         }
       }
     }
@@ -498,7 +499,7 @@
         "value": 34,
         "unit": "px"
       },
-      "$description": "Ladder target where the pointer is fine only.",
+      "$description": "Ladder target where the pointer is fine only. Valid only inside the pointer query (FP-PLAT-03); outside it the target is the coarse value.",
       "$extensions": {
         "com.lyrikai.fp": {
           "rule": "FP-CTRL-01",
@@ -1141,28 +1142,30 @@
   },
   "split": {
     "$type": "number",
-    "$description": "The φ split, in percent: written 1.618fr 1fr in CSS.",
+    "$description": "The φ split as grid tracks: 1.618fr and 1fr. Numbers with the unit in $extensions, because the format has no fr dimension.",
     "major": {
-      "$value": 61.8,
-      "$description": "Major part of a φ split.",
+      "$value": 1.618,
+      "$description": "Major track of a φ split: 1.618fr.",
       "$extensions": {
         "com.lyrikai.fp": {
           "rule": "FP-LAYOUT-01",
           "level": "FP-2",
           "status": "normative",
-          "evidence": "convention"
+          "evidence": "convention",
+          "unit": "fr"
         }
       }
     },
     "minor": {
-      "$value": 38.2,
-      "$description": "Minor part of a φ split.",
+      "$value": 1,
+      "$description": "Minor track of a φ split: 1fr.",
       "$extensions": {
         "com.lyrikai.fp": {
           "rule": "FP-LAYOUT-01",
           "level": "FP-2",
           "status": "normative",
-          "evidence": "convention"
+          "evidence": "convention",
+          "unit": "fr"
         }
       }
     }

@@ -1,6 +1,6 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: AGENTS.md
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 Copy this file into a project's `AGENTS.md` (or merge it), or place it in the global location your tool reads (see [README.md](README.md)). It is for Codex and other tools that read `AGENTS.md`.
 
@@ -16,17 +16,18 @@ Otherwise do not apply it, and do not suggest it unprompted beyond one line.
 
 ## What to do
 
-1. If a skill named `lyrikai-fibonacci` is installed, use it. It has the six verbs (`on`, `off`, `init`, `check`, `explain <rule-ID>`, `map`) and works offline.
-2. If not, read [FP-AGENT.md](FP-AGENT.md) (every normative rule with its ID, grouped by level) and follow it. Start with FP-AGENT-01 to FP-AGENT-12.
-3. Read `fp.config.json` first. If there is none, ask the user once for mode (overlay, snap, native), level (FP-1 or FP-2), platform (web) and unit (1, 4 or 8). If no one can answer, use unit 1, pointer `both`, platform `web`, `type.align` `formula`; with no mode and level, run the checks, change nothing and report.
+1. If a skill named `lyrikai-fibonacci` is installed, use it. It has the six verbs (`on`, `off`, `init`, `check`, `explain <rule-ID>`, `map`) and works offline. In this repository it is the folder `skills/lyrikai-fibonacci/` (its guide is `skills/lyrikai-fibonacci/SKILL.md`). To install it, copy that folder to `.agents/skills/` in a project or `~/.agents/skills/` for all projects (Codex), or `.claude/skills/` or `~/.claude/skills/` (Claude Code), or `.cursor/skills/` (Cursor).
+2. If not, read [FP-AGENT.md](FP-AGENT.md) (every normative rule with its ID, grouped by level) and follow it. Start with FP-AGENT-01 to FP-AGENT-13.
+3. Read `fp.config.json` first. If there is none, ask the user once for mode (overlay, snap, native), level (FP-1 or FP-2), platform (web) and unit (1, 4 or 8). If no one can answer, use what the request states and unit 1, pointer `both`, platform `web`, `type.align` `formula`; with no mode and level, run the checks, change nothing and report. The file must validate against `skills/lyrikai-fibonacci/reference/fp.config.schema.json` (also `fp.config.schema.json` beside this file); its field table is rule FP-MODE-02 in [FP-AGENT.md](FP-AGENT.md); a working example is `skills/lyrikai-fibonacci/reference/fp.config.example.json`. Do not guess the shape.
 4. Decide in this order, first match wins: accessibility floors; data honesty; the platform anchor; the host's mode and tokens; the ladder or type scale by role; phi for proportion; report what could not be kept.
-5. Ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; changing a host token's value in Overlay. Write `fp.config.json` only after showing it and getting a yes, except in a run where no one can answer (then record `pending` items and continue).
+5. Ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; changing a host token's value in Overlay. Writing `fp.config.json`: in an interactive session, show it and wait for a yes; in a non-interactive run, a request to apply the protocol is itself the consent to write it, recording exactly the values used and listing which were defaults. Floors win in every mode: a host value that fails a Guard floor is changed to the smallest value that passes and reported as `FP-CHANGE ... reason=floor`; ask first only in an interactive Overlay session; in Snap and Native, and in every non-interactive run, make it and report `status=accepted` (FP-AGENT-03). Anything else that needs a yes in a non-interactive run is left unchanged and recorded as `pending`; continue to the end (FP-AGENT-04).
 6. Lengths come from the ladder: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377 (times the unit), plus container widths 610, 987, 1597. Use the `--fp-*` tokens in `skills/lyrikai-fibonacci/reference/fp.css`. Type sizes come from the type scale, never the ladder.
-7. Before saying "done": run the reference checker if it is installed (otherwise your own script or by hand, and say which); report mode, level, unit, platform; list every `FP-OFF` and `FP-CHANGE` line, every exception and every `n/a`; put recommendations under "Suggestions"; name the rule IDs applied; state `pass`, `fail`, `pending` or `not-run`. Without the reference checker the claim ends in `self-assessed`. Never claim a pass without evidence.
-8. Never say a design is better, more beautiful or more harmonious because it uses phi or Fibonacci numbers.
+7. Before saying "done": run the reference checker if it is installed (otherwise your own script or by hand, and say which); report mode, level, unit, platform; list every `FP-OFF` and `FP-CHANGE` line, every exception and every `n/a`; put recommendations under "Suggestions"; name the rule IDs applied; state `pass`, `fail`, `pending` or `not-run`. Without the reference checker the claim ends in `self-assessed`. Never claim a pass without evidence. The reference checker is `node tools/fp-check/fp-check.mjs <folder>`; print the claim exactly as it prints it.
+8. Edit the adopter's own files in place; make no parallel copy (FP-AGENT-13). Declare every colour pair in use in `pairs` (FP-A11Y-20). `FP-CHANGE` reasons are `floor`, `scale`, `snap` or `layout`.
+9. Never say a design is better, more beautiful or more harmonious because it uses phi or Fibonacci numbers.
 
 End protocol output with this line:
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.2 · MIT License · https://www.lyrikai.com
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.3 · MIT License · https://www.lyrikai.com
 
-MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.2. https://www.lyrikai.com
+MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.3. https://www.lyrikai.com

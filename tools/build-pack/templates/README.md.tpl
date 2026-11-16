@@ -11,6 +11,7 @@ The agent pack makes a design agent follow the Fibonacci Protocol when asked. Ev
 | `skills/lyrikai-fibonacci/` (in the repository root) | Any tool that reads Agent Skills (a folder with `SKILL.md`): Claude Code, Codex, Cursor. The one switch: `/lyrikai-fibonacci on`. |
 | `AGENTS.md` | Tools that read `AGENTS.md`: Codex, Cursor and others. |
 | `cursor/fibonacci-protocol.mdc` | A Cursor project rule (not always on). |
+| `fp.config.schema.json` | The JSON Schema for `fp.config.json`. Keep it beside `AGENTS.md` and `FP-AGENT.md`. |
 | `FP-AGENT.md` | The whole protocol for an agent in one file. Works in any LLM tool: attach or paste it. |
 
 Activation, in any tool: type `/lyrikai-fibonacci on` or say "use Fibonacci design principles". Turn it off with `/lyrikai-fibonacci off`. Without the skill, ask the agent to read `FP-AGENT.md` and follow it.

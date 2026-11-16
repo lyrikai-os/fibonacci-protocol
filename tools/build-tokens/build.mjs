@@ -189,7 +189,6 @@ const isType = (t) => t.path[0] === 'type';
 /** CSS text of a token value. Type sizes are rem (FP-TOKEN-09); other px stay px. */
 export function cssValue(t) {
   const v = t.value;
-  if (t.id === 'radius.round') return `${num(v)}%`;
   switch (t.type) {
     case 'dimension':
       if (v.unit === 'px' && isType(t)) return `${num(v.value / REM_BASE)}rem`;
@@ -199,7 +198,7 @@ export function cssValue(t) {
     case 'cubicBezier':
       return `cubic-bezier(${v.map(num).join(', ')})`;
     case 'number':
-      return num(v);
+      return `${num(v)}${t.ext.unit ?? ''}`;
     default:
       throw new Error(`cannot write ${t.id} of type ${t.type}`);
   }
@@ -240,7 +239,10 @@ export function buildCss(tokens, { u = 1 } = {}) {
 
 export function buildScss(tokens, { u = 1 } = {}) {
   const lines = [...banner('//', u), ''];
-  for (const t of tokens) lines.push(`$fp-${slug(t)}: ${cssValue(t)};`);
+  for (const t of tokens) {
+    if (t.id === 'target.fine') lines.push('// Valid only inside the pointer query (FP-PLAT-03): (pointer: fine) and (not (any-pointer: coarse)).');
+    lines.push(`$fp-${slug(t)}: ${cssValue(t)};`);
+  }
   lines.push('', '$fp-tokens: (');
   tokens.forEach((t, i) => lines.push(`  "${slug(t)}": $fp-${slug(t)}${i === tokens.length - 1 ? '' : ','}`));
   lines.push(');', '');
@@ -254,10 +256,11 @@ export function buildTailwind(tokens, { u = 1 } = {}) {
   const lead = Object.fromEntries(tokens.filter((t) => t.path[0] === 'leading').map((t) => [t.path[1], num(t.value)]));
   const preset = {
     theme: {
-      spacing: { 0: '0px', ...group('space', cssValue) },
-      borderRadius: group('radius', cssValue),
+      // Below u only the sub-unit values 1 and 2 are on the ladder (FP-MATH-06); keep them when u is not 1.
+      spacing: { 0: '0px', ...(u === 1 ? {} : { 'sub-1': '1px', 'sub-2': '2px' }), ...group('space', cssValue) },
+      borderRadius: { 0: '0px', ...group('radius', cssValue) },
       fontSize: group('type', (t) => [cssValue(t), { lineHeight: lead[LEADING_FOR_STEP[t.path[1]]] }]),
-      transitionDuration: group('duration', cssValue),
+      transitionDuration: { DEFAULT: cssValue(tokens.find((t) => t.id === 'duration.233')), ...group('duration', cssValue) },
       extend: {
         zIndex: group('layer', (t) => String(t.value)),
         maxWidth: group('container', cssValue),

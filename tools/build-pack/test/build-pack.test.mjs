@@ -107,3 +107,58 @@ test('generated files are up to date (re-run equals committed)', () => {
 test('generation is deterministic', () => {
   assert.deepEqual(generate(root), generate(root));
 });
+
+test('the config schema is bundled in the skill and the pack, and each entry point names it', () => {
+  const src = read('spec/fp.config.schema.json');
+  assert.equal(read(`${SKILL}/reference/fp.config.schema.json`), src);
+  assert.equal(read('agent-pack/fp.config.schema.json'), src);
+  for (const rel of [`${SKILL}/SKILL.md`, 'agent-pack/AGENTS.md', 'agent-pack/cursor/fibonacci-protocol.mdc']) {
+    const s = read(rel);
+    assert.ok(s.includes('fp.config.schema.json'), `${rel} names the schema`);
+    assert.ok(s.includes('FP-MODE-02'), `${rel} points to the FP-MODE-02 field table`);
+  }
+  const md = read(`${SKILL}/reference/FP-AGENT.md`);
+  assert.ok(md.includes('| Field | Type | Required |'), 'FP-AGENT.md carries the field table');
+});
+
+test('AGENTS.md gives the skill path and the install paths', () => {
+  const s = read('agent-pack/AGENTS.md');
+  assert.ok(s.includes('skills/lyrikai-fibonacci/'));
+  for (const p of ['.agents/skills/', '~/.agents/skills/', '.claude/skills/', '.cursor/skills/']) {
+    assert.ok(s.includes(p), p);
+  }
+});
+
+test('consent wording for non-interactive runs matches FP-AGENT-01 and FP-AGENT-03 in every entry point', () => {
+  for (const rel of [`${SKILL}/SKILL.md`, 'agent-pack/AGENTS.md', 'agent-pack/cursor/fibonacci-protocol.mdc']) {
+    const s = read(rel).replace(/\s+/g, ' ');
+    assert.match(s, /non-interactive[^.]*a request to apply the protocol is (itself )?the consent to write/i, `${rel}: config consent`);
+    assert.match(s, /reason=floor/, `${rel}: floor reason`);
+    assert.match(s, /status=accepted/, `${rel}: floor accepted`);
+    assert.match(s, /smallest/, `${rel}: smallest change`);
+    assert.ok(!/write `?fp\.config\.json`? only after showing it and getting a yes\b(?! in an interactive)/i.test(s), `${rel}: old unconditional wording`);
+  }
+  // the source rules still say what the pack says
+  const r = (id) => c.spec.rules.find((x) => x.id === id).text;
+  assert.match(r('FP-AGENT-01'), /non-interactive run, a request to apply the protocol is itself the consent to write/);
+  assert.match(r('FP-AGENT-03'), /every non-interactive run in any mode, it makes the change without asking/);
+});
+
+test('FP-CHANGE reasons in the pack match FP-AGENT-08 and include layout', () => {
+  assert.match(c.spec.rules.find((x) => x.id === 'FP-AGENT-08').text, /floor\|scale\|snap\|layout/);
+  for (const rel of [`${SKILL}/SKILL.md`, 'agent-pack/cursor/fibonacci-protocol.mdc']) {
+    assert.ok(read(rel).includes('floor|scale|snap|layout'), rel);
+  }
+});
+
+test('SKILL.md has the first-run checklist', () => {
+  const s = read(`${SKILL}/SKILL.md`);
+  const i = s.indexOf('## First run: checklist');
+  assert.ok(i > 0);
+  const sec = s.slice(i, s.indexOf('\n## ', i + 5));
+  for (const t of ['fp.config.json', 'in place', 'FP-A11Y-20', 'node tools/fp-check/fp-check.mjs <folder>', 'FP-OFF', 'FP-CHANGE', 'Suggestions', 'exactly as `fp-check` prints it']) {
+    assert.ok(sec.includes(t), `first run lacks ${t}`);
+  }
+  assert.ok(s.includes('FP-AGENT-13'));
+  assert.ok(s.split('\n').length < 350);
+});

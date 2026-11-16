@@ -1,6 +1,6 @@
 {
   "name": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "license": "MIT",
   "homepage": "https://www.lyrikai.com",
   "rules": [
@@ -182,7 +182,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table below is part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.2`).",
+      "text": "The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.3`).\n\n| Field | Type | Required | Values and default |\n|---|---|---|---|\n| `fp` | string | yes | The spec version, in full. |\n| `mode` | string | yes | `overlay`, `snap` or `native`. |\n| `level` | string | yes | `FP-1` or `FP-2` in version 1.0. |\n| `platform` | string | yes | `web` in version 1.0. (`ios`, `macos` and `android` are reserved for 1.1; print, slides and email are not platforms for a claim.) |\n| `unit` | integer | no | `1`, `4` or `8`. Default `1`. |\n| `pointer` | string | no | `fine`, `coarse` or `both`. Default `both`. `fine` declares a product used only with a mouse or trackpad, and needs a `pointerReason`. |\n| `pointerReason` | string | when `pointer` is `fine` | Why no touch or coarse pointer is supported. |\n| `type.body` | number | no | Body size in platform units. Default: the platform anchor (16 on the web). |\n| `type.align` | string | no | `formula` or `fibonacci`. Default `formula`. |\n| `has` | object | yes | Six true-or-false facts about what is inside the scope: `motion`, `timeLimits`, `controls`, `charts`, `generatedArt`, `states`. They decide which rules are `n/a` (FP-CONF-11). Only `motion` and `controls` are checked against the source by machine; the other four are the adopter's own statement. |\n| `source` | array of globs | yes | Every file the product ships that holds lengths. |\n| `scope` | array of globs | no | The files the claim covers. Default: the same as `source`. |\n| `themes` | array | no | Each: `name`, and where the theme's colour values are found: `selector` (for example `[data-theme=\"dark\"]`), `media` (for example `(prefers-color-scheme: dark)`) or `files` (globs). Default: one unnamed theme read from `:root`. Every theme the product ships MUST be listed, and every pair is tested in every theme. |\n| `pairs` | array | yes | Each: `fg`, `bg` (token addresses or hex colours) and `kind`: `text`, `large-text` or `mark`. Every pair in use in the scope is listed (FP-A11Y-20). |\n| `roles` | array | no | Each: `match` (a token address or glob) and `role`: `icon`, `type`, `breakpoint`, `target`, `drawn` or `micro` (FP-MODE-10). Used in every mode. |\n| `controls` | array of strings | no | Class selectors of interactive elements that are not interactive by their element name or ARIA role, for example `.btn` or `.nav-item` (FP-SNAP-11). |\n| `snap.source` | array of globs | yes in Snap | The files that hold the host's tokens as they are now, after snapping. The original values are kept in the Snap table, which is the record of what changed. |\n| `snap.table` | string | no | Path of the published Snap table. Default `fp-snap.md`. |\n| `snap.overrides` | array | no | Each: `token`, `to` (a rung of the declared unit, or a value of the radius set) and `reason`. |\n| `exceptions` | array | no | Each: `value`, `where`, `reason`, `rule`, `status`; plus `source` when the reason is `data`. `reason` is `floor`, `host-token`, `data`, `content`, `platform` or `snap-drift`. `status` is `accepted` or `pending`. `where` is a file and line, a selector, or a token address; a token address covers every use of that token. |\n\n**Token addresses.** A token is addressed either by its CSS custom property name, starting with `--` (`--color-ink`), or by its path in a tokens file, with dots (`color.ink`). A glob uses `*` only, which matches any run of characters (`--icon-*`, `icon.*`). A file glob uses `*` and `**` as in common build tools.",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -262,7 +262,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "Inside the declared scope, every checked declaration (the list is in [03-conformance.md](03-conformance.md)) MUST resolve, after following `var()` references, to a value that is on the ladder, in its fixed set (FP-MATH-07), intrinsic, derived (FP-SPACE-04) or a declared exception. It does not matter whether the value arrives through a protocol token, a host token or a literal: what is tested is the resolved value. A host token whose value is not a rung fails inside the scope unless it has a role that exempts it (FP-MODE-10) or is declared as an exception with the reason `host-token`.",
+      "text": "Inside the declared scope, every checked declaration (the list is in [03-conformance.md](03-conformance.md)) MUST resolve, after following `var()` references, to a value that is on the ladder, in its fixed set (FP-MATH-07), intrinsic, derived (FP-SPACE-04) or a declared exception. It does not matter whether the value arrives through a protocol token, a host token or a literal: what is tested is the resolved value. A host token whose value is not a rung fails inside the scope unless it has a role that exempts it (FP-MODE-10) or is declared as an exception with the reason `host-token`. This rule sets what is read and how it is resolved; each off-ladder value is reported once, under the rule that owns its kind (FP-SPACE-01 for layout lengths, FP-RADIUS-01 for radii, FP-MATH-07 for strokes), never also under this one.",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -326,7 +326,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. At u = 1 the nearest rung meets the limit for every whole value from 2 up to 1.25 times the top rung (1996); the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).",
+      "text": "Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. This is the only definition of the limit: there is no separate range rule. A value above the top rung has the top rung as its nearest and is tested the same way. At u = 1 the worst case among whole values from 2 to the top rung is 4 → 5, at exactly 25%. The limit does not apply to `target` tokens (FP-SNAP-04).",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -342,7 +342,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "A value whose nearest rung drifts more than 25%, or that lies above 1.25 times the top rung, MUST NOT be snapped. It is kept unchanged and listed as an exception with the reason `snap-drift` (FP-SPACE-05).",
+      "text": "A value whose nearest rung drifts more than 25% MUST NOT be snapped. It is kept unchanged and listed as an exception with the reason `snap-drift` (FP-SPACE-05).",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -378,7 +378,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "A token or literal that sets the `height`, `min-height`, `block-size` or `min-block-size` of an interactive element (a button, a link, an input, a select, a textarea, or an element with an interactive role) MUST have the `target` or the `drawn` role, and MUST NOT end smaller than it began. A checker flags such a declaration that has neither role. Without this, nearest-rung mapping would turn a 44 control into 34.",
+      "text": "A token or literal that sets the `height`, `min-height`, `block-size` or `min-block-size` of an interactive element (a button, a link, an input, a select, a textarea, or an element with an interactive role) MUST have the `target` or the `drawn` role, and MUST NOT end smaller than it began. Interactive elements are recognised by element name and ARIA role in the selector, and by the class selectors listed in `controls` in the configuration (for example `.btn`); a class is never guessed to be interactive from its name. A checker flags such a declaration that has neither role. Without this, nearest-rung mapping would turn a 44 control into 34.",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -410,7 +410,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. A checker for version 1.0 does not read the published table: publishing it is a self-report item, and a Snap claim is valid only when the table is published.",
+      "text": "When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. Where the published table exists at `snap.table`, a checker reads each token's original value from its first four columns (token, role, original, snapped) and computes drift and merges from those originals, so that tokens already snapped in the source are still shown with where they came from. Where the table does not exist, a checker takes the values in `snap.source` as the originals. Publishing the table is a self-report item, and a Snap claim is valid only when the table is published.",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -602,7 +602,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example \"no charts\", \"platform is web\", \"mode is overlay\"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role=\"button\"]`, `:focus`, `:focus-visible` or `:hover`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement.",
+      "text": "Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example \"no charts\", \"platform is web\", \"mode is overlay\"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role=\"button\"]`, `:focus`, `:focus-visible` or `:hover`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement, which MUST be honest: `has.states` is true wherever the scope shows status of any kind (badges, alerts, validation messages, progress, online or offline marks).",
       "file": "spec/03-conformance.md"
     },
     {
@@ -666,7 +666,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML files, named by `source` and `scope`; and token files in the protocol's format. It does not read CSS-in-JS, preprocessor source or inline `style` attributes; compile those to CSS first, or report them as `not-run`. It MUST expand shorthands, follow `var()` references within the source to a resolved value, and accept `calc()` only in the two derived patterns (FP-SPACE-04). It MUST classify each value before testing it:\n\n- **Layout lengths** (tested against the ladder at the declared u): `margin`, `padding`, `gap`, `inset`, `width`, `height`, `inline-size`, `block-size`, their `min-` and `max-` forms, and every longhand and logical form of these (`margin-inline`, `padding-block-start`, `row-gap`, `top`, `inset-inline-end` and so on).\n- **Fine detail** (tested against fixed sets in platform units, whatever u is): `border-radius` and its longhands against the radius set; `border-width`, `outline-width` and `outline-offset` against 0, 1, 2 and 3.\n- **Type** (`font-size`, `line-height`): tested by FP-TYPE rules at FP-2 and up, never as lengths. A checker does not compute the cascade: it tests a `line-height` against the `font-size` declared in the same rule (FP-TYPE-13).\n- **Not tested in version 1.0:** `box-shadow`, `transform`, `background-position`, `letter-spacing`, SVG geometry, and everything else.",
+      "text": "A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML files, named by `source` and `scope`; and token files in the protocol's format. It does not read CSS-in-JS, preprocessor source or inline `style` attributes. Compile the first two to CSS first, or report them as `not-run`. Lengths in inline `style` attributes are a self-report item: the report lists them with their values, or states that the scope has none. It MUST expand shorthands, follow `var()` references within the source to a resolved value, and accept `calc()` only in the two derived patterns (FP-SPACE-04). It MUST classify each value before testing it:\n\n- **Layout lengths** (tested against the ladder at the declared u): `margin`, `padding`, `gap`, `inset`, `width`, `height`, `inline-size`, `block-size`, their `min-` and `max-` forms, and every longhand and logical form of these (`margin-inline`, `padding-block-start`, `row-gap`, `top`, `inset-inline-end` and so on).\n- **Fine detail** (tested against fixed sets in platform units, whatever u is): `border-radius` and its longhands against the radius set; `border-width`, `outline-width` and `outline-offset` against 0, 1, 2 and 3.\n- **Type** (`font-size`, `line-height`): tested by FP-TYPE rules at FP-2 and up, never as lengths. A checker does not compute the cascade: it tests a `line-height` against the `font-size` declared in the same rule (FP-TYPE-13).\n- **Not tested in version 1.0:** `box-shadow`, `transform`, `background-position`, `letter-spacing`, SVG geometry, and everything else.",
       "file": "spec/03-conformance.md"
     },
     {
@@ -731,7 +731,7 @@
         "label": "cited",
         "url": "https://www.w3.org/TR/WCAG22/"
       },
-      "text": "Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. Where a host colour fails, the floor wins: the change is reported (FP-AGENT-08) and, in Overlay, needs the user's consent.",
+      "text": "Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. Where a host colour fails, the floor wins in every mode: the colour is changed by the smallest amount that passes, and the change is reported. Who is asked first, and when, is set once in FP-AGENT-03.",
       "file": "spec/04-accessibility.md"
     },
     {
@@ -764,7 +764,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "The `pairs` list MUST name every combination of text colour and background, and of control edge or meaningful mark and adjacent colour, that the scope uses. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.",
+      "text": "The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.",
       "file": "spec/04-accessibility.md"
     },
     {
@@ -1356,7 +1356,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "To reach FP-2, each host type size in the scope is replaced by a step. The role fixes or bounds the step, and the ratio chooses within the bound. Body text (paragraphs, and the default text of the page) becomes step 0, whatever its old size. The value typed into an input becomes step 0. Every other text maps to the usable step (FP-TYPE-02) nearest in ratio (the smallest |ln(size ÷ step)|), a tie going to the larger step, and then: a control label (button, link, tab, field label) is raised to step −1 if it fell below it; a heading keeps the step the ratio gives, which may be step 0 or −1 for a small heading. No text maps below step −1 unless it is non-interactive metadata, which MAY become micro. Host line heights are replaced by the leading of FP-TYPE-07. The mapping MUST be listed in the report, one row per host size.",
+      "text": "To reach FP-2, each host type size in the scope is replaced by a step. The role fixes or bounds the step, and the ratio chooses within the bound. Body text (paragraphs, and the default text of the page) becomes step 0, whatever its old size. The value typed into an input becomes step 0. Every other text maps to the usable step (FP-TYPE-02) nearest in ratio (the smallest |ln(size ÷ step)|), a tie going to the larger step, and then: a control label (button, link, tab, field label) is raised to step −1 if it fell below it; a heading keeps the step the ratio gives, which may be step 0 or −1 for a small heading. No text maps below step −1 unless it is non-interactive metadata, which MAY become micro. Host line heights are replaced by the leading of FP-TYPE-07. Only a CSS rule that sets `font-size` is mapped; an element that inherits its size (a table cell, a link inside navigation) follows whatever it inherits from and is not listed. The mapping MUST be listed in the report, one row per host size.",
       "file": "spec/05-ui/type.md"
     },
     {
@@ -1465,7 +1465,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices. Where an output format requires a font family or a weight for each type token (the list-shaped `tokens.json`), the protocol's files carry the placeholders `inherit` and `400`. They mean \"the adopter's choice\" and are not recommendations.",
+      "text": "The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices. Where an output format requires a font family or a weight for each type token (the list-shaped `design-system-tokens.json`), the protocol's files carry the placeholders `inherit` and `400`. They mean \"the adopter's choice\" and are not recommendations.",
       "file": "spec/05-ui/type.md"
     },
     {
@@ -1481,7 +1481,7 @@
       "evidence": {
         "label": "convention"
       },
-      "text": "A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested. A split is declared by writing the custom property `--fp-layout: phi-split` in the same CSS rule as its `grid-template-columns`; nothing else (a ratio that happens to be near φ, a class name) makes a split \"declared\". A declared split MUST have exactly two tracks whose ratio is 61.8 to 38.2 within 0.1, in either order: `1.618fr 1fr`, `61.8% 38.2%`, or the tokens `--fp-split-major` and `--fp-split-minor`. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.",
+      "text": "A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested. A split is declared by writing the custom property `--fp-layout: phi-split` in the same CSS rule as its `grid-template-columns`; nothing else (a ratio that happens to be near φ, a class name) makes a split \"declared\". A declared split MUST have exactly two tracks whose ratio is 61.8 to 38.2 within 0.1, in either order: `1.618fr 1fr`, `61.8% 38.2%`, or the tokens `--fp-split-major` (`1.618fr`) and `--fp-split-minor` (`1fr`), as in `grid-template-columns: var(--fp-split-major) var(--fp-split-minor)`. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.",
       "file": "spec/05-ui/layout.md"
     },
     {
@@ -2675,7 +2675,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "A declared `snap` mode, in the configuration or in the user's request, is the user's consent to build and apply the Snap table. An agent MUST ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; and changing the value of any host token in Overlay, including a colour that fails a contrast floor.",
+      "text": "A declared `snap` mode, in the configuration or in the user's request, is the user's consent to build and apply the Snap table. An agent MUST ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; and changing the value of any host token in Overlay.\n\nA host value that fails a Guard floor (a colour pair under its contrast floor, a target under its minimum, text that cannot be resized) is the one case with its own rule, the same in every mode. The floor wins: the value is changed, never left failing. The agent makes the smallest change that meets the floor (for a colour: move its lightness, keep its hue, stop at the first value that passes) and reports it as an `FP-CHANGE` line with `reason=floor`. In an interactive session in Overlay, the agent asks before making the change. In Snap and Native, and in every non-interactive run in any mode, it makes the change without asking and reports it with `status=accepted`.",
       "file": "spec/09-agent-protocol.md"
     },
     {
@@ -2707,7 +2707,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "When no one is available to answer, an agent MUST NOT wait. It applies what it has consent for, leaves anything that needs a yes unchanged, records each such item as an `FP-OFF` or `FP-CHANGE` line with `status=pending`, and continues to the end. The result of such a run is `pending` (FP-CONF-07).",
+      "text": "When no one is available to answer, an agent MUST NOT wait. It applies what it has consent for, makes the floor changes FP-AGENT-03 allows, leaves anything else that needs a yes unchanged, records each such item as an `FP-OFF` or `FP-CHANGE` line with `status=pending`, and continues to the end. The result of such a run is `pending` (FP-CONF-07).",
       "file": "spec/09-agent-protocol.md"
     },
     {
@@ -2771,7 +2771,23 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "An agent MUST NOT change a value without saying so, and MUST NOT present a snapped design as identical to the original. Snapped lengths are reported in the Snap table (FP-SNAP-08). Every other change to something the host had (a body size raised to the anchor, a colour changed to meet a contrast floor, a type size replaced by a step) MUST be reported on one line in this form:\n\n`FP-CHANGE <where> from=<old> to=<new> reason=<floor|scale|snap> rule=<ID> status=<accepted|pending>`\n\n`<where>` is a file and line, a selector or a token address. One line MAY cover several places when `from`, `to`, `reason` and `rule` are the same for all of them: the places are listed, separated by commas.",
+      "text": "An agent MUST NOT change a value without saying so, and MUST NOT present a snapped design as identical to the original. Snapped lengths are reported in the Snap table (FP-SNAP-08). Every other change to something the host had (a body size raised to the anchor, a colour changed to meet a contrast floor, a type size replaced by a step) MUST be reported on one line in this form:\n\n`FP-CHANGE <where> from=<old> to=<new> reason=<floor|scale|snap|layout> rule=<ID> status=<accepted|pending>`\n\nThe reasons: `floor`, a Guard floor required it; `scale`, a type size or line height was replaced by the protocol's; `snap`, a non-length value changed as part of Snap; `layout`, a layout rule required it (a φ split, a container limit, reflow at 320).\n\n`<where>` is a file and line, a selector or a token address. One line MAY cover several places when `from`, `to`, `reason` and `rule` are the same for all of them: the places are listed, separated by commas.",
+      "file": "spec/09-agent-protocol.md"
+    },
+    {
+      "id": "FP-AGENT-13",
+      "title": "Work in the adopter's files",
+      "level": "Agent",
+      "status": "normative",
+      "appliesWhen": "always",
+      "test": {
+        "kind": "self-report",
+        "check": "agent.in-place"
+      },
+      "evidence": {
+        "label": "convention (protocol choice)"
+      },
+      "text": "An agent writes its changes into the adopter's own source files, in place; the original stays in version control, and no parallel copy is made unless the user asks for one. A property the checker does not test (`box-shadow`, `transform`, `letter-spacing`; the list is in FP-CONF-08) is left as it is. `outline-offset` and `border-width` are tested, against 0, 1, 2 and 3. Lengths in inline `style` attributes are outside a checker's reach: the agent moves them into CSS where it can and lists the rest in the report. The agent sets every `has` value truthfully, from what it sees in the scope.",
       "file": "spec/09-agent-protocol.md"
     },
     {
@@ -2958,7 +2974,7 @@
         "label": "cited",
         "url": "https://www.designtokens.org/tr/2025.10/"
       },
-      "text": "A length is a `dimension` with the value `{ \"value\": <number>, \"unit\": \"px\" }` or `\"rem\"`. A time is a `duration` with `{ \"value\": <number>, \"unit\": \"ms\" }` or `\"s\"`. A colour is a colour object with `colorSpace` and `components`. Ratios, opacities and layer values are `number`. Easing is `cubicBezier`.",
+      "text": "A length is a `dimension` with the value `{ \"value\": <number>, \"unit\": \"px\" }` or `\"rem\"`. A time is a `duration` with `{ \"value\": <number>, \"unit\": \"ms\" }` or `\"s\"`. A colour is a colour object with `colorSpace` and `components`. Ratios, opacities and layer values are `number`. Easing is `cubicBezier`. The format's `dimension` has only px and rem, so a value in another unit is a `number` whose unit is recorded in `$extensions[\"com.lyrikai.fp\"].unit`: the round radius is 50 with unit `\"%\"`, and the split tracks are 1.618 and 1 with unit `\"fr\"`. The generators write the unit back (`50%`, `1.618fr`).",
       "file": "spec/tokens.md"
     },
     {
@@ -3059,7 +3075,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "From the master, the protocol's generators MUST produce: CSS custom properties (FP-PLAT-02), SCSS variables, a Tailwind preset, and a list-shaped `tokens.json` for design-system tools. Each output is covered by a snapshot test. This rule binds the protocol's own repository; an adopter generates only what it uses.",
+      "text": "From the master, the protocol's generators MUST produce: CSS custom properties (FP-PLAT-02), SCSS variables, a Tailwind preset, and a list-shaped file for design-system tools, named `design-system-tokens.json`. Each output is covered by a snapshot test. This rule binds the protocol's own repository; an adopter generates only what it uses.",
       "file": "spec/tokens.md"
     },
     {
