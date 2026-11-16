@@ -1,0 +1,1 @@
+{ "open": ["FP-RADIUS-02"], "why": { "FP-RADIUS-02": "The pill action sits inside a radius-13 card with 21 padding; whether the nested corners meet the SHOULD was not judged." } }

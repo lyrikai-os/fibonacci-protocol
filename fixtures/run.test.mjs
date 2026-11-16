@@ -27,12 +27,20 @@ test('there are three fixtures, one per mode', () => {
 });
 
 for (const name of fixtures) {
-  test(`${name}: fp-check passes (exit 0)`, () => {
+  test(`${name}: fp-check passes (exit 0); valid, or a candidate with exactly the committed open items`, () => {
     const { status, report, stderr } = run(path.join(here, name));
     const failing = report ? report.rules.filter((x) => x.result === 'fail' || x.result === 'pending').map((x) => x.id) : [];
     assert.equal(status, 0, `exit ${status}; failing rules: ${failing.join(', ')}; ${stderr}`);
     assert.equal(report.result, 'pass');
-    assert.match(report.claim, /self-assessed$/);
+    if (report.claimState === 'valid') {
+      assert.match(report.claim, /^FP-/);
+    } else {
+      assert.equal(report.claimState, 'candidate');
+      const expectedFile = path.join(here, name, 'expected-open.json');
+      assert.ok(fs.existsSync(expectedFile), 'a candidate needs expected-open.json');
+      const expected = JSON.parse(fs.readFileSync(expectedFile, 'utf8')).open;
+      assert.deepEqual([...report.openItems].sort(), [...expected].sort());
+    }
   });
 
   const faultsDir = path.join(here, name, 'faults');

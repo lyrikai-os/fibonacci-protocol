@@ -1,0 +1,59 @@
+/* Small component CSS on Primer tokens (snapped) and Fibonacci Protocol type tokens (FP-2, u = 4). */
+body {
+  margin: 0;
+  background: var(--bgColor-default);
+  color: var(--fgColor-default);
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-body);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap-normal);
+  padding: var(--stack-padding-normal);
+}
+
+.card {
+  background: var(--bgColor-muted);
+  border: 1px solid var(--borderColor-default);
+  border-radius: var(--fp-radius-8);
+  padding: 16px var(--base-size-24);
+  max-inline-size: 66ch;
+}
+
+.card-title {
+  margin: 0 0 var(--base-size-8);
+  font-size: var(--fp-type-1);
+  line-height: var(--fp-leading-heading);
+}
+
+.card-meta {
+  margin: 0;
+  color: var(--fgColor-muted);
+  font-size: var(--fp-type-n1);
+  line-height: var(--fp-leading-small);
+}
+
+.btn {
+  box-sizing: border-box;
+  min-block-size: var(--control-medium-size);
+  padding: 0 var(--control-medium-paddingInline-normal);
+  border: 1px solid var(--borderColor-emphasis);
+  border-radius: var(--fp-radius-8);
+  background: var(--bgColor-default);
+  color: var(--fgColor-default);
+  font-size: var(--fp-type-0);
+  line-height: var(--fp-leading-small);
+}
+
+.btn-primary {
+  background: var(--bgColor-accent-emphasis);
+  border-color: var(--bgColor-accent-emphasis);
+  color: var(--fgColor-onEmphasis);
+}
+
+.btn:focus-visible {
+  outline: var(--fp-focus-ring) solid var(--bgColor-accent-emphasis);
+  outline-offset: var(--fp-focus-gap);
+}

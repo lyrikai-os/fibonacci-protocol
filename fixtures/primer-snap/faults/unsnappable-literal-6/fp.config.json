@@ -1,31 +1,91 @@
 {
-  "fp": "1.0.0-rc.3",
+  "fp": "1.0.0-rc.4",
   "mode": "snap",
   "level": "FP-2",
   "platform": "web",
   "unit": 4,
-  "has": { "motion": false, "timeLimits": false, "controls": true, "charts": false, "generatedArt": false, "states": false },
-  "source": ["tokens/*.css", "src/*.css"],
+  "has": {
+    "motion": false,
+    "timeLimits": false,
+    "controls": true,
+    "charts": false,
+    "generatedArt": false,
+    "states": false
+  },
+  "source": [
+    "tokens/*.css",
+    "src/*.css"
+  ],
   "themes": [
-    { "name": "light", "selector": ":root" },
-    { "name": "dark", "selector": "[data-theme=\"dark\"]" }
+    {
+      "name": "light",
+      "selector": ":root"
+    },
+    {
+      "name": "dark",
+      "selector": "[data-theme=\"dark\"]"
+    }
   ],
   "pairs": [
-    { "fg": "--fgColor-default", "bg": "--bgColor-default", "kind": "text" },
-    { "fg": "--fgColor-default", "bg": "--bgColor-muted", "kind": "text" },
-    { "fg": "--fgColor-muted", "bg": "--bgColor-muted", "kind": "text" },
-    { "fg": "--fgColor-onEmphasis", "bg": "--bgColor-accent-emphasis", "kind": "text" },
-    { "fg": "--borderColor-emphasis", "bg": "--bgColor-default", "kind": "mark" }
+    {
+      "fg": "--fgColor-default",
+      "bg": "--bgColor-default",
+      "kind": "text"
+    },
+    {
+      "fg": "--fgColor-default",
+      "bg": "--bgColor-muted",
+      "kind": "text"
+    },
+    {
+      "fg": "--fgColor-muted",
+      "bg": "--bgColor-muted",
+      "kind": "text"
+    },
+    {
+      "fg": "--fgColor-onEmphasis",
+      "bg": "--bgColor-accent-emphasis",
+      "kind": "text"
+    },
+    {
+      "fg": "--borderColor-emphasis",
+      "bg": "--bgColor-default",
+      "kind": "mark"
+    },
+    {
+      "fg": "--fgColor-muted",
+      "bg": "--bgColor-default",
+      "kind": "text"
+    },
+    {
+      "fg": "--bgColor-accent-emphasis",
+      "bg": "--bgColor-default",
+      "kind": "mark"
+    }
   ],
-  "controls": [".btn"],
+  "controls": [
+    ".btn"
+  ],
   "roles": [
-    { "match": "--control-*-size", "role": "target" }
+    {
+      "match": "--control-*-size",
+      "role": "target"
+    }
   ],
   "snap": {
-    "source": ["tokens/primer-size.css", "tokens/primer-functional.css"],
+    "source": [
+      "tokens/primer-size.css",
+      "tokens/primer-functional.css"
+    ],
     "table": "fp-snap.md"
   },
   "exceptions": [
-    { "value": "6px", "where": "--base-size-6", "reason": "snap-drift", "rule": "FP-SNAP-10", "status": "accepted" }
+    {
+      "value": "6px",
+      "where": "--base-size-6",
+      "reason": "snap-drift",
+      "rule": "FP-SNAP-10",
+      "status": "accepted"
+    }
   ]
 }

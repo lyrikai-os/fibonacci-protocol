@@ -1,0 +1,117 @@
+{
+  "$schema": "../../spec/fp-evidence.schema.json",
+  "fp": "1.0.0-rc.4",
+  "adopter": "fixture author",
+  "items": {
+    "FP-MATH-04": {
+      "result": "pass",
+      "evidence": "Read src/fp-card/card.css: lengths come from --fp-*; type sizes stay the host's (--md-sys-typescale-*); there is no duration and no data quantity.",
+      "by": "fixture author"
+    },
+    "FP-MODE-03": {
+      "result": "pass",
+      "evidence": "host/md-sys.css and host/host-components.css hold the host's tokens and components with their Material values (copied from @material/web 2.5.0, see SOURCE.md) and were not changed to add the protocol; the --fp-* tokens are added beside them in tokens/fp.css.",
+      "by": "fixture author"
+    },
+    "FP-MODE-07": {
+      "result": "pass",
+      "evidence": "Only the allowed kind of change was made: protocol tokens added in one scoped component. The ladder, the type scale, the floors and the state grammar are untouched; the host's colours and type are kept; fp-check passes a11y.contrast.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-16": {
+      "result": "pass",
+      "evidence": "No exception with reason floor is needed: fp-check passes every contrast pair in light and dark, and the measured action target is 55px high, above the 24px floor.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-20": {
+      "result": "pass",
+      "evidence": "Colour tokens used in src/fp-card/card.css, each matched to its declared pair: on-surface on surface-container (card text and title); on-surface-variant on surface-container (meta); on-primary on primary (action label); outline on surface-container (card edge, mark); primary on surface-container (action fill and focus ring, mark). fp-check passes all pairs in light and dark.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-03": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on material-overlay/preview.html: root font size 200%: scrollWidth 320 at the 320px viewport, no element past the viewport, no clipped box; the action grows from 80.9px to 119.8px wide.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-04": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on material-overlay/preview.html: with line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em and paragraph margin 2em forced: scrollWidth 320, no clipped box. The scoped CSS sets min-block-size only, no fixed height.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-05": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on material-overlay/preview.html: the action button is 80.9px wide and 55px high, above 24px.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-06": {
+      "result": "pass",
+      "evidence": "pointer is not declared (default both). The action uses var(--fp-target), 55px at the coarse base; the 34px fine value exists only inside @media (pointer: fine) and (not (any-pointer: coarse)) in tokens/fp.css.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-19": {
+      "result": "n/a",
+      "evidence": "The scope has no toast, notice or saved indicator: it is one card with a title, text and an action.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-12": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on material-overlay/preview.html: after pressing Tab, the action matches :focus-visible with outline 3px solid rgb(103, 80, 164) at offset 2px. The ring colour and its ground are the declared mark pair primary on surface-container, which passes in both themes. Material's primary is kept as the ring (Overlay may keep a host indicator).",
+      "by": "fixture author"
+    },
+    "FP-A11Y-17": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on material-overlay/preview.html: no element is position fixed or sticky; elementFromPoint at the centre of the action returns the action.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-13": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on material-overlay/preview.html: scrollWidth 320 and body scrollWidth 320 at a 320px viewport, with the host toolbar and the card both on the page; no element extends past the viewport.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-14": {
+      "result": "pass",
+      "evidence": "The scope shows no status, error or selection state; its one action is identified by its word (Action) and a filled shape (read from preview.html and card.css).",
+      "by": "fixture author"
+    },
+    "FP-SPACE-03": {
+      "result": "pass",
+      "evidence": "Values in src/fp-card/card.css were chosen by role, not rounded from a host number: card padding 21, card gap 13, card radius 13, action inline padding 21, hairline 1 (roles as in the protocol's space-and-radius guidance).",
+      "by": "fixture author"
+    },
+    "FP-LINE-02": {
+      "result": "pass",
+      "evidence": "The card edge (outline on surface-container) is a declared mark pair and passes (3.96 light, 5.144 dark in fp-check); the action is identified by its fill, primary on surface-container, a declared mark pair that passes.",
+      "by": "fixture author"
+    },
+    "FP-CTRL-01": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on material-overlay/preview.html: the action uses --fp-target and measures 55px high at the coarse base.",
+      "by": "fixture author"
+    },
+    "FP-CTRL-02": {
+      "result": "pass",
+      "evidence": "The scope has one control and no neighbour, so no hit areas overlap; its drawn height is its 55px hit area (card.css).",
+      "by": "fixture author"
+    },
+    "FP-CTRL-03": {
+      "result": "pass",
+      "evidence": "No mark, glyph or chip acts as a control; the only interactive part is the action button (preview.html).",
+      "by": "fixture author"
+    },
+    "FP-CTRL-04": {
+      "result": "n/a",
+      "evidence": "The host's components in host/ have no controls; the one control in the scope is protocol-owned and governed by FP-CTRL-01.",
+      "by": "fixture author"
+    },
+    "FP-HONEST-03": {
+      "result": "pass",
+      "evidence": "Searched the fixture folder (outside the licence text) for Parthenon, Mona Lisa, pleasing, wired and universal: no claim of the kind the rule forbids.",
+      "by": "fixture author"
+    },
+    "FP-HONEST-05": {
+      "result": "pass",
+      "evidence": "preview.html opens with 'Demonstration content: sample text, no real data.'; the CSS shows no content.",
+      "by": "fixture author"
+    }
+  }
+}

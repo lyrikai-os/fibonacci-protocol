@@ -1,0 +1,132 @@
+{
+  "$schema": "../../spec/fp-evidence.schema.json",
+  "fp": "1.0.0-rc.4",
+  "adopter": "fixture author",
+  "items": {
+    "FP-MATH-04": {
+      "result": "pass",
+      "evidence": "Read src/*.css: type sizes come from --fp-type-*, the one transition uses --fp-duration-144 and the loop is 5s (neither taken from the length ladder), and there is no data-encoding quantity.",
+      "by": "fixture author"
+    },
+    "FP-MODE-07": {
+      "result": "pass",
+      "evidence": "Every change from the template is listed in DERIVED.md; none changes the ladder, the type-scale formula or a floor, and the rule that a state has a form and a word is kept (see FP-A11Y-14).",
+      "by": "fixture author"
+    },
+    "FP-A11Y-16": {
+      "result": "pass",
+      "evidence": "No exception with reason floor is needed. fp-check passes every contrast pair in both themes, body is 16px and labels 13px (measured), and the hit area is 55px against the 44 and 24 floors.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-20": {
+      "result": "pass",
+      "evidence": "Colour slots used in src/*.css, each matched to its declared pair: ink and muted on ground, surface and raised (body, card, labels, stamp); control on ground, surface and raised (button edge); on-accent on accent and ink on accent-ground (filled and hover button); accent on ground (filled button fill, mark); focus on ground and surface (ring); st-working and st-needs-you on surface (chip words and marks). fp-check passes all 16 pairs in light and dark.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-03": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: root font size 200% at the 320px viewport: scrollWidth 320 and no clipped box, after adding overflow-wrap: anywhere to .display (before that fix the 136px display word gave scrollWidth 429).",
+      "by": "fixture author"
+    },
+    "FP-A11Y-04": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: with line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em and paragraph margin 2em forced: scrollWidth 320, no clipped box. The CSS sets min-block-size only, no fixed height on a text box.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-05": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: the pause button is 167.7px by 34px drawn with a 55px hit area, above 24px.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-06": {
+      "result": "pass",
+      "evidence": "pointer is not declared (default both); the controls use var(--fp-target) via the 55px hit area, and the 34px fine value exists only inside @media (pointer: fine) and (not (any-pointer: coarse)) in tokens/fp.css.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-09": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: the breathing mark runs 5s infinite (computed animation breathe 5s infinite); the visible 'Pause motion' button sets data-motion=paused and the computed animation-play-state changes from running to paused (clicked in the page), and clicking again restores it.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-10": {
+      "result": "pass",
+      "evidence": "Read src/motion.css: under @media (prefers-reduced-motion: reduce) the loop has animation: none and the button transition is none. Read from the CSS only; the media feature was not switched on in the browser.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-11": {
+      "result": "pass",
+      "evidence": "Read src/motion.css: the only loop changes opacity between 0.382 and 1 over a 5s half-cycle, far under three changes per second.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-19": {
+      "result": "n/a",
+      "evidence": "The scope has no toast, notice or saved indicator; the status chips are static text inside cards.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-12": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: after pressing Tab, the pause button matches :focus-visible with outline 3px solid rgb(30, 90, 168) at offset 2px, in the focus slot, which is not a status colour. The ring and its grounds are the declared mark pairs focus on ground and on surface, which pass in both themes.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-17": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: no element is position fixed or sticky; elementFromPoint at the centre of the button returns the button.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-13": {
+      "result": "fail",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: scrollWidth 320 and body scrollWidth 320 at a 320px viewport; the console is one column below 987px and no element extends past the viewport.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-14": {
+      "result": "pass",
+      "evidence": "States shown in index.html: Working = a plain filled mark that breathes, with the word 'Working'; Needs you = a filled mark with a 2px ring (computed outline solid, no animation), with the word 'Needs you'. Each has a form and a word besides colour. Both control states (hover, focus) change fill or add a ring, not colour alone.",
+      "by": "fixture author"
+    },
+    "FP-SPACE-03": {
+      "result": "pass",
+      "evidence": "Values were taken by role from the template's role table (card padding 21 and 13, gap 8, chip gap 5, section gap 89, page top 55, control drawn height 34), not rounded from a remembered number; see DERIVED.md.",
+      "by": "fixture author"
+    },
+    "FP-LINE-02": {
+      "result": "pass",
+      "evidence": "The button edge (control on ground) is a declared mark pair that passes in fp-check; the filled button is identified by its fill, accent on ground, also a declared mark pair that passes.",
+      "by": "fixture author"
+    },
+    "FP-TYPE-06": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: computed font size of .btn and .label is 13px (--fp-type-n1), at the 13px floor.",
+      "by": "fixture author"
+    },
+    "FP-LAYOUT-02": {
+      "result": "pass",
+      "evidence": "Equal-weight cards use repeat(auto-fit, minmax(233px, 1fr)) (src/layout.css .cards); the only split is the declared phi split on .console, whose two parts are main and detail (read from layout.css and index.html).",
+      "by": "fixture author"
+    },
+    "FP-CTRL-01": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: the ::after hit area of the button computes to min-block-size 55px and min-inline-size 55px (width 165.68px); the drawn height is 34px.",
+      "by": "fixture author"
+    },
+    "FP-CTRL-02": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on native/index.html: drawn height 34px, hit area 55px: elementFromPoint 10px above and 10px below the drawn box returns the button, 16px above does not. The page has one control, so no neighbouring hit areas overlap.",
+      "by": "fixture author"
+    },
+    "FP-CTRL-03": {
+      "result": "pass",
+      "evidence": "The status chips are spans, not controls (index.html); no mark or glyph acts as a control.",
+      "by": "fixture author"
+    },
+    "FP-HONEST-03": {
+      "result": "pass",
+      "evidence": "Searched the fixture folder (outside the licence text) for Parthenon, Mona Lisa, pleasing and universal: no claim of the kind the rule forbids.",
+      "by": "fixture author"
+    },
+    "FP-HONEST-05": {
+      "result": "pass",
+      "evidence": "index.html says 'Demonstration content, sample text only.' in the first paragraph and writes its one unknown count as [n]; the CSS shows no content.",
+      "by": "fixture author"
+    }
+  }
+}

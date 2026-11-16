@@ -1,0 +1,9 @@
+{
+  "fixture": "native",
+  "fault": "evidence-answered-fail",
+  "about": "The self-report answer for reflow at 320 (FP-A11Y-13) is changed to fail in fp-evidence.json.",
+  "exit": 1,
+  "mustFail": [
+    "FP-CONF-06"
+  ]
+}

@@ -1,20 +1,60 @@
 {
-  "fp": "1.0.0-rc.3",
+  "fp": "1.0.0-rc.4",
   "mode": "overlay",
   "level": "FP-1",
   "platform": "web",
   "unit": 1,
-  "has": { "motion": false, "timeLimits": false, "controls": true, "charts": false, "generatedArt": false, "states": false },
-  "source": ["host/*.css", "src/**/*.css", "tokens/fp.css"],
-  "scope": ["src/fp-card/*.css"],
+  "has": {
+    "motion": false,
+    "timeLimits": false,
+    "controls": true,
+    "charts": false,
+    "generatedArt": false,
+    "states": false
+  },
+  "source": [
+    "host/*.css",
+    "src/**/*.css",
+    "tokens/fp.css"
+  ],
+  "scope": [
+    "src/fp-card/*.css"
+  ],
   "themes": [
-    { "name": "light", "selector": ":root" },
-    { "name": "dark", "selector": "[data-theme=\"dark\"]" }
+    {
+      "name": "light",
+      "selector": ":root"
+    },
+    {
+      "name": "dark",
+      "selector": "[data-theme=\"dark\"]"
+    }
   ],
   "pairs": [
-    { "fg": "--md-sys-color-on-surface", "bg": "--md-sys-color-surface-container", "kind": "text" },
-    { "fg": "--md-sys-color-on-surface-variant", "bg": "--md-sys-color-surface-container", "kind": "text" },
-    { "fg": "--md-sys-color-on-primary", "bg": "--md-sys-color-primary", "kind": "text" },
-    { "fg": "--md-sys-color-outline", "bg": "--md-sys-color-surface-container", "kind": "mark" }
+    {
+      "fg": "--md-sys-color-on-surface",
+      "bg": "--md-sys-color-surface-container",
+      "kind": "text"
+    },
+    {
+      "fg": "--md-sys-color-on-surface-variant",
+      "bg": "--md-sys-color-surface-container",
+      "kind": "text"
+    },
+    {
+      "fg": "--md-sys-color-on-primary",
+      "bg": "--md-sys-color-primary",
+      "kind": "text"
+    },
+    {
+      "fg": "--md-sys-color-outline",
+      "bg": "--md-sys-color-surface-container",
+      "kind": "mark"
+    },
+    {
+      "fg": "--md-sys-color-primary",
+      "bg": "--md-sys-color-surface-container",
+      "kind": "mark"
+    }
   ]
 }

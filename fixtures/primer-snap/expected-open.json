@@ -1,0 +1,1 @@
+{ "open": ["FP-TYPE-12"], "why": { "FP-TYPE-12": "Needs a listed mapping of Primer type sizes to protocol steps; the fixture scope holds only protocol type tokens and no mapping was written." } }

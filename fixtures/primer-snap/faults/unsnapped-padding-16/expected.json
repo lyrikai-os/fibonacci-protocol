@@ -1,0 +1,9 @@
+{
+  "fixture": "primer-snap",
+  "fault": "unsnapped-padding-16",
+  "about": "A bare 16px padding left in the scope: after Snap it must be on a u = 4 rung, and 16 is on none (20 is).",
+  "exit": 1,
+  "mustFail": [
+    "FP-SPACE-01"
+  ]
+}

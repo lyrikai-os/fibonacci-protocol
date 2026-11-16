@@ -1,0 +1,119 @@
+.display {
+  margin: 0;
+  font-size: var(--fp-type-6);
+  line-height: var(--fp-leading-display);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fp-type-3);
+  line-height: var(--fp-leading-heading);
+  font-weight: 600;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--fp-type-1);
+  line-height: var(--fp-leading-heading);
+  font-weight: 600;
+}
+
+.label {
+  margin: 0;
+  color: var(--slot-muted);
+  font-size: var(--fp-type-n1);
+  line-height: var(--fp-leading-small);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+/* Micro: non-interactive metadata only (FP-TYPE-05). */
+.stamp {
+  margin: 0;
+  color: var(--slot-muted);
+  font-size: var(--fp-type-micro);
+  line-height: var(--fp-leading-small);
+}
+
+.card {
+  padding: var(--fp-space-21) var(--fp-space-21) var(--fp-space-13);
+  border: var(--fp-line-hairline) solid var(--slot-control);
+  border-radius: var(--fp-radius-13);
+  background: var(--slot-surface);
+  display: flex;
+  flex-direction: column;
+  gap: var(--fp-space-8);
+}
+
+/* Button: 34 drawn inside a 55 hit area (FP-CTRL-01, FP-CTRL-02). */
+.btn {
+  position: relative;
+  box-sizing: border-box;
+  min-block-size: var(--fp-space-34);
+  padding: 0 var(--fp-space-21);
+  border: var(--fp-line-hairline) solid var(--slot-control);
+  border-radius: var(--fp-radius-pill);
+  background: transparent;
+  color: var(--slot-ink);
+  font-size: var(--fp-type-n1);
+  line-height: var(--fp-leading-small);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  transition: background-color var(--fp-duration-144) var(--fp-easing-standard);
+}
+
+.btn::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block: 50%;
+  min-inline-size: var(--fp-target);
+  min-block-size: var(--fp-target);
+  translate: 0 -50%;
+}
+
+.btn-filled {
+  background: var(--slot-accent);
+  border-color: var(--slot-accent);
+  color: var(--slot-on-accent);
+}
+
+.btn:hover {
+  background: var(--slot-accent-ground);
+  color: var(--slot-ink);
+}
+
+.btn:focus-visible {
+  outline: var(--fp-focus-ring) solid var(--slot-focus);
+  outline-offset: var(--fp-focus-gap);
+}
+
+/* Status chip: a form (the mark) and a word; colour only backs them up (FP-A11Y-14). */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fp-space-5);
+  min-block-size: var(--fp-space-21);
+  padding: 0 var(--fp-space-8);
+  border-radius: var(--fp-radius-pill);
+  font-size: var(--fp-type-n1);
+  line-height: var(--fp-leading-small);
+}
+
+.chip-mark {
+  inline-size: var(--fp-space-5);
+  block-size: var(--fp-space-5);
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chip-working { color: var(--slot-st-working); }
+.chip-needs-you { color: var(--slot-st-needs-you); }
+
+/* Needs you: a filled mark with a ring; Working: a plain filled mark that breathes (form first, hue second). */
+.chip-needs-you .chip-mark {
+  outline: var(--fp-line-stroke-2) solid currentColor;
+  outline-offset: var(--fp-line-stroke-2);
+}

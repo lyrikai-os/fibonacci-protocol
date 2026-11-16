@@ -1,0 +1,132 @@
+{
+  "$schema": "../../spec/fp-evidence.schema.json",
+  "fp": "1.0.0-rc.4",
+  "adopter": "fixture author",
+  "items": {
+    "FP-MATH-04": {
+      "result": "pass",
+      "evidence": "Read src/components.css and tokens/: type sizes come from --fp-type-* (rem), there is no duration and no data-encoding quantity; the ladder is used for space, size and radius only.",
+      "by": "fixture author"
+    },
+    "FP-SNAP-08": {
+      "result": "pass",
+      "evidence": "fp-snap.md has one row for each of the 25 tokens in snap.source and one row for each of the 2 in-scope literals (1px borders), with name, role, original, snapped, drift, merged group and override reason (none), and a 'What breaks' block with all six required topics: additive spacing, 4-unit baseline, half device pixels, icons, hierarchy lost in merges, visual-regression snapshots.",
+      "by": "fixture author"
+    },
+    "FP-MODE-07": {
+      "result": "pass",
+      "evidence": "Changes are the Snap mapping listed in fp-snap.md (token values moved to u = 4 rungs, controls raised to the 52 target). The ladder, the type-scale formula and the contrast floors are unchanged; fp-check passes type.scale, a11y.contrast and a11y.body-anchor. Colour values are Primer's own, verbatim.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-16": {
+      "result": "pass",
+      "evidence": "No exception with reason floor is needed: fp-check passes every contrast pair in both themes, body is 16px, labels are 16px, and the measured targets (52px high) are above the 24px and 44px floors; no Snap mapping moved a target down.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-20": {
+      "result": "pass",
+      "evidence": "Colour tokens used in src/components.css, each matched to its declared pair: fgColor-default on bgColor-default and on bgColor-muted (body, card text, secondary button); fgColor-muted on bgColor-muted and on bgColor-default (card-meta); fgColor-onEmphasis on bgColor-accent-emphasis (primary button); borderColor-emphasis on bgColor-default (secondary button edge, mark); bgColor-accent-emphasis on bgColor-default (focus ring and primary fill, mark). borderColor-default on the card is a decorative hairline and is not declared. fp-check passes all pairs in light and dark.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-03": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on primer-snap/preview.html: root font size set to 200%: scrollWidth 320 at the 320px viewport, no element wider than the viewport, no element with scrollHeight over clientHeight under non-visible overflow, both buttons still fully visible (160px wide, 104px high).",
+      "by": "fixture author"
+    },
+    "FP-A11Y-04": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on primer-snap/preview.html: with line-height 1.5, letter-spacing 0.12em, word-spacing 0.16em and paragraph margin 2em forced on every element: scrollWidth 320, no clipped box. The CSS in scope sets no fixed height, only min-block-size.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-05": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on primer-snap/preview.html: both buttons are 240px wide and 52px high, above the 24px minimum.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-06": {
+      "result": "pass",
+      "evidence": "pointer is not declared (default both). The control sizes are tokens set to 52px (the u = 4 coarse ladder target); the only fine-pointer value in the source is --fp-target: 32px inside @media (pointer: fine) and (not (any-pointer: coarse)) in tokens/fp.css, which the components do not use.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-19": {
+      "result": "n/a",
+      "evidence": "The scope has no toast, notice or saved indicator: its markup is one card and two buttons.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-12": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on primer-snap/preview.html: after pressing Tab, the primary button matches :focus-visible with outline 3px solid rgb(9, 105, 218) at offset 2px (gap 2, ring 3). The ring colour and its ground are the declared mark pair bgColor-accent-emphasis on bgColor-default, which passes in both themes. Primer's own accent is kept as the ring (Snap may keep a host indicator).",
+      "by": "fixture author"
+    },
+    "FP-A11Y-17": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on primer-snap/preview.html: no element is position fixed or sticky; elementFromPoint at the centre of each control returns the control. The CSS in scope has no fixed or sticky position.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-13": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on primer-snap/preview.html: scrollWidth 320 and body scrollWidth 320 at a 320px viewport; no element extends past the viewport.",
+      "by": "fixture author"
+    },
+    "FP-A11Y-14": {
+      "result": "pass",
+      "evidence": "The scope shows no status, error or selection state. The two buttons are told apart by their words (Primary, Secondary) and by fill against outline, not by colour alone (read from preview.html and src/components.css).",
+      "by": "fixture author"
+    },
+    "FP-RADIUS-02": {
+      "result": "pass",
+      "evidence": "No rounded element sits inside another rounded element's padding: the card (radius 8) holds text only; the buttons (radius 8) are siblings of the card in the stack (read from preview.html).",
+      "by": "fixture author"
+    },
+    "FP-LINE-02": {
+      "result": "pass",
+      "evidence": "The secondary button edge (borderColor-emphasis) on bgColor-default is a declared mark pair and passes (3.568 dark; light value passes) in fp-check; the primary button is identified by its fill, bgColor-accent-emphasis on bgColor-default, also a declared mark pair that passes.",
+      "by": "fixture author"
+    },
+    "FP-TYPE-06": {
+      "result": "pass",
+      "evidence": "Button labels use --fp-type-0 (1rem, 16px), above the 13px floor; fp-check passes type.scale and a11y.min-text.",
+      "by": "fixture author"
+    },
+    "FP-LAYOUT-02": {
+      "result": "pass",
+      "evidence": "The scope declares no grid and no phi split (no grid-template-columns in src/components.css); fp-check layout.phi-split passes with nothing declared.",
+      "by": "fixture author"
+    },
+    "FP-LAYOUT-07": {
+      "result": "pass",
+      "evidence": "Primer's breakpoints are untouched: neither src/ nor tokens/primer-*.css contains a width media query; the only @media in the source is the pointer query in tokens/fp.css.",
+      "by": "fixture author"
+    },
+    "FP-CTRL-01": {
+      "result": "pass",
+      "evidence": "Measured in the Browser pane (headless Chromium, 320 by 700 viewport) on primer-snap/preview.html: both buttons are 52px high; the target tokens (--control-small-size, --control-medium-size, --control-large-size) are 3.25rem = 52px, the u = 4 coarse ladder target, raised from 28, 32 and 40 (fp-snap.md).",
+      "by": "fixture author"
+    },
+    "FP-CTRL-02": {
+      "result": "pass",
+      "evidence": "Buttons have no separate drawn height: the drawn height is the 52px target. They stack with --stack-gap-normal = 20px between them, so hit areas do not overlap (src/components.css, tokens/primer-functional.css).",
+      "by": "fixture author"
+    },
+    "FP-CTRL-03": {
+      "result": "pass",
+      "evidence": "No mark, glyph or chip acts as a control in the scope; the only interactive parts are two buttons (preview.html).",
+      "by": "fixture author"
+    },
+    "FP-CTRL-04": {
+      "result": "n/a",
+      "evidence": "Every control in the scope takes the target role (--control-*-size) and is governed by FP-CTRL-01; there is no host control without it.",
+      "by": "fixture author"
+    },
+    "FP-HONEST-03": {
+      "result": "pass",
+      "evidence": "Searched the fixture folder (outside the Primer and licence texts) for Parthenon, Mona Lisa, pleasing, wired and universal: no claim of the kind the rule forbids.",
+      "by": "fixture author"
+    },
+    "FP-HONEST-05": {
+      "result": "pass",
+      "evidence": "preview.html opens with 'Demonstration content: sample text, no real data.' and writes its one unknown count as [n]. The CSS shows no content.",
+      "by": "fixture author"
+    }
+  }
+}

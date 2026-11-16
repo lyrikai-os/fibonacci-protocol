@@ -3,6 +3,7 @@
   font-size: var(--fp-type-6);
   line-height: var(--fp-leading-display);
   font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 .title {
@@ -44,12 +45,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--fp-space-8);
-}
-
-.card-inner {
-  padding: var(--fp-space-8);
-  border-radius: var(--fp-radius-5);
-  background: var(--slot-raised);
 }
 
 /* Button: 34 drawn inside a 55 hit area (FP-CTRL-01, FP-CTRL-02). */
@@ -116,3 +111,9 @@
 
 .chip-working { color: var(--slot-st-working); }
 .chip-needs-you { color: var(--slot-st-needs-you); }
+
+/* Needs you: a filled mark with a ring; Working: a plain filled mark that breathes (form first, hue second). */
+.chip-needs-you .chip-mark {
+  outline: var(--fp-line-stroke-2) solid currentColor;
+  outline-offset: var(--fp-line-stroke-2);
+}

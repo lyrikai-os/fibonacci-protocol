@@ -1,31 +1,115 @@
 {
-  "fp": "1.0.0-rc.3",
+  "fp": "1.0.0-rc.4",
   "mode": "native",
   "level": "FP-2",
   "platform": "web",
   "unit": 1,
-  "has": { "motion": false, "timeLimits": false, "controls": true, "charts": false, "generatedArt": false, "states": true },
-  "type": { "body": 16, "align": "formula" },
-  "source": ["tokens/fp.css", "src/*.css"],
+  "has": {
+    "motion": false,
+    "timeLimits": false,
+    "controls": true,
+    "charts": false,
+    "generatedArt": false,
+    "states": true
+  },
+  "type": {
+    "body": 16,
+    "align": "formula"
+  },
+  "source": [
+    "tokens/fp.css",
+    "src/*.css"
+  ],
   "themes": [
-    { "name": "light", "selector": ":root" },
-    { "name": "dark", "selector": "[data-theme=\"dark\"]" }
+    {
+      "name": "light",
+      "selector": ":root"
+    },
+    {
+      "name": "dark",
+      "selector": "[data-theme=\"dark\"]"
+    }
   ],
   "pairs": [
-    { "fg": "--slot-ink", "bg": "--slot-ground", "kind": "text" },
-    { "fg": "--slot-ink", "bg": "--slot-surface", "kind": "text" },
-    { "fg": "--slot-ink", "bg": "--slot-raised", "kind": "text" },
-    { "fg": "--slot-muted", "bg": "--slot-ground", "kind": "text" },
-    { "fg": "--slot-muted", "bg": "--slot-surface", "kind": "text" },
-    { "fg": "--slot-muted", "bg": "--slot-raised", "kind": "text" },
-    { "fg": "--slot-control", "bg": "--slot-ground", "kind": "mark" },
-    { "fg": "--slot-control", "bg": "--slot-surface", "kind": "mark" },
-    { "fg": "--slot-control", "bg": "--slot-raised", "kind": "mark" },
-    { "fg": "--slot-on-accent", "bg": "--slot-accent", "kind": "text" },
-    { "fg": "--slot-ink", "bg": "--slot-accent-ground", "kind": "text" },
-    { "fg": "--slot-focus", "bg": "--slot-ground", "kind": "mark" },
-    { "fg": "--slot-focus", "bg": "--slot-surface", "kind": "mark" },
-    { "fg": "--slot-st-working", "bg": "--slot-surface", "kind": "text" },
-    { "fg": "--slot-st-needs-you", "bg": "--slot-surface", "kind": "text" }
+    {
+      "fg": "--slot-ink",
+      "bg": "--slot-ground",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-ink",
+      "bg": "--slot-surface",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-ink",
+      "bg": "--slot-raised",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-muted",
+      "bg": "--slot-ground",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-muted",
+      "bg": "--slot-surface",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-muted",
+      "bg": "--slot-raised",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-control",
+      "bg": "--slot-ground",
+      "kind": "mark"
+    },
+    {
+      "fg": "--slot-control",
+      "bg": "--slot-surface",
+      "kind": "mark"
+    },
+    {
+      "fg": "--slot-control",
+      "bg": "--slot-raised",
+      "kind": "mark"
+    },
+    {
+      "fg": "--slot-on-accent",
+      "bg": "--slot-accent",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-ink",
+      "bg": "--slot-accent-ground",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-focus",
+      "bg": "--slot-ground",
+      "kind": "mark"
+    },
+    {
+      "fg": "--slot-focus",
+      "bg": "--slot-surface",
+      "kind": "mark"
+    },
+    {
+      "fg": "--slot-st-working",
+      "bg": "--slot-surface",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-st-needs-you",
+      "bg": "--slot-surface",
+      "kind": "text"
+    },
+    {
+      "fg": "--slot-accent",
+      "bg": "--slot-ground",
+      "kind": "mark"
+    }
   ]
 }
