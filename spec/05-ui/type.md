@@ -1,6 +1,6 @@
 # 5.2 UI: type
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 Type has its own scale. It is not the length ladder, and type sizes are tested by ratio, not as lengths.
 
@@ -62,14 +62,14 @@ macOS (body 13 pt):
 
 ### FP-TYPE-02 · Step ranges
 
-Interface text MUST use steps −1 to 4. Display text (large, short, few words) MUST use even steps from 4 upward, so that display sizes are whole φ steps apart. Odd steps above 4 are not used.
+Interface text MUST use steps −1 to 4. Display text (large, short, few words) MUST use even steps from 4 upward, so that display sizes are whole φ steps apart. Odd steps above 4 are not used. A size that is the value of step 5 or 7 (53, 55, 86 or 89 from body 16) fails this rule, `type.step-range`, not the scale rule.
 
 - **Level:** FP-2 · **Status:** normative · **Applies when:** always · **Test:** machine, `type.step-range` · **Evidence:** convention (protocol choice)
 
 
 ### FP-TYPE-03 · Fibonacci substitution
 
-A system MAY set `type.align` to `fibonacci`. Then, at any step where a Fibonacci number lies within 4% of the unrounded value, that number replaces the rounded value (on the web: 21, 34, 55 and 89 in place of 20, 33, 53 and 86). The choice applies to the whole system. The default is `formula`.
+A system MAY set `type.align` to `fibonacci`. Then, at any step where a Fibonacci number lies within 4% of the unrounded value, that number replaces the rounded value (on the web: 21, 34, 55 and 89 in place of 20, 33, 53 and 86). The choice applies to the whole system. The default is `formula`. Under `fibonacci`, the rounded value that was replaced (20 on the web) fails this rule, `type.align`. Under `formula`, a Fibonacci number that is not a formula value (21 on the web) is simply off the scale and fails FP-TYPE-01.
 
 - **Level:** FP-2 · **Status:** normative · **Applies when:** always · **Test:** machine, `type.align` · **Evidence:** convention (protocol choice)
 
@@ -177,10 +177,10 @@ Running text SHOULD be set at 45 to 75 characters per line; the default is `max-
 
 ### FP-TYPE-11 · No typeface is required
 
-The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices.
+The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices. Where an output format requires a font family or a weight for each type token (the list-shaped `tokens.json`), the protocol's files carry the placeholders `inherit` and `400`. They mean "the adopter's choice" and are not recommendations.
 
 - **Level:** FP-2 · **Status:** informative · **Applies when:** always · **Test:** self-report, `type.typeface` · **Evidence:** convention (protocol choice)
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

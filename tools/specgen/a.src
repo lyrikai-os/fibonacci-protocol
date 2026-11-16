@@ -1,5 +1,5 @@
 === spec/index.md | Lyrikai: Fibonacci Protocol for UI/UX Design Agents | —
-**Status:** release candidate {{ver}}. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, is not published with this release candidate (see "Until the checker ships" below).
+**Status:** release candidate {{ver}}. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
 
 ## What this is
 
@@ -63,9 +63,13 @@ If you later go on to FP-2, note one rule that catches people out: every CSS rul
 
 `FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec {{ver}} · self-assessed`
 
-### Until the checker ships
+### Running the checker
 
-`fp-check` is the reference checker. It is not published with this release candidate. Until it is, the machine tests are defined by this specification and by [rules.json](rules.json), and an adopter runs them with their own script or by hand. A claim made that way MUST end with `self-assessed` (FP-CONF-14).
+`fp-check` is the reference checker and ships in this repository. It needs Node.js and no packages, and it works offline:
+
+`node tools/fp-check/fp-check.mjs [folder with fp.config.json]`
+
+It runs the machine tests and prints the claim. The self-report items are still yours to answer, which is why the claim ends with `self-assessed`: that part is dropped only when someone other than the adopter has assessed the self-report items and is named in the report (FP-CONF-14).
 
 ## Scope and versions
 
@@ -97,7 +101,7 @@ In version 1.0 a claim names FP-1 or FP-2 and the platform `web` (FP-CONF-05). O
 1. Write an `fp.config.json` (FP-MODE-01, FP-MODE-02; schema in [fp.config.schema.json](fp.config.schema.json)).
 2. Run the machine tests for the level and answer the self-report items with evidence (FP-CONF-06).
 3. Resolve every pending exception; a result with pending exceptions is not a pass (FP-CONF-07).
-4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec {{ver}} · self-assessed`. The last part is required for as long as the reference checker did not run the machine tests (FP-CONF-14).
+4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec {{ver}} · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
 
 A claim says what was tested. It never says that a design is more beautiful, more natural or better (FP-HONEST-04). A passing run is not a statement that a product is accessible (FP-CONF-10).
 
@@ -308,7 +312,7 @@ Native MAY claim FP-1 or FP-2. Snap and Overlay claim FP-1 by default, and at FP
 | Type scale, body anchor, leading, measure (FP-TYPE, FP-A11Y-07, FP-A11Y-08) | not tested | not tested | yes: host type is replaced | — |
 | φ split and equal columns (FP-LAYOUT-01, FP-LAYOUT-02) | not tested | not tested | yes | — |
 | Container widths and breakpoints (FP-LAYOUT-05, FP-LAYOUT-06) | — | — | — | yes |
-| Tokens in the protocol's format (FP-TOKEN) | protocol token files only | protocol token files only | protocol token files only | yes |
+| Tokens in the protocol's format (FP-TOKEN) | protocol token files only | protocol token files only | protocol token files only | protocol token files only |
 
 ## Overlay
 
@@ -347,7 +351,7 @@ Each non-exempt host length MUST map to the rung nearest to it by absolute dista
 
 @R FP-SNAP-03 | Drift limit of 25% | FP-1 | N | M snap.drift | choice
 @applies mode: snap
-Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. At u = 1 the nearest rung meets this for every whole value from 2 up to 1.25 times the top rung; the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).
+Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. At u = 1 the nearest rung meets the limit for every whole value from 2 up to 1.25 times the top rung (1996); the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).
 @@
 
 @R FP-SNAP-10 | Values that cannot be snapped | FP-1 | N | M snap.unsnappable | choice
@@ -373,7 +377,7 @@ Order is kept within each group, not across groups. The groups are: spacing and 
 
 @R FP-SNAP-06 | Collisions merge by default | FP-1 | N | M snap.merge-listed | choice
 @applies mode: snap
-When two or more host tokens map to one rung they become one value. The published table MUST list every merged group by token name.
+When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. A checker for version 1.0 does not read the published table: publishing it is a self-report item, and a Snap claim is valid only when the table is published.
 @@
 
 @R FP-SNAP-07 | Overrides | FP-1 | N | M snap.override | choice
@@ -424,7 +428,7 @@ FP-4a (art and illustration) and FP-4b (data visualisation) each require only th
 
 @R FP-CONF-04 | The claim string | Guard | N | M conf.claim-format | choice
 @applies the report
-A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim whose machine tests were not run by the reference checker MUST end with ` · self-assessed` (FP-CONF-14).
+A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped.
 @@
 
 @R FP-CONF-05 | Version 1.0 claims: FP-1 and FP-2, on the web | Guard | N | M conf.v1-levels | choice
@@ -462,7 +466,7 @@ The conditions used in this specification are:
 | has: charts | `has.charts` is true: the scope shows data graphics |
 | has: generated art | `has.generatedArt` is true: the scope ships art made by a generator |
 | has: states | `has.states` is true: the scope shows status or state indicators |
-| protocol token files | the system ships token files in the protocol's format; always in Native |
+| protocol token files | the system ships token files in the protocol's format (`*.tokens.json`). A system in any mode, Native included, that ships none has these rules as `n/a` |
 
 FP-CONF-13 was never assigned; the number is not in use.
 
@@ -478,7 +482,7 @@ A run passes a level only when every applicable machine test passes, every appli
 
 @R FP-CONF-14 | Machine tests not run, and self-assessment | Guard | N | M conf.not-run | choice
 @applies the report
-If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. If they were run by a tool other than the reference checker, or by hand, the claim MUST end with `self-assessed`, and the report MUST say what ran them. Words such as "provisional pass" MUST NOT be used.
+If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. Words such as "provisional pass" MUST NOT be used.
 @@
 
 ## Checker inputs

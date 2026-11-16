@@ -1,6 +1,6 @@
 # 8.1 Platforms: web
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 ### FP-PLAT-01 · Web units
 
@@ -20,13 +20,21 @@ The protocol's CSS custom properties MUST use the `--fp-` prefix and these names
 |---|---|---|---|
 | Space | `--fp-space-1` … `--fp-space-377` | the Fibonacci number F; the value is F × u | yes |
 | Container | `--fp-container-610`, `-987`, `-1597` | the value | no |
-| Radius | `--fp-radius-2`, `-3`, `-5`, `-8`, `-13`, `-21`, `--fp-radius-pill` | the value | no |
+| Radius | `--fp-radius-2`, `-3`, `-5`, `-8`, `-13`, `-21`, `--fp-radius-pill` (9999px), `--fp-radius-round` (50%); 0 has no token | the value | no |
+| Line | `--fp-line-hairline` (1), `--fp-line-stroke-2`, `--fp-line-stroke-3` | the role and value | no |
 | Focus | `--fp-focus-gap` (2), `--fp-focus-ring` (3) | the role | no |
-| Target | `--fp-target` | the role; the ladder target for the pointer | yes |
+| Target | `--fp-target` (the ladder target for the current pointer: coarse by default, fine inside the pointer query), `--fp-target-coarse` (always the coarse ladder target) | the role | yes |
+| Target floor | `--fp-target-floor-coarse` (44), `--fp-target-floor-fine` (24) | the role | no |
 | Type | `--fp-type-n1`, `--fp-type-0` … `--fp-type-8`, `--fp-type-micro` | the step k (`n1` is −1) | no |
 | Leading | `--fp-leading-body`, `-dense`, `-small`, `-heading`, `-display` | the role | no |
 | Duration | `--fp-duration-89`, `-144`, `-233`, `-377` | the value in ms | no |
+| Easing | `--fp-easing-standard`, `--fp-easing-enter`, `--fp-easing-exit` | the role | no |
+| Layer | `--fp-layer-base` (1), `-raised` (2), `-overlay` (3), `-popover` (13), `-toast` (21) | the role | no |
 | Tone | `--fp-tone-1` … `--fp-tone-5` | the power of 1/φ | no |
+| Split | `--fp-split-major` (61.8), `--fp-split-minor` (38.2) | the role; unitless numbers | no |
+| Constants | `--fp-math-phi`, `--fp-math-phi-inverse`, `--fp-math-phi-inverse-squared`, `--fp-math-phi-root`, `--fp-math-golden-angle-degrees`, `--fp-math-golden-angle-radians`, `--fp-math-hash-constant` | the constant (FP-MATH-01) | no |
+
+The type tokens for steps 5 and 7 exist so that the list is complete; FP-TYPE-02 does not allow them in use. Two marker properties declare layout intent to a checker and carry no value of their own: `--fp-layout: phi-split` (FP-LAYOUT-01) and `--fp-layout: container` (FP-LAYOUT-05).
 
 ### FP-PLAT-03 · Web pointer queries
 
@@ -46,4 +54,4 @@ Web values in one place, at u = 1: body 16 px (1rem); micro 11 px; ladder target
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

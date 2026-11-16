@@ -170,13 +170,21 @@ The protocol's CSS custom properties MUST use the `--fp-` prefix and these names
 |---|---|---|---|
 | Space | `--fp-space-1` … `--fp-space-377` | the Fibonacci number F; the value is F × u | yes |
 | Container | `--fp-container-610`, `-987`, `-1597` | the value | no |
-| Radius | `--fp-radius-2`, `-3`, `-5`, `-8`, `-13`, `-21`, `--fp-radius-pill` | the value | no |
+| Radius | `--fp-radius-2`, `-3`, `-5`, `-8`, `-13`, `-21`, `--fp-radius-pill` (9999px), `--fp-radius-round` (50%); 0 has no token | the value | no |
+| Line | `--fp-line-hairline` (1), `--fp-line-stroke-2`, `--fp-line-stroke-3` | the role and value | no |
 | Focus | `--fp-focus-gap` (2), `--fp-focus-ring` (3) | the role | no |
-| Target | `--fp-target` | the role; the ladder target for the pointer | yes |
+| Target | `--fp-target` (the ladder target for the current pointer: coarse by default, fine inside the pointer query), `--fp-target-coarse` (always the coarse ladder target) | the role | yes |
+| Target floor | `--fp-target-floor-coarse` (44), `--fp-target-floor-fine` (24) | the role | no |
 | Type | `--fp-type-n1`, `--fp-type-0` … `--fp-type-8`, `--fp-type-micro` | the step k (`n1` is −1) | no |
 | Leading | `--fp-leading-body`, `-dense`, `-small`, `-heading`, `-display` | the role | no |
 | Duration | `--fp-duration-89`, `-144`, `-233`, `-377` | the value in ms | no |
+| Easing | `--fp-easing-standard`, `--fp-easing-enter`, `--fp-easing-exit` | the role | no |
+| Layer | `--fp-layer-base` (1), `-raised` (2), `-overlay` (3), `-popover` (13), `-toast` (21) | the role | no |
 | Tone | `--fp-tone-1` … `--fp-tone-5` | the power of 1/φ | no |
+| Split | `--fp-split-major` (61.8), `--fp-split-minor` (38.2) | the role; unitless numbers | no |
+| Constants | `--fp-math-phi`, `--fp-math-phi-inverse`, `--fp-math-phi-inverse-squared`, `--fp-math-phi-root`, `--fp-math-golden-angle-degrees`, `--fp-math-golden-angle-radians`, `--fp-math-hash-constant` | the constant (FP-MATH-01) | no |
+
+The type tokens for steps 5 and 7 exist so that the list is complete; FP-TYPE-02 does not allow them in use. Two marker properties declare layout intent to a checker and carry no value of their own: `--fp-layout: phi-split` (FP-LAYOUT-01) and `--fp-layout: container` (FP-LAYOUT-05).
 
 @R FP-PLAT-03 | Web pointer queries | Guard | N | M plat.web-pointer | choice
 @applies platform: web
@@ -247,7 +255,7 @@ The rules here have the level **Agent**. They describe the agent, not the design
 ## Start
 
 @R FP-AGENT-01 | Read the configuration, or ask once | Agent | N | S agent.config | choice
-Before designing, an agent MUST read `fp.config.json`. If there is none, it MUST ask the user once for mode, level, platform and unit, and proceed with the answer. If it cannot ask, it uses what the request states and these defaults for the rest: unit 1, pointer `both`, platform `web`, `type.align` `formula`. Mode and level have no default: without them the agent runs the checks, changes nothing and reports. An agent MAY suggest another unit (for example u = 4 for a 4-based grid) but MUST NOT apply a unit the user did not state or accept. A request to apply the protocol is consent to write a configuration that records exactly the values used; the report MUST list which were defaults.
+Before designing, an agent MUST read `fp.config.json`. If there is none, it MUST ask the user once for mode, level, platform and unit, and proceed with the answer. If it cannot ask, it uses what the request states and these defaults for the rest: unit 1, pointer `both`, platform `web`, `type.align` `formula`. Mode and level have no default: without them the agent runs the checks, changes nothing and reports. An agent MAY suggest another unit (for example u = 4 for a 4-based grid) but MUST NOT apply a unit the user did not state or accept. Writing the configuration depends on whether anyone can answer. In an interactive session the agent shows the configuration and waits for a yes before writing it (this is what `init` does). In a non-interactive run, a request to apply the protocol is itself the consent to write a configuration that records exactly the values used; the report MUST list which were defaults.
 @@
 
 ## Decision order
@@ -279,7 +287,7 @@ When no one is available to answer, an agent MUST NOT wait. It applies what it h
 ## Before saying "done"
 
 @R FP-AGENT-05 | Done-checks | Agent | N | S agent.done-checks | choice
-Before reporting that work is done, an agent MUST: run the machine tests with the reference checker if it is installed, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. A result obtained without the reference checker is reported as self-assessed (FP-CONF-14).
+Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires.
 @@
 
 @R FP-AGENT-06 | Name the rules used | Agent | N | S agent.rule-ids | choice
@@ -318,10 +326,10 @@ The `/lyrikai-fibonacci` skill MUST provide exactly these verbs:
 
 - `on [FP-1|FP-2|FP-3|FP-4a|FP-4b] [overlay|snap|native]`: turn the protocol on for the conversation. With no arguments it prints the current state. If there is no `fp.config.json`, it asks once for mode, level, platform and unit (FP-AGENT-01). The phrase "use Fibonacci design principles" is the same activation.
 - `off`: turn it off.
-- `init`: show a starter `fp.config.json` and write it only on a yes.
-- `check`: run the checks and report rule IDs, `FP-OFF` and `FP-CHANGE` lines and the result.
+- `init`: show a starter `fp.config.json` and write it only on a yes. `init` is interactive by definition; a non-interactive run writes its configuration under FP-AGENT-01 instead.
+- `check`: run the reference checker where the repository is present, with `node tools/fp-check/fp-check.mjs [folder]` (Node.js, no packages, offline), and otherwise work through the same tests by hand; then report rule IDs, `FP-OFF` and `FP-CHANGE` lines and the result.
 - `explain <rule-ID>`: print the rule's text, level, status, applies-when, test and evidence, from the copy of `rules.json` the skill carries.
-- `map`: print the Snap table for the user's tokens, with merges, drift and the "what breaks" block. It changes nothing.
+- `map`: print the Snap table for the user's tokens in the format of FP-SNAP-08 (one row per token: name, role, original, snapped, drift, merged group, override reason), with the "what breaks" block. The rungs come from FP-MATH-03 at the declared unit (FP-MATH-06; the lists are also in `fp.config.schema.json` under `$defs`). It changes nothing.
 
 A request for a level that is informative in this version MUST be answered with that fact.
 @@
@@ -387,7 +395,7 @@ Where this specification discusses preference for φ, it MUST state the null and
 - Design Tokens Format Module 2025.10: https://www.designtokens.org/tr/2025.10/
 
 === spec/tokens.md | Tokens | deliverable
-These rules apply to token files written in the protocol's format: the protocol's own published tokens, and the tokens of a Native system. A host in Overlay or Snap keeps whatever token pipeline it has and is not asked to adopt this one; for such a host these rules are `n/a` unless it ships protocol-format files.
+These rules apply to token files written in the protocol's format: the protocol's own published tokens, and the tokens of any system that chooses to ship such files. No mode requires them. A system that ships none, in Overlay, Snap or Native, has these rules as `n/a`.
 
 @R FP-TOKEN-01 | Token format | FP-1 | N | M token.dtcg | cited https://www.designtokens.org/tr/2025.10/
 @applies protocol token files
@@ -406,7 +414,7 @@ A token or group name MUST NOT begin with `$` and MUST NOT contain `{`, `}` or `
 
 @R FP-TOKEN-04 | The master is in platform units | FP-1 | N | M token.master-unit | choice
 @applies protocol token files
-The master stores each value as a px number already multiplied by the declared u, and records u in the file metadata (FP-TOKEN-07). Values in pt, dp and mm are produced by the generators, because the format has no such units.
+The master stores every length and every type size as a px number, lengths already multiplied by the declared u, and records u in the file metadata (FP-TOKEN-07). Values in other units are produced by the generators: rem for web type (FP-TOKEN-09), and pt, dp and mm for other platforms, because the format has no such units. A type size of 16 px in the master becomes `1rem` in the generated web output; the two rules do not conflict.
 @@
 
 @R FP-TOKEN-05 | Themes | FP-1 | N | M token.themes | choice
@@ -432,7 +440,7 @@ From the master, the protocol's generators MUST produce: CSS custom properties (
 
 @R FP-TOKEN-09 | Type in rem | FP-1 | N | M token.type-rem | choice
 @applies protocol token files
-Generated web type sizes MUST be in rem (FP-TYPE-04). Generated space is in px by default and MAY be in rem.
+Generated web type sizes MUST be in rem (FP-TYPE-04): the generator divides the master's px value by 16. This rule is about generated web outputs (CSS, SCSS, the Tailwind preset), not the master file. Generated space is in px by default and MAY be in rem.
 @@
 
 @R FP-TOKEN-10 | Style Dictionary compatibility | FP-1 | I | M token.style-dictionary | choice

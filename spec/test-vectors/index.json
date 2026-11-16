@@ -1,6 +1,6 @@
 {
   "name": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "license": "MIT",
   "homepage": "https://www.lyrikai.com",
   "vectors": [
@@ -76,7 +76,7 @@
     },
     {
       "vector": "08-snap-targets",
-      "about": "Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach.",
+      "about": "Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. The three targets that end at 55 are listed as a merged group (FP-SNAP-06). Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach.",
       "result": "pass",
       "inputs": [
         "input.css"
@@ -106,7 +106,7 @@
     },
     {
       "vector": "11-type-scale-formula",
-      "about": "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, and the unused odd step 5 (53) fail.",
+      "about": "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, fail; the unused odd step 5 (53) fails the step-range rule (FP-TYPE-02), not the scale rule.",
       "result": "fail",
       "inputs": [
         "input.css"
@@ -116,7 +116,7 @@
     },
     {
       "vector": "12-type-scale-fibonacci",
-      "about": "The same input with type.align: fibonacci. Now 21 is the step and 20 is not.",
+      "about": "The same input with type.align: fibonacci. Now 21 is the step, and 20, the value it replaced, fails the alignment rule (FP-TYPE-03). 53 still fails the step-range rule.",
       "result": "fail",
       "inputs": [
         "input.css"

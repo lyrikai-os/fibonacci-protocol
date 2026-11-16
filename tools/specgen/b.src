@@ -34,7 +34,7 @@ The radius of an inner corner SHOULD equal the outer radius minus the padding be
 @@
 
 @R FP-RADIUS-03 | Pill and round | FP-1 | N | M radius.pill-round | conv
-`pill` is a radius of at least half the element's height (for example 9999px). `round` is 50% on an element of equal width and height. A bar or strip SHOULD use 2, not `pill`.
+`pill` is written as the token `--fp-radius-pill` or the literal `9999px`, and nothing else: a checker does not know an element's height, so another large radius (999px, 100px) fails the radius set. `round` is written as `--fp-radius-round` or the literal `50%`, on an element of equal width and height. 0 is written as `0` and has no token. A bar or strip SHOULD use 2, not `pill`.
 @@
 
 ## Lines, tone and elevation
@@ -84,11 +84,11 @@ macOS (body 13 pt):
 {{type13}}
 
 @R FP-TYPE-02 | Step ranges | FP-2 | N | M type.step-range | choice
-Interface text MUST use steps −1 to 4. Display text (large, short, few words) MUST use even steps from 4 upward, so that display sizes are whole φ steps apart. Odd steps above 4 are not used.
+Interface text MUST use steps −1 to 4. Display text (large, short, few words) MUST use even steps from 4 upward, so that display sizes are whole φ steps apart. Odd steps above 4 are not used. A size that is the value of step 5 or 7 (53, 55, 86 or 89 from body 16) fails this rule, `type.step-range`, not the scale rule.
 @@
 
 @R FP-TYPE-03 | Fibonacci substitution | FP-2 | N | M type.align | choice
-A system MAY set `type.align` to `fibonacci`. Then, at any step where a Fibonacci number lies within 4% of the unrounded value, that number replaces the rounded value (on the web: 21, 34, 55 and 89 in place of 20, 33, 53 and 86). The choice applies to the whole system. The default is `formula`.
+A system MAY set `type.align` to `fibonacci`. Then, at any step where a Fibonacci number lies within 4% of the unrounded value, that number replaces the rounded value (on the web: 21, 34, 55 and 89 in place of 20, 33, 53 and 86). The choice applies to the whole system. The default is `formula`. Under `fibonacci`, the rounded value that was replaced (20 on the web) fails this rule, `type.align`. Under `formula`, a Fibonacci number that is not a formula value (21 on the web) is simply off the scale and fails FP-TYPE-01.
 @@
 
 @R FP-TYPE-04 | Units | FP-2 | N | M type.units | choice
@@ -145,12 +145,12 @@ Running text SHOULD be set at 45 to 75 characters per line; the default is `max-
 @@
 
 @R FP-TYPE-11 | No typeface is required | FP-2 | I | S type.typeface | choice
-The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices.
+The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices. Where an output format requires a font family or a weight for each type token (the list-shaped `tokens.json`), the protocol's files carry the placeholders `inherit` and `400`. They mean "the adopter's choice" and are not recommendations.
 @@
 
 === spec/05-ui/layout.md | 5.3 UI: layout | 5
 @R FP-LAYOUT-01 | The φ split | FP-2 | N | M layout.phi-split | conv
-A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested: its ratio MUST be 61.8 to 38.2 within 0.1. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.
+A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested. A split is declared by writing the custom property `--fp-layout: phi-split` in the same CSS rule as its `grid-template-columns`; nothing else (a ratio that happens to be near φ, a class name) makes a split "declared". A declared split MUST have exactly two tracks whose ratio is 61.8 to 38.2 within 0.1, in either order: `1.618fr 1fr`, `61.8% 38.2%`, or the tokens `--fp-split-major` and `--fp-split-minor`. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.
 @@
 
 @R FP-LAYOUT-02 | Equal content gets equal columns | FP-2 | N | S layout.equal-allowed | choice
@@ -167,7 +167,7 @@ A single main element MAY be placed at one of the four crossings of the lines at
 
 @R FP-LAYOUT-05 | Container widths | FP-2 | N | M layout.container-widths | choice
 @applies mode: native
-In Native, a container's width limit MUST be 610, 987 or 1597 platform units (at every u), or a derived value of one of them (FP-SPACE-04). On the web it MUST be written as `max-inline-size` (or `max-width`), never as a fixed width, so that the container shrinks and the page still reflows at 320 (FP-A11Y-13).
+In Native, a container's width limit MUST be 610, 987 or 1597 platform units (at every u), or a derived value of one of them (FP-SPACE-04). On the web it MUST be written as `max-inline-size` (or `max-width`), never as a fixed width, so that the container shrinks and the page still reflows at 320 (FP-A11Y-13). A checker identifies a container limit by its token, not by its size: a `max-inline-size` or `max-width` that uses a `--fp-container-*` token passes; a `width` or `inline-size` that uses one fails; and a rule marked `--fp-layout: container` MUST set its limit with one of the three tokens. Any other width is an ordinary layout length and is tested against the ladder (FP-SPACE-01).
 @@
 
 @R FP-LAYOUT-06 | Native breakpoints | FP-2 | I | S layout.breakpoints | choice

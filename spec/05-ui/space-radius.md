@@ -1,6 +1,6 @@
 # 5.1 UI: space, radius, lines
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 ## Space
 
@@ -57,7 +57,7 @@ The radius of an inner corner SHOULD equal the outer radius minus the padding be
 
 ### FP-RADIUS-03 · Pill and round
 
-`pill` is a radius of at least half the element's height (for example 9999px). `round` is 50% on an element of equal width and height. A bar or strip SHOULD use 2, not `pill`.
+`pill` is written as the token `--fp-radius-pill` or the literal `9999px`, and nothing else: a checker does not know an element's height, so another large radius (999px, 100px) fails the radius set. `round` is written as `--fp-radius-round` or the literal `50%`, on an element of equal width and height. 0 is written as `0` and has no token. A bar or strip SHOULD use 2, not `pill`.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** always · **Test:** machine, `radius.pill-round` · **Evidence:** convention
 
@@ -101,4 +101,4 @@ A Native system SHOULD separate surfaces with hairlines and ground steps rather 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

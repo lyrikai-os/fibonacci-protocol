@@ -1,6 +1,6 @@
 {
   "vector": "14-na-contradiction",
-  "spec": "1.0.0-rc.1",
+  "spec": "1.0.0-rc.2",
   "about": "has.motion and has.controls are declared false, but the scope has a transition and a button selector. FP-CONF-11 fails twice: a rule may not be marked n/a when its condition is true.",
   "result": "fail",
   "findings": [

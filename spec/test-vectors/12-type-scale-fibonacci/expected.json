@@ -1,7 +1,7 @@
 {
   "vector": "12-type-scale-fibonacci",
-  "spec": "1.0.0-rc.1",
-  "about": "The same input with type.align: fibonacci. Now 21 is the step and 20 is not.",
+  "spec": "1.0.0-rc.2",
+  "about": "The same input with type.align: fibonacci. Now 21 is the step, and 20, the value it replaced, fails the alignment rule (FP-TYPE-03). 53 still fails the step-range rule.",
   "result": "fail",
   "findings": [
     {
@@ -9,10 +9,10 @@
       "selector": ".h3",
       "property": "font-size",
       "value": "1.25rem",
-      "check": "type.scale",
-      "rule": "FP-TYPE-01",
+      "check": "type.align",
+      "rule": "FP-TYPE-03",
       "result": "fail",
-      "message": "20 is not a step of the scale"
+      "message": "20 is replaced by 21 at step 1 under type.align: fibonacci"
     },
     {
       "file": "input.css",
@@ -49,10 +49,10 @@
       "selector": ".bad-leading",
       "property": "font-size",
       "value": "1.25rem",
-      "check": "type.scale",
-      "rule": "FP-TYPE-01",
+      "check": "type.align",
+      "rule": "FP-TYPE-03",
       "result": "fail",
-      "message": "20 is not a step of the scale"
+      "message": "20 is replaced by 21 at step 1 under type.align: fibonacci"
     },
     {
       "file": "input.css",
@@ -79,10 +79,10 @@
       "selector": ".bad-odd-step",
       "property": "font-size",
       "value": "3.3125rem",
-      "check": "type.scale",
-      "rule": "FP-TYPE-01",
+      "check": "type.step-range",
+      "rule": "FP-TYPE-02",
       "result": "fail",
-      "message": "53 is not a step of the scale"
+      "message": "53 is the value of step 5, which is not used"
     }
   ]
 }

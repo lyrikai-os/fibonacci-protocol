@@ -1,6 +1,6 @@
 {
   "name": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "license": "MIT",
   "homepage": "https://www.lyrikai.com",
   "rules": [
@@ -182,7 +182,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table below is part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.1`).",
+      "text": "The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table below is part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.2`).",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -326,7 +326,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. At u = 1 the nearest rung meets this for every whole value from 2 up to 1.25 times the top rung; the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).",
+      "text": "Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. At u = 1 the nearest rung meets the limit for every whole value from 2 up to 1.25 times the top rung (1996); the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -410,7 +410,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "When two or more host tokens map to one rung they become one value. The published table MUST list every merged group by token name.",
+      "text": "When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. A checker for version 1.0 does not read the published table: publishing it is a self-report item, and a Snap claim is valid only when the table is published.",
       "file": "spec/02-integration-modes.md"
     },
     {
@@ -554,7 +554,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim whose machine tests were not run by the reference checker MUST end with ` · self-assessed` (FP-CONF-14).",
+      "text": "A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped.",
       "file": "spec/03-conformance.md"
     },
     {
@@ -650,7 +650,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. If they were run by a tool other than the reference checker, or by hand, the claim MUST end with `self-assessed`, and the report MUST say what ran them. Words such as \"provisional pass\" MUST NOT be used.",
+      "text": "If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. Words such as \"provisional pass\" MUST NOT be used.",
       "file": "spec/03-conformance.md"
     },
     {
@@ -1171,7 +1171,7 @@
       "evidence": {
         "label": "convention"
       },
-      "text": "`pill` is a radius of at least half the element's height (for example 9999px). `round` is 50% on an element of equal width and height. A bar or strip SHOULD use 2, not `pill`.",
+      "text": "`pill` is written as the token `--fp-radius-pill` or the literal `9999px`, and nothing else: a checker does not know an element's height, so another large radius (999px, 100px) fails the radius set. `round` is written as `--fp-radius-round` or the literal `50%`, on an element of equal width and height. 0 is written as `0` and has no token. A bar or strip SHOULD use 2, not `pill`.",
       "file": "spec/05-ui/space-radius.md"
     },
     {
@@ -1272,7 +1272,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "Interface text MUST use steps −1 to 4. Display text (large, short, few words) MUST use even steps from 4 upward, so that display sizes are whole φ steps apart. Odd steps above 4 are not used.",
+      "text": "Interface text MUST use steps −1 to 4. Display text (large, short, few words) MUST use even steps from 4 upward, so that display sizes are whole φ steps apart. Odd steps above 4 are not used. A size that is the value of step 5 or 7 (53, 55, 86 or 89 from body 16) fails this rule, `type.step-range`, not the scale rule.",
       "file": "spec/05-ui/type.md"
     },
     {
@@ -1288,7 +1288,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "A system MAY set `type.align` to `fibonacci`. Then, at any step where a Fibonacci number lies within 4% of the unrounded value, that number replaces the rounded value (on the web: 21, 34, 55 and 89 in place of 20, 33, 53 and 86). The choice applies to the whole system. The default is `formula`.",
+      "text": "A system MAY set `type.align` to `fibonacci`. Then, at any step where a Fibonacci number lies within 4% of the unrounded value, that number replaces the rounded value (on the web: 21, 34, 55 and 89 in place of 20, 33, 53 and 86). The choice applies to the whole system. The default is `formula`. Under `fibonacci`, the rounded value that was replaced (20 on the web) fails this rule, `type.align`. Under `formula`, a Fibonacci number that is not a formula value (21 on the web) is simply off the scale and fails FP-TYPE-01.",
       "file": "spec/05-ui/type.md"
     },
     {
@@ -1465,7 +1465,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices.",
+      "text": "The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices. Where an output format requires a font family or a weight for each type token (the list-shaped `tokens.json`), the protocol's files carry the placeholders `inherit` and `400`. They mean \"the adopter's choice\" and are not recommendations.",
       "file": "spec/05-ui/type.md"
     },
     {
@@ -1481,7 +1481,7 @@
       "evidence": {
         "label": "convention"
       },
-      "text": "A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested: its ratio MUST be 61.8 to 38.2 within 0.1. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.",
+      "text": "A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested. A split is declared by writing the custom property `--fp-layout: phi-split` in the same CSS rule as its `grid-template-columns`; nothing else (a ratio that happens to be near φ, a class name) makes a split \"declared\". A declared split MUST have exactly two tracks whose ratio is 61.8 to 38.2 within 0.1, in either order: `1.618fr 1fr`, `61.8% 38.2%`, or the tokens `--fp-split-major` and `--fp-split-minor`. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.",
       "file": "spec/05-ui/layout.md"
     },
     {
@@ -1545,7 +1545,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "In Native, a container's width limit MUST be 610, 987 or 1597 platform units (at every u), or a derived value of one of them (FP-SPACE-04). On the web it MUST be written as `max-inline-size` (or `max-width`), never as a fixed width, so that the container shrinks and the page still reflows at 320 (FP-A11Y-13).",
+      "text": "In Native, a container's width limit MUST be 610, 987 or 1597 platform units (at every u), or a derived value of one of them (FP-SPACE-04). On the web it MUST be written as `max-inline-size` (or `max-width`), never as a fixed width, so that the container shrinks and the page still reflows at 320 (FP-A11Y-13). A checker identifies a container limit by its token, not by its size: a `max-inline-size` or `max-width` that uses a `--fp-container-*` token passes; a `width` or `inline-size` that uses one fails; and a rule marked `--fp-layout: container` MUST set its limit with one of the three tokens. Any other width is an ordinary layout length and is tested against the ladder (FP-SPACE-01).",
       "file": "spec/05-ui/layout.md"
     },
     {
@@ -2643,7 +2643,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "Before designing, an agent MUST read `fp.config.json`. If there is none, it MUST ask the user once for mode, level, platform and unit, and proceed with the answer. If it cannot ask, it uses what the request states and these defaults for the rest: unit 1, pointer `both`, platform `web`, `type.align` `formula`. Mode and level have no default: without them the agent runs the checks, changes nothing and reports. An agent MAY suggest another unit (for example u = 4 for a 4-based grid) but MUST NOT apply a unit the user did not state or accept. A request to apply the protocol is consent to write a configuration that records exactly the values used; the report MUST list which were defaults.",
+      "text": "Before designing, an agent MUST read `fp.config.json`. If there is none, it MUST ask the user once for mode, level, platform and unit, and proceed with the answer. If it cannot ask, it uses what the request states and these defaults for the rest: unit 1, pointer `both`, platform `web`, `type.align` `formula`. Mode and level have no default: without them the agent runs the checks, changes nothing and reports. An agent MAY suggest another unit (for example u = 4 for a 4-based grid) but MUST NOT apply a unit the user did not state or accept. Writing the configuration depends on whether anyone can answer. In an interactive session the agent shows the configuration and waits for a yes before writing it (this is what `init` does). In a non-interactive run, a request to apply the protocol is itself the consent to write a configuration that records exactly the values used; the report MUST list which were defaults.",
       "file": "spec/09-agent-protocol.md"
     },
     {
@@ -2723,7 +2723,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "Before reporting that work is done, an agent MUST: run the machine tests with the reference checker if it is installed, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading \"Suggestions\"; and state the result as `pass`, `fail`, `pending` or `not-run`. A result obtained without the reference checker is reported as self-assessed (FP-CONF-14).",
+      "text": "Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading \"Suggestions\"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires.",
       "file": "spec/09-agent-protocol.md"
     },
     {
@@ -2807,7 +2807,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "The `/lyrikai-fibonacci` skill MUST provide exactly these verbs:\n\n- `on [FP-1|FP-2|FP-3|FP-4a|FP-4b] [overlay|snap|native]`: turn the protocol on for the conversation. With no arguments it prints the current state. If there is no `fp.config.json`, it asks once for mode, level, platform and unit (FP-AGENT-01). The phrase \"use Fibonacci design principles\" is the same activation.\n- `off`: turn it off.\n- `init`: show a starter `fp.config.json` and write it only on a yes.\n- `check`: run the checks and report rule IDs, `FP-OFF` and `FP-CHANGE` lines and the result.\n- `explain <rule-ID>`: print the rule's text, level, status, applies-when, test and evidence, from the copy of `rules.json` the skill carries.\n- `map`: print the Snap table for the user's tokens, with merges, drift and the \"what breaks\" block. It changes nothing.\n\nA request for a level that is informative in this version MUST be answered with that fact.",
+      "text": "The `/lyrikai-fibonacci` skill MUST provide exactly these verbs:\n\n- `on [FP-1|FP-2|FP-3|FP-4a|FP-4b] [overlay|snap|native]`: turn the protocol on for the conversation. With no arguments it prints the current state. If there is no `fp.config.json`, it asks once for mode, level, platform and unit (FP-AGENT-01). The phrase \"use Fibonacci design principles\" is the same activation.\n- `off`: turn it off.\n- `init`: show a starter `fp.config.json` and write it only on a yes. `init` is interactive by definition; a non-interactive run writes its configuration under FP-AGENT-01 instead.\n- `check`: run the reference checker where the repository is present, with `node tools/fp-check/fp-check.mjs [folder]` (Node.js, no packages, offline), and otherwise work through the same tests by hand; then report rule IDs, `FP-OFF` and `FP-CHANGE` lines and the result.\n- `explain <rule-ID>`: print the rule's text, level, status, applies-when, test and evidence, from the copy of `rules.json` the skill carries.\n- `map`: print the Snap table for the user's tokens in the format of FP-SNAP-08 (one row per token: name, role, original, snapped, drift, merged group, override reason), with the \"what breaks\" block. The rungs come from FP-MATH-03 at the declared unit (FP-MATH-06; the lists are also in `fp.config.schema.json` under `$defs`). It changes nothing.\n\nA request for a level that is informative in this version MUST be answered with that fact.",
       "file": "spec/09-agent-protocol.md"
     },
     {
@@ -2991,7 +2991,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "The master stores each value as a px number already multiplied by the declared u, and records u in the file metadata (FP-TOKEN-07). Values in pt, dp and mm are produced by the generators, because the format has no such units.",
+      "text": "The master stores every length and every type size as a px number, lengths already multiplied by the declared u, and records u in the file metadata (FP-TOKEN-07). Values in other units are produced by the generators: rem for web type (FP-TOKEN-09), and pt, dp and mm for other platforms, because the format has no such units. A type size of 16 px in the master becomes `1rem` in the generated web output; the two rules do not conflict.",
       "file": "spec/tokens.md"
     },
     {
@@ -3075,7 +3075,7 @@
       "evidence": {
         "label": "convention (protocol choice)"
       },
-      "text": "Generated web type sizes MUST be in rem (FP-TYPE-04). Generated space is in px by default and MAY be in rem.",
+      "text": "Generated web type sizes MUST be in rem (FP-TYPE-04): the generator divides the master's px value by 16. This rule is about generated web outputs (CSS, SCSS, the Tailwind preset), not the master file. Generated space is in px by default and MAY be in rem.",
       "file": "spec/tokens.md"
     },
     {

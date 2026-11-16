@@ -1,6 +1,6 @@
 # Test vectors
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 Each folder holds one case: the input files, an `fp.config.json` that validates against [fp.config.schema.json](../fp.config.schema.json), and `expected.json`, the result a conforming checker gives. [index.json](index.json) lists them.
 
@@ -17,11 +17,11 @@ A finding identifies a declaration by file, selector, property and value, once p
 | [05-roles-and-exceptions](05-roles-and-exceptions/) | fail | Overlay tests resolved values. A host token that resolves to a rung passes; an icon-role token is not tested; a host token that is not a rung fails unless it is a declared exception (addressed by token or by selector). A pending exception makes the run pending when nothing else fails; here .b fails outright. |
 | [06-snap-u1](06-snap-u1/) | pass | A 4-based scale at u = 1: nearest rung, ties go up (4 → 5), drift at most 25%, merges listed. Radii map to the radius set; 32 is over 25% from 21 and is not snapped. The values that cannot be snapped are declared as accepted snap-drift exceptions, so the run passes. |
 | [07-snap-u4](07-snap-u4/) | pass | The same scale at u = 4: 2 is a sub-unit value and is kept; 6 drifts 33% and is not snapped; 16 is a tie between 12 and 20 and goes up. The values that cannot be snapped are declared as accepted snap-drift exceptions, so the run passes. |
-| [08-snap-targets](08-snap-targets/) | pass | Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach. |
+| [08-snap-targets](08-snap-targets/) | pass | Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. The three targets that end at 55 are listed as a merged group (FP-SNAP-06). Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach. |
 | [09-snap-targets-fine](09-snap-targets-fine/) | pass | The same tokens with pointer: fine declared. The ladder target is 34, so 32 becomes 34, 40 and 44 become 55 (the smallest rung at or above the original), and 64 may stay. |
 | [10-snap-overrides](10-snap-overrides/) | fail | Overrides: 16 → 21 (31.3%) passes; 24 → 34 (41.7%) is over 38.2% and fails, so 24 stays at its nearest rung; 20 → 13 (35%) is within the limit but breaks order against 16 → 21, which fails FP-SNAP-05. |
-| [11-type-scale-formula](11-type-scale-formula/) | fail | Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, and the unused odd step 5 (53) fail. |
-| [12-type-scale-fibonacci](12-type-scale-fibonacci/) | fail | The same input with type.align: fibonacci. Now 21 is the step and 20 is not. |
+| [11-type-scale-formula](11-type-scale-formula/) | fail | Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, fail; the unused odd step 5 (53) fails the step-range rule (FP-TYPE-02), not the scale rule. |
+| [12-type-scale-fibonacci](12-type-scale-fibonacci/) | fail | The same input with type.align: fibonacci. Now 21 is the step, and 20, the value it replaced, fails the alignment rule (FP-TYPE-03). 53 still fails the step-range rule. |
 | [13-contrast](13-contrast/) | fail | Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals. |
 | [14-na-contradiction](14-na-contradiction/) | fail | has.motion and has.controls are declared false, but the scope has a transition and a button selector. FP-CONF-11 fails twice: a rule may not be marked n/a when its condition is true. |
 | [15-na-consistent](15-na-consistent/) | pass | The same input with has.motion and has.controls declared true. No contradiction. |
@@ -31,4 +31,4 @@ A finding identifies a declaration by file, selector, property and value, once p
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

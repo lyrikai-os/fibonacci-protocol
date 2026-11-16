@@ -1,6 +1,6 @@
 {
   "vector": "10-snap-overrides",
-  "spec": "1.0.0-rc.1",
+  "spec": "1.0.0-rc.2",
   "about": "Overrides: 16 → 21 (31.3%) passes; 24 → 34 (41.7%) is over 38.2% and fails, so 24 stays at its nearest rung; 20 → 13 (35%) is within the limit but breaks order against 16 → 21, which fails FP-SNAP-05.",
   "result": "fail",
   "overrides": [

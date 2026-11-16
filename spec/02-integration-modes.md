@@ -1,6 +1,6 @@
 # 2. Integration modes
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 A system that already exists adopts the protocol in one of three modes. The mode is declared in a file, so that a person, an agent and a checker all read the same thing.
 
@@ -15,7 +15,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 
 ### FP-MODE-02 · Configuration fields
 
-The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table below is part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.1`).
+The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table below is part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.2`).
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** always · **Test:** machine, `mode.config-schema` · **Evidence:** convention (protocol choice)
 
@@ -46,7 +46,7 @@ The file MUST validate against [fp.config.schema.json](fp.config.schema.json). T
 
 ```json
 {
-  "fp": "1.0.0-rc.1",
+  "fp": "1.0.0-rc.2",
   "mode": "snap",
   "level": "FP-1",
   "platform": "web",
@@ -114,7 +114,7 @@ Native MAY claim FP-1 or FP-2. Snap and Overlay claim FP-1 by default, and at FP
 | Type scale, body anchor, leading, measure (FP-TYPE, FP-A11Y-07, FP-A11Y-08) | not tested | not tested | yes: host type is replaced | — |
 | φ split and equal columns (FP-LAYOUT-01, FP-LAYOUT-02) | not tested | not tested | yes | — |
 | Container widths and breakpoints (FP-LAYOUT-05, FP-LAYOUT-06) | — | — | — | yes |
-| Tokens in the protocol's format (FP-TOKEN) | protocol token files only | protocol token files only | protocol token files only | yes |
+| Tokens in the protocol's format (FP-TOKEN) | protocol token files only | protocol token files only | protocol token files only | protocol token files only |
 
 ## Overlay
 
@@ -163,7 +163,7 @@ Each non-exempt host length MUST map to the rung nearest to it by absolute dista
 
 ### FP-SNAP-03 · Drift limit of 25%
 
-Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. At u = 1 the nearest rung meets this for every whole value from 2 up to 1.25 times the top rung; the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).
+Drift is |rung − value| / value. An automatic mapping MUST have a drift of at most 25%. The top rung is the largest value on the ladder at the declared u, container widths included: 1597 at u = 1 and u = 4, 3016 at u = 8. At u = 1 the nearest rung meets the limit for every whole value from 2 up to 1.25 times the top rung (1996); the worst case is 4 → 5. The limit does not apply to `target` tokens (FP-SNAP-04).
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: snap · **Test:** machine, `snap.drift` · **Evidence:** convention (protocol choice)
 
@@ -198,7 +198,7 @@ Order is kept within each group, not across groups. The groups are: spacing and 
 
 ### FP-SNAP-06 · Collisions merge by default
 
-When two or more host tokens map to one rung they become one value. The published table MUST list every merged group by token name.
+When two or more host tokens of the same group (spacing lengths, radii, or `target` tokens) end at one value, they have merged. Targets that are raised to the same ladder target are a merge like any other. A checker computes the mapping and lists every merged group by token name in its report; that is this rule's machine test, and it needs no file from the adopter. The published Snap table (FP-SNAP-08) MUST list the same groups. A checker for version 1.0 does not read the published table: publishing it is a self-report item, and a Snap claim is valid only when the table is published.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: snap · **Test:** machine, `snap.merge-listed` · **Evidence:** convention (protocol choice)
 
@@ -243,4 +243,4 @@ An adopter MAY change: colour slot values, typefaces and weights, the words show
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

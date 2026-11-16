@@ -1,7 +1,7 @@
 {
   "vector": "11-type-scale-formula",
-  "spec": "1.0.0-rc.1",
-  "about": "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, and the unused odd step 5 (53) fail.",
+  "spec": "1.0.0-rc.2",
+  "about": "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, fail; the unused odd step 5 (53) fails the step-range rule (FP-TYPE-02), not the scale rule.",
   "result": "fail",
   "findings": [
     {
@@ -79,10 +79,10 @@
       "selector": ".bad-odd-step",
       "property": "font-size",
       "value": "3.3125rem",
-      "check": "type.scale",
-      "rule": "FP-TYPE-01",
+      "check": "type.step-range",
+      "rule": "FP-TYPE-02",
       "result": "fail",
-      "message": "53 is not a step of the scale"
+      "message": "53 is the value of step 5, which is not used"
     }
   ]
 }

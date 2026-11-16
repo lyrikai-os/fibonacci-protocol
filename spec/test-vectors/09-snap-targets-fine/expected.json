@@ -1,6 +1,6 @@
 {
   "vector": "09-snap-targets-fine",
-  "spec": "1.0.0-rc.1",
+  "spec": "1.0.0-rc.2",
   "about": "The same tokens with pointer: fine declared. The ladder target is 34, so 32 becomes 34, 40 and 44 become 55 (the smallest rung at or above the original), and 64 may stay.",
   "result": "pass",
   "mapping": [
@@ -68,6 +68,15 @@
       "note": "exempt by role, unchanged"
     }
   ],
-  "merges": [],
+  "merges": [
+    {
+      "role": "target",
+      "rung": 55,
+      "tokens": [
+        "--control-md",
+        "--control-lg"
+      ]
+    }
+  ],
   "orderBreaches": []
 }

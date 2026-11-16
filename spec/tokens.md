@@ -1,8 +1,8 @@
 # Tokens
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
-These rules apply to token files written in the protocol's format: the protocol's own published tokens, and the tokens of a Native system. A host in Overlay or Snap keeps whatever token pipeline it has and is not asked to adopt this one; for such a host these rules are `n/a` unless it ships protocol-format files.
+These rules apply to token files written in the protocol's format: the protocol's own published tokens, and the tokens of any system that chooses to ship such files. No mode requires them. A system that ships none, in Overlay, Snap or Native, has these rules as `n/a`.
 
 ### FP-TOKEN-01 · Token format
 
@@ -27,7 +27,7 @@ A token or group name MUST NOT begin with `$` and MUST NOT contain `{`, `}` or `
 
 ### FP-TOKEN-04 · The master is in platform units
 
-The master stores each value as a px number already multiplied by the declared u, and records u in the file metadata (FP-TOKEN-07). Values in pt, dp and mm are produced by the generators, because the format has no such units.
+The master stores every length and every type size as a px number, lengths already multiplied by the declared u, and records u in the file metadata (FP-TOKEN-07). Values in other units are produced by the generators: rem for web type (FP-TOKEN-09), and pt, dp and mm for other platforms, because the format has no such units. A type size of 16 px in the master becomes `1rem` in the generated web output; the two rules do not conflict.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** protocol token files · **Test:** machine, `token.master-unit` · **Evidence:** convention (protocol choice)
 
@@ -62,7 +62,7 @@ From the master, the protocol's generators MUST produce: CSS custom properties (
 
 ### FP-TOKEN-09 · Type in rem
 
-Generated web type sizes MUST be in rem (FP-TYPE-04). Generated space is in px by default and MAY be in rem.
+Generated web type sizes MUST be in rem (FP-TYPE-04): the generator divides the master's px value by 16. This rule is about generated web outputs (CSS, SCSS, the Tailwind preset), not the master file. Generated space is in px by default and MAY be in rem.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** protocol token files · **Test:** machine, `token.type-rem` · **Evidence:** convention (protocol choice)
 
@@ -76,7 +76,7 @@ The master SHOULD build under Style Dictionary 4 and 5. Known gaps (object-form 
 
 ```json
 {
-  "$extensions": { "com.lyrikai.fp": { "homepage": "https://www.lyrikai.com", "spec": "1.0.0-rc.1", "unit": 1 } },
+  "$extensions": { "com.lyrikai.fp": { "homepage": "https://www.lyrikai.com", "spec": "1.0.0-rc.2", "unit": 1 } },
   "space": {
     "$type": "dimension",
     "13": {
@@ -97,4 +97,4 @@ The master SHOULD build under Style Dictionary 4 and 5. Known gaps (object-form 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

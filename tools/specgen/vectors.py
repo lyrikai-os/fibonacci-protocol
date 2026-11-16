@@ -14,7 +14,7 @@ def hu1(fr):
     return math.floor(Fraction(fr) * 10 + Fraction(1, 2)) / 10
 
 OUT = sys.argv[1]
-VER = "1.0.0-rc.1"
+VER = "1.0.0-rc.2"
 NAME = "Lyrikai: Fibonacci Protocol for UI/UX Design Agents"
 HOME = "https://www.lyrikai.com"
 PHI = (1 + 5 ** 0.5) / 2
@@ -161,7 +161,7 @@ def snap_table(tokens, cfg):
         rows.append(row)
     groups = {}
     for r in rows:
-        if r["role"] in ("space", "radius") and r.get("snapped") is not None and "exempt" not in r.get("note", ""):
+        if r["role"] in ("space", "radius", "target") and r.get("snapped") is not None and "exempt" not in r.get("note", ""):
             groups.setdefault((r["role"], r["snapped"]), []).append(r["token"])
     merges = [{"role": k[0], "rung": k[1], "tokens": v} for k, v in groups.items() if len(v) > 1]
     return rows, merges
@@ -199,18 +199,26 @@ def check_overrides(tokens, cfg):
     return out, order, final
 
 # ---------- type ----------
-def steps(body, align):
-    out = {}
-    for k in (-1, 0, 1, 2, 3, 4, 6, 8):
-        x = body * PHI ** (k / 2); s = int(math.floor(x + 0.5))
+ALLOWED_STEPS = (-1, 0, 1, 2, 3, 4, 6, 8)
+def classify_size(size, body, align):
+    """Returns (step, None) when the size is accepted, else (None, (check, rule, message))."""
+    table = {}
+    for k in range(-1, 9):
+        x = body * PHI ** (k / 2); formula = int(math.floor(x + 0.5))
+        f = min(FIB, key=lambda q: abs(q - x)); sub = f if abs(f - x) / x <= 0.04 and f != formula else None
+        table[k] = (formula, sub)
+    for k, (formula, sub) in table.items():
+        if size not in (formula, sub): continue
+        if k not in ALLOWED_STEPS:
+            return None, ("type.step-range", "FP-TYPE-02", f"{size:g} is the value of step {k}, which is not used")
+        accepted = sub if (align == "fibonacci" and sub is not None) else formula
+        if size == accepted: return k, None
         if align == "fibonacci":
-            f = min(FIB, key=lambda q: abs(q - x))
-            if abs(f - x) / x <= 0.04: s = f
-        out[s] = k
-    return out
+            return None, ("type.align", "FP-TYPE-03", f"{size:g} is replaced by {sub} at step {k} under type.align: fibonacci")
+    return None, ("type.scale", "FP-TYPE-01", f"{size:g} is not a step of the scale")
 
 def check_type(files, cfg):
-    body = cfg.get("type", {}).get("body", 16); st = steps(body, cfg.get("type", {}).get("align", "formula"))
+    body = cfg.get("type", {}).get("body", 16); align = cfg.get("type", {}).get("align", "formula")
     findings = []
     for fname, text in files.items():
         rules = parse_css(text); props = custom_props(rules)
@@ -219,7 +227,7 @@ def check_type(files, cfg):
             if "font-size" not in d: continue
             tok = d["font-size"]; name = re.fullmatch(r"var\((--[\w-]+)\)", tok); name = name.group(1) if name else None
             res = resolve(tok, props); k = None
-            def add(check, rule, msg): findings.append({"file": fname, "selector": sel, "property": "font-size" if check.startswith("type.s") or check in ("type.units", "type.micro") else "line-height", "value": d.get("font-size") if "leading" not in check else d.get("line-height"), "check": check, "rule": rule, "result": "fail", "message": msg})
+            def add(check, rule, msg): findings.append({"file": fname, "selector": sel, "property": "font-size" if check in ("type.scale", "type.step-range", "type.align", "type.units", "type.micro") else "line-height", "value": d.get("font-size") if "leading" not in check else d.get("line-height"), "check": check, "rule": rule, "result": "fail", "message": msg})
             if name and (name == "--fp-type-micro" or role_of(name, cfg) == "micro"):
                 k = "micro"
             else:
@@ -230,8 +238,8 @@ def check_type(files, cfg):
                 else:
                     size = float(m.group(1)) * 16
                 if size is not None:
-                    if size in st: k = st[size]
-                    else: add("type.scale", "FP-TYPE-01", f"{size:g} is not a step of the scale")
+                    k, bad = classify_size(size, body, align)
+                    if bad: add(*bad)
             lh = d.get("line-height")
             if lh is None:
                 add("type.leading-declared", "FP-TYPE-13", "no line-height in the rule that sets font-size")
@@ -358,7 +366,7 @@ c = cfg(mode="snap", snap={"source": ["input.css"]}, has=dict(HASN, controls=Tru
         roles=[{"match": "--control-*", "role": "target"}, {"match": "--button-drawn", "role": "drawn"}, {"match": "--icon-*", "role": "icon"}])
 G4TOKS = list(toks_g4)
 rows, merges = snap_table(toks, c)
-vec("08-snap-targets", "Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach.",
+vec("08-snap-targets", "Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. The three targets that end at 55 are listed as a merged group (FP-SNAP-06). Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach.",
     {"input.css": tokens_css(toks)}, c, {"result": "pass", "mapping": rows, "merges": merges, "orderBreaches": []})
 c2 = dict(c, pointer="fine", pointerReason="Desktop application; no touch input is supported.")
 rows, merges = snap_table(toks, c2)
@@ -390,8 +398,8 @@ body { font-size: 1rem; line-height: 1.618; }
 .bad-missing { font-size: 1rem; }
 .bad-odd-step { font-size: 3.3125rem; line-height: 1.146; }
 """
-for nm, al, about in (("11-type-scale-formula", "formula", "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, and the unused odd step 5 (53) fail."),
-                      ("12-type-scale-fibonacci", "fibonacci", "The same input with type.align: fibonacci. Now 21 is the step and 20 is not.")):
+for nm, al, about in (("11-type-scale-formula", "formula", "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, fail; the unused odd step 5 (53) fails the step-range rule (FP-TYPE-02), not the scale rule."),
+                      ("12-type-scale-fibonacci", "fibonacci", "The same input with type.align: fibonacci. Now 21 is the step, and 20, the value it replaced, fails the alignment rule (FP-TYPE-03). 53 still fails the step-range rule.")):
     c = cfg(level="FP-2", type={"body": 16, "align": al})
     f = check_type({"input.css": css}, c)
     vec(nm, about, {"input.css": css}, c, {"result": "fail" if f else "pass", "findings": f})

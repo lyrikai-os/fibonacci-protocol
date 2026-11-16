@@ -1,8 +1,8 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-**Status:** release candidate 1.0.0-rc.1. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, is not published with this release candidate (see "Until the checker ships" below).
+**Status:** release candidate 1.0.0-rc.2. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
 
 ## What this is
 
@@ -29,7 +29,7 @@ This is the smallest adoption. It changes nothing your system already has.
 **1. Add the tokens.** Copy this block into your CSS.
 
 ```css
-/* Fibonacci Protocol 1.0.0-rc.1 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
+/* Fibonacci Protocol 1.0.0-rc.2 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
 :root {
   --fp-space-1: 1px;
   --fp-space-2: 2px;
@@ -67,7 +67,7 @@ This is the smallest adoption. It changes nothing your system already has.
 
 ```json
 {
-  "fp": "1.0.0-rc.1",
+  "fp": "1.0.0-rc.2",
   "mode": "overlay",
   "level": "FP-1",
   "platform": "web",
@@ -169,11 +169,15 @@ If you later go on to FP-2, note one rule that catches people out: every CSS rul
 
 **5. State the claim**, exactly in this form:
 
-`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.1 · self-assessed`
+`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.2 · self-assessed`
 
-### Until the checker ships
+### Running the checker
 
-`fp-check` is the reference checker. It is not published with this release candidate. Until it is, the machine tests are defined by this specification and by [rules.json](rules.json), and an adopter runs them with their own script or by hand. A claim made that way MUST end with `self-assessed` (FP-CONF-14).
+`fp-check` is the reference checker and ships in this repository. It needs Node.js and no packages, and it works offline:
+
+`node tools/fp-check/fp-check.mjs [folder with fp.config.json]`
+
+It runs the machine tests and prints the claim. The self-report items are still yours to answer, which is why the claim ends with `self-assessed`: that part is dropped only when someone other than the adopter has assessed the self-report items and is named in the report (FP-CONF-14).
 
 ## Scope and versions
 
@@ -205,7 +209,7 @@ In version 1.0 a claim names FP-1 or FP-2 and the platform `web` (FP-CONF-05). O
 1. Write an `fp.config.json` (FP-MODE-01, FP-MODE-02; schema in [fp.config.schema.json](fp.config.schema.json)).
 2. Run the machine tests for the level and answer the self-report items with evidence (FP-CONF-06).
 3. Resolve every pending exception; a result with pending exceptions is not a pass (FP-CONF-07).
-4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.1 · self-assessed`. The last part is required for as long as the reference checker did not run the machine tests (FP-CONF-14).
+4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.2 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
 
 A claim says what was tested. It never says that a design is more beautiful, more natural or better (FP-HONEST-04). A passing run is not a statement that a product is accessible (FP-CONF-10).
 
@@ -480,4 +484,4 @@ MIT License. Third-party values used as test fixtures keep their own licences an
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

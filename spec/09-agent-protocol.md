@@ -1,6 +1,6 @@
 # 9. Agent protocol
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 This section is written for a design agent: any model or tool that makes or edits a design on a person's behalf. It is the source from which the agent pack and the `/lyrikai-fibonacci` skill are generated.
 
@@ -10,7 +10,7 @@ The rules here have the level **Agent**. They describe the agent, not the design
 
 ### FP-AGENT-01 · Read the configuration, or ask once
 
-Before designing, an agent MUST read `fp.config.json`. If there is none, it MUST ask the user once for mode, level, platform and unit, and proceed with the answer. If it cannot ask, it uses what the request states and these defaults for the rest: unit 1, pointer `both`, platform `web`, `type.align` `formula`. Mode and level have no default: without them the agent runs the checks, changes nothing and reports. An agent MAY suggest another unit (for example u = 4 for a 4-based grid) but MUST NOT apply a unit the user did not state or accept. A request to apply the protocol is consent to write a configuration that records exactly the values used; the report MUST list which were defaults.
+Before designing, an agent MUST read `fp.config.json`. If there is none, it MUST ask the user once for mode, level, platform and unit, and proceed with the answer. If it cannot ask, it uses what the request states and these defaults for the rest: unit 1, pointer `both`, platform `web`, `type.align` `formula`. Mode and level have no default: without them the agent runs the checks, changes nothing and reports. An agent MAY suggest another unit (for example u = 4 for a 4-based grid) but MUST NOT apply a unit the user did not state or accept. Writing the configuration depends on whether anyone can answer. In an interactive session the agent shows the configuration and waits for a yes before writing it (this is what `init` does). In a non-interactive run, a request to apply the protocol is itself the consent to write a configuration that records exactly the values used; the report MUST list which were defaults.
 
 - **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** self-report, `agent.config` · **Evidence:** convention (protocol choice)
 
@@ -57,7 +57,7 @@ When no one is available to answer, an agent MUST NOT wait. It applies what it h
 
 ### FP-AGENT-05 · Done-checks
 
-Before reporting that work is done, an agent MUST: run the machine tests with the reference checker if it is installed, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. A result obtained without the reference checker is reported as self-assessed (FP-CONF-14).
+Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires.
 
 - **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** self-report, `agent.done-checks` · **Evidence:** convention (protocol choice)
 
@@ -110,10 +110,10 @@ The `/lyrikai-fibonacci` skill MUST provide exactly these verbs:
 
 - `on [FP-1|FP-2|FP-3|FP-4a|FP-4b] [overlay|snap|native]`: turn the protocol on for the conversation. With no arguments it prints the current state. If there is no `fp.config.json`, it asks once for mode, level, platform and unit (FP-AGENT-01). The phrase "use Fibonacci design principles" is the same activation.
 - `off`: turn it off.
-- `init`: show a starter `fp.config.json` and write it only on a yes.
-- `check`: run the checks and report rule IDs, `FP-OFF` and `FP-CHANGE` lines and the result.
+- `init`: show a starter `fp.config.json` and write it only on a yes. `init` is interactive by definition; a non-interactive run writes its configuration under FP-AGENT-01 instead.
+- `check`: run the reference checker where the repository is present, with `node tools/fp-check/fp-check.mjs [folder]` (Node.js, no packages, offline), and otherwise work through the same tests by hand; then report rule IDs, `FP-OFF` and `FP-CHANGE` lines and the result.
 - `explain <rule-ID>`: print the rule's text, level, status, applies-when, test and evidence, from the copy of `rules.json` the skill carries.
-- `map`: print the Snap table for the user's tokens, with merges, drift and the "what breaks" block. It changes nothing.
+- `map`: print the Snap table for the user's tokens in the format of FP-SNAP-08 (one row per token: name, role, original, snapped, drift, merged group, override reason), with the "what breaks" block. The rungs come from FP-MATH-03 at the declared unit (FP-MATH-06; the lists are also in `fp.config.schema.json` under `$defs`). It changes nothing.
 
 A request for a level that is informative in this version MUST be answered with that fact.
 
@@ -128,4 +128,4 @@ The skill's output MUST end with a line that names the protocol, the spec versio
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

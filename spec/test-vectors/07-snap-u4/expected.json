@@ -1,6 +1,6 @@
 {
   "vector": "07-snap-u4",
-  "spec": "1.0.0-rc.1",
+  "spec": "1.0.0-rc.2",
   "about": "The same scale at u = 4: 2 is a sub-unit value and is kept; 6 drifts 33% and is not snapped; 16 is a tie between 12 and 20 and goes up. The values that cannot be snapped are declared as accepted snap-drift exceptions, so the run passes.",
   "result": "pass",
   "mapping": [

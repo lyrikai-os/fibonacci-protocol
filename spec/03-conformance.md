@@ -1,6 +1,6 @@
 # 3. Conformance
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 ## Levels
 
@@ -27,7 +27,7 @@ FP-4a (art and illustration) and FP-4b (data visualisation) each require only th
 
 ### FP-CONF-04 · The claim string
 
-A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim whose machine tests were not run by the reference checker MUST end with ` · self-assessed` (FP-CONF-14).
+A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** machine, `conf.claim-format` · **Evidence:** convention (protocol choice)
 
@@ -73,7 +73,7 @@ The conditions used in this specification are:
 | has: charts | `has.charts` is true: the scope shows data graphics |
 | has: generated art | `has.generatedArt` is true: the scope ships art made by a generator |
 | has: states | `has.states` is true: the scope shows status or state indicators |
-| protocol token files | the system ships token files in the protocol's format; always in Native |
+| protocol token files | the system ships token files in the protocol's format (`*.tokens.json`). A system in any mode, Native included, that ships none has these rules as `n/a` |
 
 FP-CONF-13 was never assigned; the number is not in use.
 
@@ -93,7 +93,7 @@ A run passes a level only when every applicable machine test passes, every appli
 
 ### FP-CONF-14 · Machine tests not run, and self-assessment
 
-If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. If they were run by a tool other than the reference checker, or by hand, the claim MUST end with `self-assessed`, and the report MUST say what ran them. Words such as "provisional pass" MUST NOT be used.
+If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. Words such as "provisional pass" MUST NOT be used.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** machine, `conf.not-run` · **Evidence:** convention (protocol choice)
 
@@ -139,4 +139,4 @@ A report MUST state which rules were machine-tested, which were self-reported, w
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
