@@ -1,0 +1,10 @@
+{
+  "fixture": "material-overlay",
+  "fault": "host-token-off-ladder",
+  "about": "The scoped card takes its gap from a host shape token (12px), which is not a rung and has no declared exception.",
+  "exit": 1,
+  "mustFail": [
+    "FP-MODE-04",
+    "FP-SPACE-01"
+  ]
+}

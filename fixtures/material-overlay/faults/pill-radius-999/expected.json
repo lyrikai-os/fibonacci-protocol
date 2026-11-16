@@ -1,0 +1,9 @@
+{
+  "fixture": "material-overlay",
+  "fault": "pill-radius-999",
+  "about": "A pill written as 999px instead of the token or 9999px.",
+  "exit": 1,
+  "mustFail": [
+    "FP-RADIUS-01"
+  ]
+}

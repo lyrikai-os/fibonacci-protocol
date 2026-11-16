@@ -1,0 +1,9 @@
+{
+  "fixture": "primer-snap",
+  "fault": "motion-false-with-transition",
+  "about": "has.motion is false, but the button has a transition.",
+  "exit": 1,
+  "mustFail": [
+    "FP-CONF-11"
+  ]
+}

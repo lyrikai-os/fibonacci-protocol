@@ -1,0 +1,5 @@
+This folder (fixtures/material-overlay) is licensed under the Apache License, Version 2.0, and is separately licensed from the rest of this repository, which is MIT.
+
+It contains token values from @material/web 2.5.0 (Copyright 2023 Google LLC, Apache-2.0). See LICENSE-material for the licence text and SOURCE.md for the exact files. The values in host/md-sys.css are changed only in form (SCSS map entries written as CSS custom properties). The files tokens/fp.css, host/host-components.css, src/fp-card/card.css and fp.config.json were written for the Fibonacci Protocol (https://www.lyrikai.com) and are offered under Apache-2.0 here so that the folder has one licence.
+
+"Material" and "Google" are used only to identify the source; no endorsement is implied.

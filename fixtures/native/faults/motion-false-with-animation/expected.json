@@ -1,0 +1,9 @@
+{
+  "fixture": "native",
+  "fault": "motion-false-with-animation",
+  "about": "has.motion is false, but the Working mark still animates.",
+  "exit": 1,
+  "mustFail": [
+    "FP-CONF-11"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "fixture": "primer-snap",
+  "fault": "undeclared-drift",
+  "about": "The accepted snap-drift exception for the 6px token is removed, so the unsnappable value is undeclared.",
+  "exit": 1,
+  "mustFail": [
+    "FP-SNAP-10"
+  ]
+}

@@ -1,0 +1,46 @@
+/* A scoped component. Colours and type stay the host's (--md-sys-*); every length is a protocol token.
+ * Nothing in host/ is changed. */
+.fp-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fp-space-13);
+  padding: var(--fp-space-21);
+  border: var(--fp-line-hairline) solid var(--md-sys-color-outline);
+  border-radius: var(--fp-radius-13);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  max-inline-size: var(--fp-container-610);
+}
+
+.fp-card__title {
+  margin: 0;
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+}
+
+.fp-card__meta {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+
+.fp-card__action {
+  align-self: flex-start;
+  box-sizing: border-box;
+  min-block-size: var(--fp-target);
+  padding-inline: var(--fp-space-21);
+  border: 0;
+  border-radius: var(--fp-radius-pill);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+}
+
+.fp-card__action:focus-visible {
+  outline: var(--fp-focus-ring) solid var(--md-sys-color-primary);
+  outline-offset: var(--fp-focus-gap);
+}

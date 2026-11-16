@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Native FP-2 sample</title>
+<link rel="stylesheet" href="tokens/fp.css">
+<link rel="stylesheet" href="src/slots.css">
+<link rel="stylesheet" href="src/layout.css">
+<link rel="stylesheet" href="src/components.css">
+<link rel="stylesheet" href="src/motion.css">
+</head>
+<body>
+<main class="page">
+  <section class="section">
+    <h1 class="display">Native sample</h1>
+    <p class="prose">A corrected copy derived from an in-house template. Body text is 16 px, labels are 13 px, and every control has a 55 px hit area.</p>
+    <!-- Page-level control that pauses every loop (FP-A11Y-09). -->
+    <button class="btn" type="button" id="pause" aria-pressed="false">Pause motion</button>
+  </section>
+  <section class="section console">
+    <div class="card"><h2 class="heading">Main</h2><p class="label">Status</p><span class="chip chip-working"><span class="chip-mark"></span>Working</span></div>
+    <div class="card"><h2 class="heading">Detail</h2><p class="stamp">Updated [n] minutes ago</p><span class="chip chip-needs-you"><span class="chip-mark"></span>Needs you</span></div>
+  </section>
+</main>
+<script>
+  document.getElementById('pause').addEventListener('click', function () {
+    var paused = document.documentElement.dataset.motion === 'paused';
+    document.documentElement.dataset.motion = paused ? '' : 'paused';
+    this.setAttribute('aria-pressed', String(!paused));
+  });
+</script>
+</body>
+</html>

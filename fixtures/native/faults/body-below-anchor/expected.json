@@ -1,0 +1,9 @@
+{
+  "fixture": "native",
+  "fault": "body-below-anchor",
+  "about": "Body text set at step -1 (13px), under the 16px body anchor.",
+  "exit": 1,
+  "mustFail": [
+    "FP-A11Y-07"
+  ]
+}

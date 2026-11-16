@@ -1,0 +1,32 @@
+/* Colour slots. Values are the in-house template's desk slots (light and dark), unchanged where they
+ * already met the contrast floors; see DERIVED.md for the corrected ones.
+ * Colour is the adopter's choice (FP-MODE-07); the protocol fixes only the floors. */
+:root {
+  --slot-ground: #f3f4f6;
+  --slot-surface: #fafbfc;
+  --slot-raised: #e9ecef;
+  --slot-ink: #12171c;
+  --slot-muted: #4b5560;
+  --slot-control: #6b7580;
+  --slot-accent: #3a5c7d;
+  --slot-on-accent: #ffffff;
+  --slot-accent-ground: #dde6ef;
+  --slot-focus: #1e5aa8;
+  --slot-st-working: #135f66;
+  --slot-st-needs-you: #7d4a00;
+}
+
+[data-theme="dark"] {
+  --slot-ground: #0d0f12;
+  --slot-surface: #14171b;
+  --slot-raised: #1d2126;
+  --slot-ink: #e7eaed;
+  --slot-muted: #9ea9b4;
+  --slot-control: #77828d;
+  --slot-accent: #8eb2d6;
+  --slot-on-accent: #0d0f12;
+  --slot-accent-ground: #1c2a38;
+  --slot-focus: #8ab8ff;
+  --slot-st-working: #62c2c9;
+  --slot-st-needs-you: #e8b04d;
+}

@@ -1,0 +1,9 @@
+{
+  "fixture": "material-overlay",
+  "fault": "failing-contrast",
+  "about": "The dark theme variant text is darkened until it falls under 4.5:1 on the dark card.",
+  "exit": 1,
+  "mustFail": [
+    "FP-A11Y-01"
+  ]
+}

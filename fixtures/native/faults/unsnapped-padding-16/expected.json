@@ -1,0 +1,10 @@
+{
+  "fixture": "native",
+  "fault": "unsnapped-padding-16",
+  "about": "A literal 16px padding on the card.",
+  "exit": 1,
+  "mustFail": [
+    "FP-SPACE-01",
+    "FP-MODE-06"
+  ]
+}

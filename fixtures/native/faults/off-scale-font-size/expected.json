@@ -1,0 +1,9 @@
+{
+  "fixture": "native",
+  "fault": "off-scale-font-size",
+  "about": "The heading is set at 1.375rem (22px), which is not a step of the type scale.",
+  "exit": 1,
+  "mustFail": [
+    "FP-TYPE-01"
+  ]
+}

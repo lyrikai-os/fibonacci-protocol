@@ -1,0 +1,11 @@
+/* A few Primer functional size tokens (dist/css/functional/size/size.css, @primer/primitives 11.10.0, MIT),
+ * snapped at u = 4. Originals are in ../fp-snap.md. Control sizes are hit areas: they take the target role
+ * and end at the u = 4 ladder target (52), never smaller (FP-SNAP-04). */
+:root {
+  --control-small-size: 3.25rem;
+  --control-medium-size: 3.25rem;
+  --control-large-size: 3.25rem;
+  --control-medium-paddingInline-normal: 0.75rem;
+  --stack-gap-normal: 1.25rem;
+  --stack-padding-normal: 1.25rem;
+}

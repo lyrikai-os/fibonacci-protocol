@@ -1,0 +1,19 @@
+/* The host's own component CSS. Off the ladder on purpose (16, 24, 12): Overlay does not touch it,
+ * and it is outside the claimed scope. It counts in coverage (FP-MODE-05). */
+.host-toolbar {
+  display: flex;
+  gap: 16px;
+  padding: 12px 24px;
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--md-sys-shape-corner-large);
+}
+
+.host-chip {
+  padding: 6px 16px;
+  border-radius: var(--md-sys-shape-corner-small);
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+}

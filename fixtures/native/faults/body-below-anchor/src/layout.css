@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  background: var(--slot-ground);
+  color: var(--slot-ink);
+  font-size: var(--fp-type-n1);
+  line-height: var(--fp-leading-small);
+}
+
+.page {
+  --fp-layout: container;
+  max-inline-size: var(--fp-container-987);
+  margin-inline: auto;
+  padding: var(--fp-space-55) var(--fp-space-21);
+}
+
+.section + .section {
+  margin-block-start: var(--fp-space-89);
+}
+
+.prose {
+  max-inline-size: 66ch;
+}
+
+/* One column below 987; from 987 a declared phi split (FP-LAYOUT-05, -01, -06). */
+.console {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fp-space-21);
+}
+
+@media (min-width: 987px) {
+  .console {
+    --fp-layout: phi-split;
+    grid-template-columns: 1.618fr 1fr;
+  }
+}
+
+/* Equal weight content gets equal columns, and is never flagged (FP-LAYOUT-02). */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--fp-space-233), 1fr));
+  gap: var(--fp-space-13);
+}

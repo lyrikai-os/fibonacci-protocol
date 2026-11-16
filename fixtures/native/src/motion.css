@@ -1,0 +1,24 @@
+/* One ambient loop: the Working mark breathes (opacity only; words never move).
+ * Corrected from the template: a page-level control pauses it (FP-A11Y-09) and reduced motion
+ * stops it (FP-A11Y-10). Without either, a 5 s loop shown beside content would fail. */
+@keyframes breathe {
+  from { opacity: var(--fp-tone-2); }
+  to { opacity: 1; }
+}
+
+.chip-working .chip-mark {
+  animation: breathe 5s var(--fp-easing-standard) infinite alternate;
+}
+
+[data-motion="paused"] .chip-working .chip-mark {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip-working .chip-mark {
+    animation: none;
+  }
+  .btn {
+    transition: none;
+  }
+}

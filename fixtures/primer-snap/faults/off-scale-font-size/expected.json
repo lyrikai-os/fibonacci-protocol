@@ -1,0 +1,9 @@
+{
+  "fixture": "primer-snap",
+  "fault": "off-scale-font-size",
+  "about": "A card note set at 0.875rem (14px), which is not a step of the type scale.",
+  "exit": 1,
+  "mustFail": [
+    "FP-TYPE-01"
+  ]
+}

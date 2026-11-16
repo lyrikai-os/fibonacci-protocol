@@ -1,0 +1,23 @@
+/* A few Primer semantic colour tokens, values verbatim from
+ * @primer/primitives 11.10.0 dist/css/functional/themes/light.css and dark.css (MIT, Copyright (c) 2018 GitHub Inc.).
+ * Primer scopes its themes with data-color-mode attributes; here light is :root and dark is [data-theme="dark"]. */
+:root {
+  --bgColor-default: #ffffff;
+  --bgColor-muted: #f6f8fa;
+  --bgColor-accent-emphasis: #0969da;
+  --fgColor-default: #1f2328;
+  --fgColor-muted: #8c959f;
+  --fgColor-onEmphasis: #ffffff;
+  --borderColor-default: #d1d9e0;
+  --borderColor-emphasis: #818b98;
+}
+[data-theme="dark"] {
+  --bgColor-default: #0d1117;
+  --bgColor-muted: #151b23;
+  --bgColor-accent-emphasis: #1f6feb;
+  --fgColor-default: #f0f6fc;
+  --fgColor-muted: #9198a1;
+  --fgColor-onEmphasis: #ffffff;
+  --borderColor-default: #3d444d;
+  --borderColor-emphasis: #656c76;
+}

@@ -733,7 +733,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
       };
       const fam = /^--fp-(space|container|radius|focus|type|leading|duration|tone)-(.+)$/.exec(cp.name);
       if (fam) {
-        const allowed = { space: FIB.map(String), container: CONTAINERS.map(String), radius: ['2', '3', '5', '8', '13', '21', 'pill'], focus: ['gap', 'ring'], type: ['n1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'micro'], leading: ['body', 'dense', 'small', 'heading', 'display'], duration: ['89', '144', '233', '377'], tone: ['1', '2', '3', '4', '5'] }[fam[1]];
+        const allowed = { space: FIB.map(String), container: CONTAINERS.map(String), radius: ['2', '3', '5', '8', '13', '21', 'pill', 'round'], focus: ['gap', 'ring'], type: ['n1', '0', '1', '2', '3', '4', '5', '6', '7', '8', 'micro'], leading: ['body', 'dense', 'small', 'heading', 'display'], duration: ['89', '144', '233', '377'], tone: ['1', '2', '3', '4', '5'] }[fam[1]];
         if (!allowed.includes(fam[2])) { bad('plat.web-tokens', 'FP-PLAT-02', `${cp.name} is not a protocol name`); continue; }
         mark('plat.web-tokens', 'pass');
         const r = resolveVars(cp.value, vars); const c = classifyToken(r.text);

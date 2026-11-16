@@ -1,0 +1,9 @@
+{
+  "fixture": "primer-snap",
+  "fault": "control-height-no-role",
+  "about": "The button height is a literal 40px on an interactive element with neither the target nor the drawn role. Snap would turn a 40 control into 32.",
+  "exit": 1,
+  "mustFail": [
+    "FP-SNAP-11"
+  ]
+}

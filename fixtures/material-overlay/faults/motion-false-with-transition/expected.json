@@ -1,0 +1,9 @@
+{
+  "fixture": "material-overlay",
+  "fault": "motion-false-with-transition",
+  "about": "has.motion is false, but the action has a transition.",
+  "exit": 1,
+  "mustFail": [
+    "FP-CONF-11"
+  ]
+}

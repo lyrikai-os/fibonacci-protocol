@@ -1,0 +1,9 @@
+{
+  "fixture": "native",
+  "fault": "failing-contrast",
+  "about": "Light-theme muted text lightened to a grey under 4.5:1 on the ground.",
+  "exit": 1,
+  "mustFail": [
+    "FP-A11Y-01"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "fixture": "primer-snap",
+  "fault": "failing-contrast",
+  "about": "Primer muted text in the light theme replaced with a lighter grey that falls under 4.5:1 on the muted card.",
+  "exit": 1,
+  "mustFail": [
+    "FP-A11Y-01"
+  ]
+}
