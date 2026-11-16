@@ -1,0 +1,100 @@
+# fp-check
+
+The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0-rc.1.
+MIT License. [www.lyrikai.com](https://www.lyrikai.com)
+
+`fp-check` reads an `fp.config.json` and the CSS it names, runs the protocol's machine tests locally (no network, no dependencies, Node 20), and reports one result per rule ID: `pass`, `fail`, `pending`, `n/a`, `not-run`, or `self-report` for the rules only people can answer.
+
+It was written from the specification text (`spec/`) and checked against the published test vectors in `spec/test-vectors/`. It did not read the script that made the vectors. Where it and a vector disagree, the test is left failing and the disagreement is listed below.
+
+## Use
+
+```sh
+node tools/fp-check/fp-check.mjs [dir] [--config fp.config.json] [--json] [--expect expected.json] [--spec <dir>]
+```
+
+| Option | Meaning |
+|---|---|
+| `dir` | Folder with `fp.config.json` and the source. Default `.`. Globs in `source`, `scope` and `snap.source` are relative to it. |
+| `--config` | Another configuration file. Read from `dir` if it is there, else from the working directory. |
+| `--json` | Print the full report as JSON (findings, mapping, merges, overrides, pairs, coverage, claim, the table of every rule). |
+| `--expect` | Compare the report with an expected-results file (the format of `spec/test-vectors/*/expected.json`) and print the differences. |
+| `--spec` | Folder with `rules.json` and `fp.config.schema.json`. Default: the repository's `spec/` (or `FP_SPEC_DIR`). |
+
+Exit codes: `0` pass (or `--expect` matches), `1` fail or pending (or `--expect` differs), `2` not-run or an input error (no configuration, bad option).
+
+A passing run prints the claim string of FP-CONF-04, for example `FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.1 · self-assessed`. It ends in `self-assessed` for as long as self-report rules remain that people have not answered (FP-CONF-14). A failed, pending or not-run run prints no claim.
+
+### Tests
+
+```sh
+cd tools/fp-check && node --test
+```
+
+`test/vectors.test.mjs` runs the checker on every vector folder and compares with its `expected.json`. The other test files cover the CSS reader, the value classifier, the JSON Schema validator, every check, Snap, the type scale, contrast, token files and the command line.
+
+## What it checks
+
+Configuration: validates `fp.config.json` against `fp.config.schema.json` with a small built-in JSON Schema 2020-12 validator (`$ref`, `type`, `enum`, `const`, `pattern`, `minimum`, `minLength`, `minItems`, `items`, `properties`, `required`, `additionalProperties`, `allOf`, `anyOf`, `oneOf`, `not`, `if`/`then`/`else`), and checks that `fp` equals the specification version.
+
+Reading (FP-CONF-08): plain `.css`, `<style>` blocks in `.html`, and DTCG token files (`*.json`). Shorthands are expanded to longhands (`padding`, `margin`, `inset`, `gap`, logical pairs, `border-radius` with `/`, `border-width`, `border`, `outline`), `var()` is followed within the source (with fallbacks and chains), and `calc()` is accepted only in the two derived patterns. `@media`, `@supports`, `@layer`, `@container`, `@keyframes` and nested rules are read.
+
+Machine tests implemented (62 of the 94 machine rules in `rules.json`; the other 32 are `n/a` in any adopter's run, see below):
+
+| Area | Rules and check names |
+|---|---|
+| Lengths | FP-SPACE-01 `space.on-ladder` (rungs at the declared u, 0, intrinsic values, negatives, rem and absolute units); FP-SPACE-04 `space.derived` (container x 0.618 or 0.382, container minus one ladder token, container is `100%`/`100vw`/`100vh`/`100cqi` and forms or the `--fp-container-N` token, no chaining); FP-SPACE-05 `space.exceptions`; FP-MATH-03 `math.ladder`; FP-MATH-05/06 `math.unit`, `math.unit-profile`; FP-MATH-08/09 `math.rounding`, `math.zero-negative` (fractions of a unit) |
+| Fine detail | FP-RADIUS-01 `radius.set` (0, 2, 3, 5, 8, 13, 21, pill, round); FP-RADIUS-03 `radius.pill-round`; FP-MATH-07 `math.fixed-detail` (border and outline widths and offsets 0 to 3, whatever u is) |
+| Modes | FP-MODE-01/02/08/10 `mode.config-present`, `mode.config-schema`, `mode.single`, `mode.roles`; FP-MODE-04 `mode.overlay-resolved`; FP-MODE-05 `mode.overlay-coverage` (counted after shorthand expansion, rounded half up); FP-MODE-06 `mode.native`; FP-MODE-09 `mode.level-ceiling` |
+| Snap | FP-SNAP-01 to 07, 09, 10, 11: `snap.exempt-by-role`, `snap.nearest` (ties up), `snap.drift` (at most 25%, exact), `snap.unsnappable`, `snap.target-up` (u and pointer aware), `snap.control-height`, `snap.monotonic` (order within a group), `snap.merge-listed`, `snap.override` (at most 38.2%), `snap.level-cap`. Tokens come from CSS custom properties or a DTCG file; bare literals in the scope are mapped and listed |
+| Roles and exceptions | `icon`, `type`, `breakpoint`, `drawn`, `micro` exempt; `target` is exempt when it meets the ladder target; exceptions match by token address (any `var()` in the chain), selector, `file:line` or file, and by value; `pending` exceptions make the run `pending` (FP-CONF-07) |
+| Contrast | FP-A11Y-01/02 `a11y.contrast`, `a11y.contrast-exact`: WCAG 2.x luminance on every declared pair in every declared theme (by selector, media query or files); the ratio is never rounded and is displayed truncated to three decimals |
+| Type (FP-2) | FP-TYPE-01 `type.scale`, -02 `type.step-range`, -03 `type.align`, -04 `type.units`, -05 `type.micro`, -07 `type.leading`, -08 `type.leading-unitless`, -13 `type.leading-declared`, -09 `type.measure-max`; FP-A11Y-07/08 `a11y.body-anchor`, `a11y.min-text` |
+| Layout (FP-2) | FP-LAYOUT-01 `layout.phi-split`; FP-LAYOUT-05 `layout.container-widths` (Native) |
+| Applicability | FP-CONF-11 `conf.not-applicable`: `has.motion` contradicted by `animation`, `transition` or `@keyframes`; `has.controls` by `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover` |
+| Web | FP-PLAT-01 `plat.web-units`, FP-PLAT-02 `plat.web-tokens`, FP-PLAT-03 `plat.web-pointer` on `--fp-*` custom properties |
+| Token files | FP-TOKEN-01 to 07, 09: `token.dtcg`, `token.types`, `token.names`, `token.master-unit`, `token.themes`, `token.extensions`, `token.root-metadata`, `token.type-rem` |
+| Report | FP-CONF-04/05/07/14 (`conf.claim-format`, `conf.v1-levels`, `conf.no-pending`, `conf.not-run`), FP-HONEST-02 `honest.banned-words`, FP-HONEST-04 `honest.claim-wording` |
+
+Type tests run when `level` is `FP-2`, in every mode (the host's type in an Overlay or Snap scope is replaced by the protocol's, FP-MODE-09). At FP-1 type is not read.
+
+### Heuristics to know about
+
+- A "declared" phi split (FP-LAYOUT-01) is a two-track `grid-template-columns` of `fr` or `%` whose ratio is within 0.1 of 61.8 to 38.2, or within 5% of phi but not within 0.1, or in a rule whose selector contains `phi`, `golden` or `fp-split`. Equal tracks and other splits are never flagged.
+- A "container" width limit (FP-LAYOUT-05, Native, FP-2) is a `max-width` or `max-inline-size` of 500px or more; a fixed `width` or `inline-size` of 610, 987 or 1597 is refused.
+- `pill` (FP-RADIUS-03) is a radius of 999px or more; the element's height is not known.
+- `em`, `ex`, `lh` and similar units depend on a font size the checker does not compute; they are not flagged and are listed in the notes. Viewport, container and `%` units are intrinsic (FP-CONF-09).
+- `calc()` is allowed for layout lengths only in the derived patterns; in a radius or stroke it fails. `min()`, `max()` and `clamp()` test each length argument.
+- Accepted exceptions counted in an Overlay claim are those that matched a checked value in the scope.
+
+## What it does not check: self-report rules
+
+These rules are decided by people with evidence (FP-CONF-06). `fp-check` lists the ones that apply to a run and leaves them as `self-report`. It cannot show target sizes, reflow, colour-only states or pause controls (FP-CONF-10), and a passing run is not proof that a product is accessible.
+
+- Guard: FP-A11Y-03 text resize, FP-A11Y-04 text spacing, FP-A11Y-05 target size, FP-A11Y-06 focus visible, FP-A11Y-09 to 11 motion and flashes, FP-A11Y-12 focus ring, FP-A11Y-13 reflow at 320, FP-A11Y-14, FP-A11Y-16 floors win, FP-A11Y-17, FP-A11Y-18 time limits, FP-A11Y-19, FP-A11Y-20 every pair declared, FP-LINE-02, FP-CTRL-01 to 04 control targets and hit areas, FP-VIZ-01, 04, 05, 06 data honesty, FP-HONEST-03 claims never made, FP-HONEST-05 invent nothing, FP-CONF-06, FP-CONF-10, FP-CONF-12
+- FP-1: FP-MATH-04 ladder scope, FP-MODE-03 Overlay keeps the host, FP-MODE-07 what an adopter may change, FP-SPACE-03 choose by role, FP-RADIUS-02 nested radii, FP-SNAP-08 the published table's "what breaks" block
+- FP-2: FP-TYPE-06 control labels, FP-TYPE-12 host type mapping, FP-LAYOUT-02 equal columns, FP-LAYOUT-07 host breakpoints
+- Informative, FP-3, FP-4a, FP-4b, Agent and the other platforms: published as guidance; `n/a` for a version 1.0 claim (FP-CONF-05, FP-CONF-12)
+
+Machine rules that are `n/a` in an adopter's run because they bind the checker or the specification, or are informative or for a later level: `math.constants`, `conf.guard-base`, `conf.cumulative`, `conf.badges`, `conf.classify`, `conf.not-flagged`, `honest.labels`, `token.outputs`, `token.style-dictionary`, `plat.web-tailwind`, `agent.fp-off`, `agent.fp-change`, and the FP-3, FP-4a and FP-4b checks (`motion.*`, `color.*`, `state.*`, `art.*`, `viz.ticks`, `math.no-approximate-angle`). The behaviour FP-CONF-08 and FP-CONF-09 describe is implemented and unit-tested; the constants of FP-MATH-01 are asserted in the tests.
+
+### Not-run
+
+Rules are `not-run`, and so is the run, when the machine tests cannot run:
+
+- a file in `source` is CSS-in-JS or preprocessor source (`.js`, `.ts`, `.tsx`, `.scss`, `.less`, `.vue` and so on): compile it to CSS first (FP-CONF-08);
+- a `var()` cannot be resolved inside the source, or a colour in a declared pair cannot be resolved;
+- no file matched `source`.
+
+Inline `style` attributes are not read; a note says so. A Native claim that ships no protocol token file leaves the FP-TOKEN rules `not-run` with a reason; that does not change the run result. A Snap run with no published table leaves FP-SNAP-06 `not-run` with a note, and also does not change the run result.
+
+## Disagreements with the published vectors
+
+`node --test` fails four vector tests on purpose. See the notes in the pull request or hand-over; in short:
+
+- `08-snap-targets`, `09-snap-targets-fine`: the vector lists no merged groups for `target` tokens. FP-SNAP-06 says two or more host tokens that map to one rung become one value and every merged group is listed by name, so `--control-sm/md/lg` (all raised to 55) are a merge.
+- `11-type-scale-formula`, `12-type-scale-fibonacci`: the vector reports the unused odd step 53 as `type.scale` / FP-TYPE-01 and, under `type.align: fibonacci`, the replaced value 20 as `type.scale` / FP-TYPE-01. By the rule text these are FP-TYPE-02 `type.step-range` ("Odd steps above 4 are not used") and FP-TYPE-03 `type.align` ("that number replaces the rounded value"). The results (fail) and the sizes flagged agree; only the rule and check names differ.
+
+## License
+
+MIT. Copyright the Lyrikai authors. [www.lyrikai.com](https://www.lyrikai.com)
