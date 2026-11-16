@@ -1,0 +1,476 @@
+{
+  "name": "Lyrikai Fibonacci Protocol",
+  "version": "1.0.0-rc.1",
+  "color": {
+    "themes": [
+      {
+        "id": "light",
+        "name": "Light"
+      },
+      {
+        "id": "dark",
+        "name": "Dark"
+      }
+    ],
+    "tokens": []
+  },
+  "type": {
+    "fonts": [],
+    "families": {
+      "default": "inherit"
+    },
+    "groups": [
+      {
+        "name": "Interface",
+        "family": "default",
+        "styles": [
+          {
+            "name": "type-n1",
+            "fontSize": "0.8125rem",
+            "lineHeight": 1.382,
+            "fontWeight": 400
+          },
+          {
+            "name": "type-0",
+            "fontSize": "1rem",
+            "lineHeight": 1.618,
+            "fontWeight": 400
+          },
+          {
+            "name": "type-0-dense",
+            "fontSize": "1rem",
+            "lineHeight": 1.5,
+            "fontWeight": 400
+          },
+          {
+            "name": "type-1",
+            "fontSize": "1.25rem",
+            "lineHeight": 1.236,
+            "fontWeight": 400
+          },
+          {
+            "name": "type-2",
+            "fontSize": "1.625rem",
+            "lineHeight": 1.236,
+            "fontWeight": 400
+          },
+          {
+            "name": "type-3",
+            "fontSize": "2.0625rem",
+            "lineHeight": 1.236,
+            "fontWeight": 400
+          },
+          {
+            "name": "type-4",
+            "fontSize": "2.625rem",
+            "lineHeight": 1.146,
+            "fontWeight": 400
+          }
+        ]
+      },
+      {
+        "name": "Display",
+        "family": "default",
+        "styles": [
+          {
+            "name": "type-4-display",
+            "fontSize": "2.625rem",
+            "lineHeight": 1.146,
+            "fontWeight": 400
+          },
+          {
+            "name": "type-6-display",
+            "fontSize": "4.25rem",
+            "lineHeight": 1.146,
+            "fontWeight": 400
+          },
+          {
+            "name": "type-8-display",
+            "fontSize": "6.875rem",
+            "lineHeight": 1.146,
+            "fontWeight": 400
+          }
+        ]
+      },
+      {
+        "name": "Metadata",
+        "family": "default",
+        "styles": [
+          {
+            "name": "type-micro",
+            "fontSize": "0.6875rem",
+            "lineHeight": 1.382,
+            "fontWeight": 400
+          }
+        ]
+      }
+    ]
+  },
+  "spacing": {
+    "tokens": [
+      {
+        "name": "space-1",
+        "value": "8px",
+        "usage": "Hairline-scale space."
+      },
+      {
+        "name": "space-2",
+        "value": "16px",
+        "usage": "Bars, strips, fine gap."
+      },
+      {
+        "name": "space-3",
+        "value": "24px",
+        "usage": "Rings, tight gap."
+      },
+      {
+        "name": "space-5",
+        "value": "40px",
+        "usage": "Inner gap."
+      },
+      {
+        "name": "space-8",
+        "value": "64px",
+        "usage": "Gap between controls, padding inside pills."
+      },
+      {
+        "name": "space-13",
+        "value": "104px",
+        "usage": "Gap, small padding."
+      },
+      {
+        "name": "space-21",
+        "value": "168px",
+        "usage": "Card and figure padding."
+      },
+      {
+        "name": "space-34",
+        "value": "272px",
+        "usage": "Panel padding; control height with a fine pointer."
+      },
+      {
+        "name": "space-55",
+        "value": "440px",
+        "usage": "Page top, rows, touch target."
+      },
+      {
+        "name": "space-89",
+        "value": "712px",
+        "usage": "Gap between sections."
+      },
+      {
+        "name": "space-144",
+        "value": "1152px",
+        "usage": "Box size."
+      },
+      {
+        "name": "space-233",
+        "value": "1864px",
+        "usage": "Box size, card width."
+      },
+      {
+        "name": "space-377",
+        "value": "3016px",
+        "usage": "Box size, card height."
+      }
+    ]
+  },
+  "radius": {
+    "tokens": [
+      {
+        "name": "radius-2",
+        "value": "2px",
+        "usage": "Bars and strips."
+      },
+      {
+        "name": "radius-3",
+        "value": "3px",
+        "usage": "Small marks."
+      },
+      {
+        "name": "radius-5",
+        "value": "5px",
+        "usage": "Nested inner corner."
+      },
+      {
+        "name": "radius-8",
+        "value": "8px",
+        "usage": "Small tiles."
+      },
+      {
+        "name": "radius-13",
+        "value": "13px",
+        "usage": "Cards and figures."
+      },
+      {
+        "name": "radius-21",
+        "value": "21px",
+        "usage": "Outer frames."
+      },
+      {
+        "name": "radius-pill",
+        "value": "9999px",
+        "usage": "Pill: a radius of at least half the element height."
+      }
+    ]
+  },
+  "container": {
+    "tokens": [
+      {
+        "name": "container-610",
+        "value": "610px",
+        "usage": "Container width limit 610; write as max-inline-size."
+      },
+      {
+        "name": "container-987",
+        "value": "987px",
+        "usage": "Container width limit 987; write as max-inline-size."
+      },
+      {
+        "name": "container-1597",
+        "value": "1597px",
+        "usage": "Container width limit 1597; write as max-inline-size."
+      }
+    ]
+  },
+  "line": {
+    "tokens": [
+      {
+        "name": "line-hairline",
+        "value": "1px",
+        "usage": "Hairline: 1 platform unit. Decoration, never the only edge of a control."
+      },
+      {
+        "name": "line-stroke-2",
+        "value": "2px",
+        "usage": "Stroke width 2, for example a state mark stroke."
+      },
+      {
+        "name": "line-stroke-3",
+        "value": "3px",
+        "usage": "Stroke width 3."
+      }
+    ]
+  },
+  "focus": {
+    "tokens": [
+      {
+        "name": "focus-gap",
+        "value": "2px",
+        "usage": "Gap between the element and its focus ring."
+      },
+      {
+        "name": "focus-ring",
+        "value": "3px",
+        "usage": "Focus ring width."
+      }
+    ]
+  },
+  "target": {
+    "tokens": [
+      {
+        "name": "target-coarse",
+        "value": "64px",
+        "usage": "Ladder target for a coarse or unknown pointer."
+      },
+      {
+        "name": "target-fine",
+        "value": "24px",
+        "usage": "Ladder target where the pointer is fine only."
+      },
+      {
+        "name": "target-floor-coarse",
+        "value": "44px",
+        "usage": "Target floor for a coarse or unknown pointer (protocol choice; WCAG AA minimum is 24)."
+      },
+      {
+        "name": "target-floor-fine",
+        "value": "24px",
+        "usage": "Target floor for a fine pointer (WCAG 2.2, 2.5.8)."
+      }
+    ]
+  },
+  "leading": {
+    "tokens": [
+      {
+        "name": "leading-body",
+        "value": "1.618",
+        "usage": "Running text at body size."
+      },
+      {
+        "name": "leading-dense",
+        "value": "1.5",
+        "usage": "Dense body: body-size text in tables, lists and forms."
+      },
+      {
+        "name": "leading-small",
+        "value": "1.382",
+        "usage": "Small text and any single-line label."
+      },
+      {
+        "name": "leading-heading",
+        "value": "1.236",
+        "usage": "Headings at steps 1 to 3."
+      },
+      {
+        "name": "leading-display",
+        "value": "1.146",
+        "usage": "Display text and headings at step 4 and above."
+      }
+    ]
+  },
+  "duration": {
+    "tokens": [
+      {
+        "name": "duration-89",
+        "value": "89ms",
+        "usage": "Feedback (press, toggle)."
+      },
+      {
+        "name": "duration-144",
+        "value": "144ms",
+        "usage": "Small element entering or leaving."
+      },
+      {
+        "name": "duration-233",
+        "value": "233ms",
+        "usage": "Standard change (menu, panel)."
+      },
+      {
+        "name": "duration-377",
+        "value": "377ms",
+        "usage": "Large surface (sheet, dialog, page)."
+      }
+    ]
+  },
+  "easing": {
+    "tokens": [
+      {
+        "name": "easing-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "usage": "Standard easing."
+      },
+      {
+        "name": "easing-enter",
+        "value": "cubic-bezier(0, 0, 0.2, 1)",
+        "usage": "Easing for elements entering."
+      },
+      {
+        "name": "easing-exit",
+        "value": "cubic-bezier(0.4, 0, 1, 1)",
+        "usage": "Easing for elements leaving."
+      }
+    ]
+  },
+  "layer": {
+    "tokens": [
+      {
+        "name": "layer-base",
+        "value": "1",
+        "usage": "Layer base."
+      },
+      {
+        "name": "layer-raised",
+        "value": "2",
+        "usage": "Layer raised."
+      },
+      {
+        "name": "layer-overlay",
+        "value": "3",
+        "usage": "Layer overlay."
+      },
+      {
+        "name": "layer-popover",
+        "value": "13",
+        "usage": "Layer popover."
+      },
+      {
+        "name": "layer-toast",
+        "value": "21",
+        "usage": "Layer toast."
+      }
+    ]
+  },
+  "tone": {
+    "tokens": [
+      {
+        "name": "tone-1",
+        "value": "0.618",
+        "usage": "Tone 1: φ^-1."
+      },
+      {
+        "name": "tone-2",
+        "value": "0.382",
+        "usage": "Tone 2: φ^-2."
+      },
+      {
+        "name": "tone-3",
+        "value": "0.236",
+        "usage": "Tone 3: φ^-3."
+      },
+      {
+        "name": "tone-4",
+        "value": "0.146",
+        "usage": "Tone 4: φ^-4."
+      },
+      {
+        "name": "tone-5",
+        "value": "0.09",
+        "usage": "Tone 5: φ^-5."
+      }
+    ]
+  },
+  "math": {
+    "tokens": [
+      {
+        "name": "math-phi",
+        "value": "1.61803398875",
+        "usage": "φ = (1 + √5) / 2."
+      },
+      {
+        "name": "math-phi-inverse",
+        "value": "0.61803398875",
+        "usage": "1/φ = φ - 1."
+      },
+      {
+        "name": "math-phi-inverse-squared",
+        "value": "0.38196601125",
+        "usage": "1/φ² = 2 - φ."
+      },
+      {
+        "name": "math-phi-root",
+        "value": "1.272019649514",
+        "usage": "√φ, the type step ratio."
+      },
+      {
+        "name": "math-golden-angle-degrees",
+        "value": "137.507764050038",
+        "usage": "Golden angle in degrees."
+      },
+      {
+        "name": "math-golden-angle-radians",
+        "value": "2.399963229729",
+        "usage": "Golden angle in radians."
+      },
+      {
+        "name": "math-hash-constant",
+        "value": "2654435769",
+        "usage": "Fibonacci hashing constant."
+      }
+    ]
+  },
+  "split": {
+    "tokens": [
+      {
+        "name": "split-major",
+        "value": "61.8",
+        "usage": "Major part of a φ split."
+      },
+      {
+        "name": "split-minor",
+        "value": "38.2",
+        "usage": "Minor part of a φ split."
+      }
+    ]
+  }
+}
