@@ -1,6 +1,6 @@
 {
   "vector": "06-snap-u1",
-  "spec": "1.0.0-rc.3",
+  "spec": "1.0.0-rc.4",
   "about": "A 4-based scale at u = 1: nearest rung, ties go up (4 → 5), drift at most 25%, merges listed. Radii map to the radius set; 32 is over 25% from 21 and is not snapped. The values that cannot be snapped are declared as accepted snap-drift exceptions, so the run passes.",
   "result": "pass",
   "mapping": [

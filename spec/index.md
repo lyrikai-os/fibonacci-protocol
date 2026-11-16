@@ -1,8 +1,8 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-**Status:** release candidate 1.0.0-rc.3. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
+**Status:** release candidate 1.0.0-rc.4. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
 
 ## What this is
 
@@ -29,7 +29,7 @@ This is the smallest adoption. It changes nothing your system already has.
 **1. Add the tokens.** Copy this block into your CSS.
 
 ```css
-/* Fibonacci Protocol 1.0.0-rc.3 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
+/* Fibonacci Protocol 1.0.0-rc.4 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
 :root {
   --fp-space-1: 1px;
   --fp-space-2: 2px;
@@ -67,7 +67,7 @@ This is the smallest adoption. It changes nothing your system already has.
 
 ```json
 {
-  "fp": "1.0.0-rc.3",
+  "fp": "1.0.0-rc.4",
   "mode": "overlay",
   "level": "FP-1",
   "platform": "web",
@@ -87,7 +87,7 @@ This is the smallest adoption. It changes nothing your system already has.
 
 **3. Use the tokens in the scope.** Inside the scope, every margin, padding, gap, inset, size and radius resolves to a rung: `padding: var(--fp-space-21)`, `gap: var(--fp-space-8)`, `border-radius: var(--fp-radius-13)`. One of your own tokens is fine where its value is already a rung (8, for example). A token of yours that is used in the scope and is not a rung (a 16 gap, say) is either replaced there by a protocol token or declared once as an exception, with the token's name as `where`. Icon sizes are left alone when the icon tokens are given the `icon` role, as above. Your type, colours, breakpoints and grid stay as they are.
 
-**4. Check.** Every rule in the list below gets a result. Run the machine tests on the scope; answer each self-report item with evidence. The rules are tested on the scope: the files in `scope` and every view those files style. They say nothing about the rest of the product, and the claim names the scope so that a reader can see that. A rule whose "needed" condition is false for you is recorded as `n/a` with a one-line reason (FP-CONF-11). Test vectors for the machine tests are in [test-vectors/](test-vectors/README.md).
+**4. Check.** Every rule in the list below gets a result. Run the machine tests on the scope; answer each self-report item with evidence, in a file `fp-evidence.json` beside `fp.config.json` (one entry per rule: `result`, `evidence`, `by`; FP-CONF-06). The rules are tested on the scope: the files in `scope` and every view those files style. They say nothing about the rest of the product, and the claim names the scope so that a reader can see that. A rule whose "needed" condition is false for you is recorded as `n/a` with a one-line reason (FP-CONF-11). Test vectors for the machine tests are in [test-vectors/](test-vectors/README.md).
 
 This is the complete list for a web, Overlay, FP-1 claim, generated from [rules.json](rules.json):
 
@@ -111,11 +111,9 @@ This is the complete list for a web, Overlay, FP-1 claim, generated from [rules.
 | [FP-MODE-07](02-integration-modes.md) | What an adopter may and may not change | self-report | always |
 | [FP-CONF-04](03-conformance.md) | The claim string | machine | always (tested on the report) |
 | [FP-CONF-05](03-conformance.md) | Version 1.0 claims: FP-1 and FP-2, on the web | machine | always (tested on the report) |
-| [FP-CONF-12](03-conformance.md) | Agent conformance is separate | self-report | always (tested on the report) |
-| [FP-CONF-06](03-conformance.md) | Machine tests and self-report | self-report | always (tested on the report) |
+| [FP-CONF-06](03-conformance.md) | Machine tests, self-report and the evidence file | machine | always (tested on the report) |
 | [FP-CONF-07](03-conformance.md) | A pass needs zero pending exceptions | machine | always (tested on the report) |
 | [FP-CONF-14](03-conformance.md) | Machine tests not run, and self-assessment | machine | always (tested on the report) |
-| [FP-CONF-10](03-conformance.md) | The limits of a check are stated | self-report | always (tested on the report) |
 | [FP-A11Y-16](04-accessibility.md) | Floors win over the ladder | self-report | always |
 | [FP-A11Y-01](04-accessibility.md) | Contrast floors | machine | always |
 | [FP-A11Y-02](04-accessibility.md) | Large text and no rounding | machine | always |
@@ -167,9 +165,9 @@ This is the complete list for a web, Overlay, FP-1 claim, generated from [rules.
 
 If you later go on to FP-2, note one rule that catches people out: every CSS rule that sets a `font-size` must also set `line-height` in the same rule (FP-TYPE-13).
 
-**5. State the claim**, exactly in this form:
+**5. State the claim.** It exists only when the machine tests pass and every self-report item in the list has an entry with evidence. Until then the checker prints a candidate line and the number of items still open, which is not a claim. The claim has exactly this form:
 
-`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.3 · self-assessed`
+`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed`
 
 ### Running the checker
 
@@ -177,7 +175,7 @@ If you later go on to FP-2, note one rule that catches people out: every CSS rul
 
 `node tools/fp-check/fp-check.mjs [folder with fp.config.json]`
 
-It runs the machine tests and prints the claim. The self-report items are still yours to answer, which is why the claim ends with `self-assessed`: that part is dropped only when someone other than the adopter has assessed the self-report items and is named in the report (FP-CONF-14).
+It runs the machine tests, reads `fp-evidence.json`, and prints either the claim or, while self-report items are open, a candidate line with their count. The claim ends with `self-assessed` when the adopter answered the self-report items; that part is dropped only when someone independent of the adopter assessed them and is named in the evidence file (FP-CONF-14).
 
 ## Scope and versions
 
@@ -207,9 +205,9 @@ In version 1.0 a claim names FP-1 or FP-2 and the platform `web` (FP-CONF-05). O
 ## How to claim conformance
 
 1. Write an `fp.config.json` (FP-MODE-01, FP-MODE-02; schema in [fp.config.schema.json](fp.config.schema.json)).
-2. Run the machine tests for the level and answer the self-report items with evidence (FP-CONF-06).
+2. Run the machine tests for the level and answer the self-report items with evidence, in `fp-evidence.json` (FP-CONF-06; schema in [fp-evidence.schema.json](fp-evidence.schema.json)).
 3. Resolve every pending exception; a result with pending exceptions is not a pass (FP-CONF-07).
-4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.3 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
+4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.4 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
 
 A claim says what was tested. It never says that a design is more beautiful, more natural or better (FP-HONEST-04). A passing run is not a statement that a product is accessible (FP-CONF-10).
 
@@ -235,8 +233,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | FP-3 | 0 | 22 | 22 |
 | FP-4a | 0 | 12 | 12 |
 | FP-4b | 0 | 8 | 8 |
-| Agent | 13 | 0 | 13 |
-| **All** | **126** | **60** | **186** |
+| Agent | 14 | 0 | 14 |
+| **All** | **127** | **60** | **187** |
 
 ## File map
 
@@ -259,12 +257,13 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [08-platforms/apple.md](08-platforms/apple.md) | 8 | 8.2 Platforms: iOS and macOS | `FP-PLAT` (3) |
 | [08-platforms/android.md](08-platforms/android.md) | 8 | 8.3 Platforms: Android | `FP-PLAT` (2) |
 | [08-platforms/print-slides-email.md](08-platforms/print-slides-email.md) | 8 | 8.4 Platforms: print, slides, email | `FP-PLAT` (3) |
-| [09-agent-protocol.md](09-agent-protocol.md) | 9 | 9. Agent protocol | `FP-AGENT` (13) |
+| [09-agent-protocol.md](09-agent-protocol.md) | 9 | 9. Agent protocol | `FP-AGENT` (14) |
 | [10-evidence-honesty.md](10-evidence-honesty.md) | 10 | 10. Evidence and honesty | `FP-HONEST` (6) |
 | [tokens.md](tokens.md) | deliverable | Tokens | `FP-TOKEN` (10) |
 | [appendix-snap-tables.md](appendix-snap-tables.md) | 2 | Appendix: worked Snap tables | — (0) |
 | [rules.json](rules.json) | — | Every rule in machine-readable form, with its text; generated from the same source as these pages | all |
 | [fp.config.schema.json](fp.config.schema.json) | 2 | JSON Schema (2020-12) for `fp.config.json` | — |
+| [fp-evidence.schema.json](fp-evidence.schema.json) | 3 | JSON Schema (2020-12) for `fp-evidence.json` | — |
 | [test-vectors/](test-vectors/README.md) | 3 | Inputs and expected results for the core machine tests | — |
 
 ## Glossary
@@ -323,14 +322,14 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [FP-CONF-03](03-conformance.md) | FP-4a and FP-4b are separate badges | Guard | normative | a checker | machine: `conf.badges` | convention (protocol choice) |
 | [FP-CONF-04](03-conformance.md) | The claim string | Guard | normative | the report | machine: `conf.claim-format` | convention (protocol choice) |
 | [FP-CONF-05](03-conformance.md) | Version 1.0 claims: FP-1 and FP-2, on the web | Guard | normative | the report | machine: `conf.v1-levels` | convention (protocol choice) |
-| [FP-CONF-12](03-conformance.md) | Agent conformance is separate | Guard | normative | the report | self-report: `conf.agent-separate` | convention (protocol choice) |
+| [FP-CONF-12](03-conformance.md) | Agent conformance is separate | Guard | normative | a checker | self-report: `conf.agent-separate` | convention (protocol choice) |
 | [FP-CONF-11](03-conformance.md) | Not applicable | Guard | normative | a checker | machine: `conf.not-applicable` | convention (protocol choice) |
-| [FP-CONF-06](03-conformance.md) | Machine tests and self-report | Guard | normative | the report | self-report: `conf.evidence` | convention (protocol choice) |
+| [FP-CONF-06](03-conformance.md) | Machine tests, self-report and the evidence file | Guard | normative | the report | machine: `conf.evidence` | convention (protocol choice) |
 | [FP-CONF-07](03-conformance.md) | A pass needs zero pending exceptions | Guard | normative | the report | machine: `conf.no-pending` | convention (protocol choice) |
 | [FP-CONF-14](03-conformance.md) | Machine tests not run, and self-assessment | Guard | normative | the report | machine: `conf.not-run` | convention (protocol choice) |
 | [FP-CONF-08](03-conformance.md) | What a checker reads and how it classifies | Guard | normative | a checker | machine: `conf.classify` | convention (protocol choice) |
 | [FP-CONF-09](03-conformance.md) | What a checker never flags | Guard | normative | a checker | machine: `conf.not-flagged` | convention (protocol choice) |
-| [FP-CONF-10](03-conformance.md) | The limits of a check are stated | Guard | normative | the report | self-report: `conf.limits-stated` | convention (protocol choice) |
+| [FP-CONF-10](03-conformance.md) | The limits of a check are stated | Guard | normative | a checker | self-report: `conf.limits-stated` | convention (protocol choice) |
 | [FP-A11Y-16](04-accessibility.md) | Floors win over the ladder | Guard | normative | always | self-report: `a11y.precedence` | convention (protocol choice) |
 | [FP-A11Y-01](04-accessibility.md) | Contrast floors | Guard | normative | always | machine: `a11y.contrast` | cited ([source](https://www.w3.org/TR/WCAG22/)) |
 | [FP-A11Y-02](04-accessibility.md) | Large text and no rounding | Guard | normative | always | machine: `a11y.contrast-exact` | cited ([source](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)) |
@@ -451,6 +450,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [FP-AGENT-12](09-agent-protocol.md) | Exemptions an agent declares are listed | Agent | normative | always | self-report: `agent.exemptions-listed` | convention (protocol choice) |
 | [FP-AGENT-04](09-agent-protocol.md) | Non-interactive runs do not stall | Agent | normative | always | self-report: `agent.non-interactive` | convention (protocol choice) |
 | [FP-AGENT-05](09-agent-protocol.md) | Done-checks | Agent | normative | always | self-report: `agent.done-checks` | convention (protocol choice) |
+| [FP-AGENT-14](09-agent-protocol.md) | The report file | Agent | normative | always | machine: `agent.report-file` | convention (protocol choice) |
 | [FP-AGENT-06](09-agent-protocol.md) | Name the rules used | Agent | normative | always | self-report: `agent.rule-ids` | convention (protocol choice) |
 | [FP-AGENT-07](09-agent-protocol.md) | Report every off-ladder value | Agent | normative | always | machine: `agent.fp-off` | convention (protocol choice) |
 | [FP-AGENT-08](09-agent-protocol.md) | Report every change to a host value | Agent | normative | always | machine: `agent.fp-change` | convention (protocol choice) |
@@ -485,4 +485,4 @@ MIT License. Third-party values used as test fixtures keep their own licences an
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

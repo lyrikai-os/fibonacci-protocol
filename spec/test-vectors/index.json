@@ -1,6 +1,6 @@
 {
   "name": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "license": "MIT",
   "homepage": "https://www.lyrikai.com",
   "vectors": [
@@ -156,9 +156,45 @@
     },
     {
       "vector": "16-overlay-coverage",
-      "about": "Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged.",
+      "about": "Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged. There is no fp-evidence.json, so every applicable self-report rule is open and the checker prints a candidate line, not a claim.",
       "result": "pass",
       "inputs": [
+        "src/card.css",
+        "src/legacy.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "19-evidence-complete",
+      "about": "Machine tests pass and fp-evidence.json has an entry with evidence for every applicable self-report rule, answered by the adopter. The claim is valid and ends with self-assessed.",
+      "result": "pass",
+      "inputs": [
+        "fp-evidence.json",
+        "src/card.css",
+        "src/legacy.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "20-evidence-missing",
+      "about": "The same, with one self-report entry missing and one with empty evidence. There is no claim: the checker prints a candidate line and the two open rule IDs.",
+      "result": "pass",
+      "inputs": [
+        "fp-evidence.json",
+        "src/card.css",
+        "src/legacy.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "21-evidence-independent",
+      "about": "The same as 19, with every entry assessed by a party other than the adopter and marked independent. The claim is valid and the self-assessed suffix is dropped.",
+      "result": "pass",
+      "inputs": [
+        "fp-evidence.json",
         "src/card.css",
         "src/legacy.css"
       ],

@@ -1,6 +1,6 @@
 # 8.1 Platforms: web
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 ### FP-PLAT-01 · Web units
 
@@ -54,4 +54,4 @@ Web values in one place, at u = 1: body 16 px (1rem); micro 11 px; ladder target
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

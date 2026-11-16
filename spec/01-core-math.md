@@ -1,6 +1,6 @@
 # 1. Core math
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 This section defines the numbers everything else uses: the constants, the length ladder, the base unit and the rounding rules.
 
@@ -112,4 +112,4 @@ Two properties are arithmetic and useful. First, adjacent rungs add up to the ne
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

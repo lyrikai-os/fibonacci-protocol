@@ -1,0 +1,96 @@
+{
+  "fp": "1.0.0-rc.4",
+  "adopter": "Example adopter (demonstration content)",
+  "items": {
+    "FP-MATH-04": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-MATH-04.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-MODE-03": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-MODE-03.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-MODE-07": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-MODE-07.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-A11Y-16": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-A11Y-16.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-A11Y-20": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-A11Y-20.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-A11Y-03": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-A11Y-03.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-A11Y-04": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-A11Y-04.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-A11Y-19": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-A11Y-19.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-A11Y-13": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-A11Y-13.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-A11Y-14": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-A11Y-14.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-SPACE-03": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-SPACE-03.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-RADIUS-02": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-RADIUS-02.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-CTRL-04": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-CTRL-04.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-HONEST-03": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-HONEST-03.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    },
+    "FP-HONEST-05": {
+      "result": "pass",
+      "evidence": "Demonstration content for this test vector: see evidence/FP-HONEST-05.md",
+      "by": "Example assessor (demonstration content)",
+      "independent": true
+    }
+  }
+}

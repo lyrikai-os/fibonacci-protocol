@@ -1,6 +1,6 @@
 # 3. Conformance
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 ## Levels
 
@@ -27,7 +27,7 @@ FP-4a (art and illustration) and FP-4b (data visualisation) each require only th
 
 ### FP-CONF-04 · The claim string
 
-A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped.
+A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped. When the machine tests pass but self-report rules are still open (FP-CONF-06), there is no claim yet. A checker then prints a candidate line instead, in the form `candidate · <the claim string> · open <count>`, and lists the open rule IDs. A candidate line MUST NOT be published or quoted as a claim.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** machine, `conf.claim-format` · **Evidence:** convention (protocol choice)
 
@@ -43,7 +43,7 @@ Under version 1.0 a claim MAY name FP-1 or FP-2 only, and its platform MUST be `
 
 The FP-AGENT rules describe an agent or a skill, not a design system. They MUST NOT be counted in a system's claim. An agent or skill that meets every normative FP-AGENT rule MAY say that it "follows the Fibonacci Protocol agent rules, spec <version>".
 
-- **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** self-report, `conf.agent-separate` · **Evidence:** convention (protocol choice)
+- **Level:** Guard · **Status:** normative · **Applies when:** a checker · **Test:** self-report, `conf.agent-separate` · **Evidence:** convention (protocol choice)
 
 
 ## Results
@@ -77,11 +77,19 @@ The conditions used in this specification are:
 
 FP-CONF-13 was never assigned; the number is not in use.
 
-### FP-CONF-06 · Machine tests and self-report
+### FP-CONF-06 · Machine tests, self-report and the evidence file
 
 Each rule names its test. A machine test is one that can be decided from the inputs listed under "Checker inputs", locally, with no network. A self-report item MUST be answered with evidence: a measurement, a screenshot, a file reference or a recorded check. A self-report item that applies and has no evidence counts as failed. A SHOULD inside a normative rule is a recommendation: not following it is reported as "recommendation not followed", with the reason, and does not fail the rule.
 
-- **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** self-report, `conf.evidence` · **Evidence:** convention (protocol choice)
+Self-report answers are recorded in a file, `fp-evidence.json`, beside `fp.config.json`. It MUST validate against [fp-evidence.schema.json](fp-evidence.schema.json). It holds `fp` (the spec version), `adopter` (who is making the claim), and `items`: one entry for each applicable self-report rule, keyed by rule ID, with `result` (`pass`, `fail` or `n/a`), `evidence` (text, a file path or a URL; for `n/a`, the reason) and `by` (who assessed it). An entry MAY add `"independent": true` when `by` is neither the adopter nor a person or agent working for the adopter.
+
+A self-report rule is applicable when it is normative, its level is within the claim (Guard, FP-1, and FP-2 for an FP-2 claim), and its applies-when condition is true for the configuration. A checker works this list out from `rules.json` and the configuration, and reads the file:
+
+- an applicable rule with no entry, or with empty `evidence`, is **open**;
+- an entry with `result` `fail` fails the run;
+- the claim is valid only when the machine tests pass, no exception is pending, and no applicable self-report rule is open.
+
+- **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** machine, `conf.evidence` · **Evidence:** convention (protocol choice)
 
 
 ### FP-CONF-07 · A pass needs zero pending exceptions
@@ -93,7 +101,7 @@ A run passes a level only when every applicable machine test passes, every appli
 
 ### FP-CONF-14 · Machine tests not run, and self-assessment
 
-If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. Words such as "provisional pass" MUST NOT be used.
+If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. A checker decides this from `fp-evidence.json`: the suffix stays if any applicable item's `by` is the adopter or lacks `"independent": true`. Words such as "provisional pass" MUST NOT be used.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** machine, `conf.not-run` · **Evidence:** convention (protocol choice)
 
@@ -108,6 +116,7 @@ A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML f
 - **Fine detail** (tested against fixed sets in platform units, whatever u is): `border-radius` and its longhands against the radius set; `border-width`, `outline-width` and `outline-offset` against 0, 1, 2 and 3.
 - **Type** (`font-size`, `line-height`): tested by FP-TYPE rules at FP-2 and up, never as lengths. A checker does not compute the cascade: it tests a `line-height` against the `font-size` declared in the same rule (FP-TYPE-13).
 - **Not tested in version 1.0:** `box-shadow`, `transform`, `background-position`, `letter-spacing`, SVG geometry, and everything else.
+- **Never lengths under test:** a width or height written inside the condition of `@media` or `@container` (a breakpoint). Hosts keep their breakpoints (FP-LAYOUT-07), so a breakpoint is not checked, not snapped and never reported as an `FP-OFF` line, in any mode. The declarations inside the block are read as usual.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** a checker · **Test:** machine, `conf.classify` · **Evidence:** convention (protocol choice)
 
@@ -123,7 +132,7 @@ A checker MUST NOT flag: equal-width columns or a host's column grid; equal-widt
 
 A report MUST state which rules were machine-tested, which were self-reported, which were `n/a` and which were `not-run`. Target sizes, reflow, colour-only states and pause controls cannot be proved from source files. A passing run MUST NOT be described as proof that a product is accessible.
 
-- **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** self-report, `conf.limits-stated` · **Evidence:** convention (protocol choice)
+- **Level:** Guard · **Status:** normative · **Applies when:** a checker · **Test:** self-report, `conf.limits-stated` · **Evidence:** convention (protocol choice)
 
 
 ## What each level tests
@@ -139,4 +148,4 @@ A report MUST state which rules were machine-tested, which were self-reported, w
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

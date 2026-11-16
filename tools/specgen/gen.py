@@ -24,7 +24,7 @@ def hu1(fr):
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
 NAME = "Lyrikai: Fibonacci Protocol for UI/UX Design Agents"
-VER = "1.0.0-rc.3"
+VER = "1.0.0-rc.4"
 HOME = "https://www.lyrikai.com"
 PHI = (1 + 5 ** 0.5) / 2
 FIB = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597]
@@ -272,6 +272,7 @@ def filemap():
         rows.append(f"| [{p}]({p}) | {f['plan']} | {f['title']} | {', '.join('`' + q + '`' for q in pre) or '—'} ({len(ids)}) |")
     rows.append("| [rules.json](rules.json) | — | Every rule in machine-readable form, with its text; generated from the same source as these pages | all |")
     rows.append("| [fp.config.schema.json](fp.config.schema.json) | 2 | JSON Schema (2020-12) for `fp.config.json` | — |")
+    rows.append("| [fp-evidence.schema.json](fp-evidence.schema.json) | 3 | JSON Schema (2020-12) for `fp-evidence.json` | — |")
     rows.append("| [test-vectors/](test-vectors/README.md) | 3 | Inputs and expected results for the core machine tests | — |")
     return "\n".join(rows)
 

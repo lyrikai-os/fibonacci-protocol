@@ -1,6 +1,6 @@
 # 9. Agent protocol
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 This section is written for a design agent: any model or tool that makes or edits a design on a person's behalf. It is the source from which the agent pack and the `/lyrikai-fibonacci` skill are generated.
 
@@ -59,9 +59,25 @@ When no one is available to answer, an agent MUST NOT wait. It applies what it h
 
 ### FP-AGENT-05 · Done-checks
 
-Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires.
+Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires. The agent records each self-report item it assessed in `fp-evidence.json` (FP-CONF-06), with itself and the adopter it works for as `by`; items it could not assess stay open, and the agent then reports a candidate line, not a claim.
 
 - **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** self-report, `agent.done-checks` · **Evidence:** convention (protocol choice)
+
+
+### FP-AGENT-14 · The report file
+
+An agent MUST write its report to a file, `fp-report.md`, beside `fp.config.json`, with these sections in this order, each present even when empty (an empty section says "none"):
+
+1. **Claim**: the claim string, or the candidate line with the open rule IDs, or the result `fail`, `pending` or `not-run`.
+2. **State**: mode, level, unit, platform, what ran the machine tests, and which configuration values were defaults.
+3. **FP-OFF**: one line per off-ladder value (FP-AGENT-07).
+4. **FP-CHANGE**: one line per change to a host value that is not a snapped length (FP-AGENT-08). Snapped lengths are in the Snap table (FP-SNAP-08), not here.
+5. **Exemptions added**: every `roles` entry the agent added (FP-AGENT-12).
+6. **Suggestions**: what the agent would recommend but did not apply.
+7. **Rules**: the rule IDs applied, and each `n/a` with its reason (FP-AGENT-06).
+8. The About line (FP-AGENT-11), last.
+
+- **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** machine, `agent.report-file` · **Evidence:** convention (protocol choice)
 
 
 ### FP-AGENT-06 · Name the rules used
@@ -101,7 +117,7 @@ Example: `FP-CHANGE tokens.css:8 from=14px to=1rem reason=floor rule=FP-A11Y-07 
 
 ### FP-AGENT-13 · Work in the adopter's files
 
-An agent writes its changes into the adopter's own source files, in place; the original stays in version control, and no parallel copy is made unless the user asks for one. A property the checker does not test (`box-shadow`, `transform`, `letter-spacing`; the list is in FP-CONF-08) is left as it is. `outline-offset` and `border-width` are tested, against 0, 1, 2 and 3. Lengths in inline `style` attributes are outside a checker's reach: the agent moves them into CSS where it can and lists the rest in the report. The agent sets every `has` value truthfully, from what it sees in the scope.
+An agent writes its changes into the adopter's own source files, in place; the original stays in version control, and no parallel copy is made unless the user asks for one. Where the adopter's folder is not under version control, the agent first keeps a copy of each file it will change, named `<file>.fp-original` beside it, and says so in the report. Snapped lengths are recorded in the Snap table, and the whole report is written to `fp-report.md` (FP-AGENT-14). A property the checker does not test (`box-shadow`, `transform`, `letter-spacing`; the list is in FP-CONF-08) is left as it is. `outline-offset` and `border-width` are tested, against 0, 1, 2 and 3. Lengths in inline `style` attributes are outside a checker's reach: the agent moves them into CSS where it can and lists the rest in the report. The agent sets every `has` value truthfully, from what it sees in the scope.
 
 - **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** self-report, `agent.in-place` · **Evidence:** convention (protocol choice)
 
@@ -139,4 +155,4 @@ The skill's output MUST end with a line that names the protocol, the spec versio
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

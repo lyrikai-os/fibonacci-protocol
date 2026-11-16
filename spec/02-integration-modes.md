@@ -1,6 +1,6 @@
 # 2. Integration modes
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 A system that already exists adopts the protocol in one of three modes. The mode is declared in a file, so that a person, an agent and a checker all read the same thing.
 
@@ -15,7 +15,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 
 ### FP-MODE-02 · Configuration fields
 
-The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.3`).
+The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.4`).
 
 | Field | Type | Required | Values and default |
 |---|---|---|---|
@@ -47,7 +47,7 @@ The file MUST validate against [fp.config.schema.json](fp.config.schema.json). T
 
 ```json
 {
-  "fp": "1.0.0-rc.3",
+  "fp": "1.0.0-rc.4",
   "mode": "snap",
   "level": "FP-1",
   "platform": "web",
@@ -213,7 +213,7 @@ Any token of a merged group MAY be moved by hand to another rung, chosen by role
 
 ### FP-SNAP-08 · The published table states what breaks
 
-A Snap table MUST be published with the system, at the path in `snap.table` (default `fp-snap.md`, beside `fp.config.json`). It MUST have one row per token and per in-scope literal, with: name, role, original value, snapped value, drift, the group it merged into, and any override reason. It MUST carry a "what breaks" block that covers at least: additive spacing; a 4-unit baseline rhythm; half device pixels at 1.5× density for odd rungs at u = 1; icons of 16 and 24 inside 13 and 21 boxes; hierarchy lost in merges; and visual-regression snapshots.
+A Snap table MUST be published with the system, at the path in `snap.table` (default `fp-snap.md`, beside `fp.config.json`). It MUST have one row per token and per in-scope literal, with: name, role, original value, snapped value, drift, the group it merged into, and any override reason. It MUST carry a "what breaks" block that covers at least: additive spacing; a 4-unit baseline rhythm; half device pixels at 1.5× density for odd rungs at u = 1; icons of 16 and 24 inside 13 and 21 boxes; hierarchy lost in merges; and visual-regression snapshots. Snapped lengths are recorded in this table and nowhere else: they are not repeated as `FP-CHANGE` lines.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: snap · **Test:** self-report, `snap.what-breaks` · **Evidence:** convention (protocol choice)
 
@@ -244,4 +244,4 @@ An adopter MAY change: colour slot values, typefaces and weights, the words show
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

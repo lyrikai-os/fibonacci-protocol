@@ -1,0 +1,32 @@
+{
+  "vector": "19-evidence-complete",
+  "spec": "1.0.0-rc.4",
+  "about": "Machine tests pass and fp-evidence.json has an entry with evidence for every applicable self-report rule, answered by the adopter. The claim is valid and ends with self-assessed.",
+  "result": "pass",
+  "findings": [],
+  "coverage": {
+    "inScope": 11,
+    "inSource": 22,
+    "percent": 50
+  },
+  "claimState": "valid",
+  "claim": "FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed",
+  "openItems": [],
+  "applicableSelfReport": [
+    "FP-MATH-04",
+    "FP-MODE-03",
+    "FP-MODE-07",
+    "FP-A11Y-16",
+    "FP-A11Y-20",
+    "FP-A11Y-03",
+    "FP-A11Y-04",
+    "FP-A11Y-19",
+    "FP-A11Y-13",
+    "FP-A11Y-14",
+    "FP-SPACE-03",
+    "FP-RADIUS-02",
+    "FP-CTRL-04",
+    "FP-HONEST-03",
+    "FP-HONEST-05"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "fp": "1.0.0-rc.4",
+  "mode": "overlay",
+  "level": "FP-1",
+  "platform": "web",
+  "unit": 1,
+  "has": {
+    "motion": false,
+    "timeLimits": false,
+    "controls": false,
+    "charts": false,
+    "generatedArt": false,
+    "states": false
+  },
+  "source": [
+    "src/**/*.css"
+  ],
+  "pairs": [
+    {
+      "fg": "#1a1a1a",
+      "bg": "#ffffff",
+      "kind": "text"
+    }
+  ],
+  "scope": [
+    "src/card.css"
+  ]
+}

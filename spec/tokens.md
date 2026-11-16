@@ -1,6 +1,6 @@
 # Tokens
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 These rules apply to token files written in the protocol's format: the protocol's own published tokens, and the tokens of any system that chooses to ship such files. No mode requires them. A system that ships none, in Overlay, Snap or Native, has these rules as `n/a`.
 
@@ -76,7 +76,7 @@ The master SHOULD build under Style Dictionary 4 and 5. Known gaps (object-form 
 
 ```json
 {
-  "$extensions": { "com.lyrikai.fp": { "homepage": "https://www.lyrikai.com", "spec": "1.0.0-rc.3", "unit": 1 } },
+  "$extensions": { "com.lyrikai.fp": { "homepage": "https://www.lyrikai.com", "spec": "1.0.0-rc.4", "unit": 1 } },
   "space": {
     "$type": "dimension",
     "13": {
@@ -97,4 +97,4 @@ The master SHOULD build under Style Dictionary 4 and 5. Known gaps (object-form 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

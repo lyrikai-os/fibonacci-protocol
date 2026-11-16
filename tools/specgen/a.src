@@ -51,7 +51,7 @@ This is the smallest adoption. It changes nothing your system already has.
 
 **3. Use the tokens in the scope.** Inside the scope, every margin, padding, gap, inset, size and radius resolves to a rung: `padding: var(--fp-space-21)`, `gap: var(--fp-space-8)`, `border-radius: var(--fp-radius-13)`. One of your own tokens is fine where its value is already a rung (8, for example). A token of yours that is used in the scope and is not a rung (a 16 gap, say) is either replaced there by a protocol token or declared once as an exception, with the token's name as `where`. Icon sizes are left alone when the icon tokens are given the `icon` role, as above. Your type, colours, breakpoints and grid stay as they are.
 
-**4. Check.** Every rule in the list below gets a result. Run the machine tests on the scope; answer each self-report item with evidence. The rules are tested on the scope: the files in `scope` and every view those files style. They say nothing about the rest of the product, and the claim names the scope so that a reader can see that. A rule whose "needed" condition is false for you is recorded as `n/a` with a one-line reason (FP-CONF-11). Test vectors for the machine tests are in [test-vectors/](test-vectors/README.md).
+**4. Check.** Every rule in the list below gets a result. Run the machine tests on the scope; answer each self-report item with evidence, in a file `fp-evidence.json` beside `fp.config.json` (one entry per rule: `result`, `evidence`, `by`; FP-CONF-06). The rules are tested on the scope: the files in `scope` and every view those files style. They say nothing about the rest of the product, and the claim names the scope so that a reader can see that. A rule whose "needed" condition is false for you is recorded as `n/a` with a one-line reason (FP-CONF-11). Test vectors for the machine tests are in [test-vectors/](test-vectors/README.md).
 
 This is the complete list for a web, Overlay, FP-1 claim, generated from [rules.json](rules.json):
 
@@ -59,7 +59,7 @@ This is the complete list for a web, Overlay, FP-1 claim, generated from [rules.
 
 If you later go on to FP-2, note one rule that catches people out: every CSS rule that sets a `font-size` must also set `line-height` in the same rule (FP-TYPE-13).
 
-**5. State the claim**, exactly in this form:
+**5. State the claim.** It exists only when the machine tests pass and every self-report item in the list has an entry with evidence. Until then the checker prints a candidate line and the number of items still open, which is not a claim. The claim has exactly this form:
 
 `FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec {{ver}} · self-assessed`
 
@@ -69,7 +69,7 @@ If you later go on to FP-2, note one rule that catches people out: every CSS rul
 
 `node tools/fp-check/fp-check.mjs [folder with fp.config.json]`
 
-It runs the machine tests and prints the claim. The self-report items are still yours to answer, which is why the claim ends with `self-assessed`: that part is dropped only when someone other than the adopter has assessed the self-report items and is named in the report (FP-CONF-14).
+It runs the machine tests, reads `fp-evidence.json`, and prints either the claim or, while self-report items are open, a candidate line with their count. The claim ends with `self-assessed` when the adopter answered the self-report items; that part is dropped only when someone independent of the adopter assessed them and is named in the evidence file (FP-CONF-14).
 
 ## Scope and versions
 
@@ -99,7 +99,7 @@ In version 1.0 a claim names FP-1 or FP-2 and the platform `web` (FP-CONF-05). O
 ## How to claim conformance
 
 1. Write an `fp.config.json` (FP-MODE-01, FP-MODE-02; schema in [fp.config.schema.json](fp.config.schema.json)).
-2. Run the machine tests for the level and answer the self-report items with evidence (FP-CONF-06).
+2. Run the machine tests for the level and answer the self-report items with evidence, in `fp-evidence.json` (FP-CONF-06; schema in [fp-evidence.schema.json](fp-evidence.schema.json)).
 3. Resolve every pending exception; a result with pending exceptions is not a pass (FP-CONF-07).
 4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec {{ver}} · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
 
@@ -388,7 +388,7 @@ Any token of a merged group MAY be moved by hand to another rung, chosen by role
 
 @R FP-SNAP-08 | The published table states what breaks | FP-1 | N | S snap.what-breaks | choice
 @applies mode: snap
-A Snap table MUST be published with the system, at the path in `snap.table` (default `fp-snap.md`, beside `fp.config.json`). It MUST have one row per token and per in-scope literal, with: name, role, original value, snapped value, drift, the group it merged into, and any override reason. It MUST carry a "what breaks" block that covers at least: additive spacing; a 4-unit baseline rhythm; half device pixels at 1.5× density for odd rungs at u = 1; icons of 16 and 24 inside 13 and 21 boxes; hierarchy lost in merges; and visual-regression snapshots.
+A Snap table MUST be published with the system, at the path in `snap.table` (default `fp-snap.md`, beside `fp.config.json`). It MUST have one row per token and per in-scope literal, with: name, role, original value, snapped value, drift, the group it merged into, and any override reason. It MUST carry a "what breaks" block that covers at least: additive spacing; a 4-unit baseline rhythm; half device pixels at 1.5× density for odd rungs at u = 1; icons of 16 and 24 inside 13 and 21 boxes; hierarchy lost in merges; and visual-regression snapshots. Snapped lengths are recorded in this table and nowhere else: they are not repeated as `FP-CHANGE` lines.
 @@
 
 @R FP-SNAP-09 | Snapping alone reaches FP-1 | FP-1 | N | M snap.level-cap | choice
@@ -429,7 +429,7 @@ FP-4a (art and illustration) and FP-4b (data visualisation) each require only th
 
 @R FP-CONF-04 | The claim string | Guard | N | M conf.claim-format | choice
 @applies the report
-A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped.
+A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped. When the machine tests pass but self-report rules are still open (FP-CONF-06), there is no claim yet. A checker then prints a candidate line instead, in the form `candidate · <the claim string> · open <count>`, and lists the open rule IDs. A candidate line MUST NOT be published or quoted as a claim.
 @@
 
 @R FP-CONF-05 | Version 1.0 claims: FP-1 and FP-2, on the web | Guard | N | M conf.v1-levels | choice
@@ -438,7 +438,7 @@ Under version 1.0 a claim MAY name FP-1 or FP-2 only, and its platform MUST be `
 @@
 
 @R FP-CONF-12 | Agent conformance is separate | Guard | N | S conf.agent-separate | choice
-@applies the report
+@applies a checker
 The FP-AGENT rules describe an agent or a skill, not a design system. They MUST NOT be counted in a system's claim. An agent or skill that meets every normative FP-AGENT rule MAY say that it "follows the Fibonacci Protocol agent rules, spec <version>".
 @@
 
@@ -471,9 +471,17 @@ The conditions used in this specification are:
 
 FP-CONF-13 was never assigned; the number is not in use.
 
-@R FP-CONF-06 | Machine tests and self-report | Guard | N | S conf.evidence | choice
+@R FP-CONF-06 | Machine tests, self-report and the evidence file | Guard | N | M conf.evidence | choice
 @applies the report
 Each rule names its test. A machine test is one that can be decided from the inputs listed under "Checker inputs", locally, with no network. A self-report item MUST be answered with evidence: a measurement, a screenshot, a file reference or a recorded check. A self-report item that applies and has no evidence counts as failed. A SHOULD inside a normative rule is a recommendation: not following it is reported as "recommendation not followed", with the reason, and does not fail the rule.
+
+Self-report answers are recorded in a file, `fp-evidence.json`, beside `fp.config.json`. It MUST validate against [fp-evidence.schema.json](fp-evidence.schema.json). It holds `fp` (the spec version), `adopter` (who is making the claim), and `items`: one entry for each applicable self-report rule, keyed by rule ID, with `result` (`pass`, `fail` or `n/a`), `evidence` (text, a file path or a URL; for `n/a`, the reason) and `by` (who assessed it). An entry MAY add `"independent": true` when `by` is neither the adopter nor a person or agent working for the adopter.
+
+A self-report rule is applicable when it is normative, its level is within the claim (Guard, FP-1, and FP-2 for an FP-2 claim), and its applies-when condition is true for the configuration. A checker works this list out from `rules.json` and the configuration, and reads the file:
+
+- an applicable rule with no entry, or with empty `evidence`, is **open**;
+- an entry with `result` `fail` fails the run;
+- the claim is valid only when the machine tests pass, no exception is pending, and no applicable self-report rule is open.
 @@
 
 @R FP-CONF-07 | A pass needs zero pending exceptions | Guard | N | M conf.no-pending | choice
@@ -483,7 +491,7 @@ A run passes a level only when every applicable machine test passes, every appli
 
 @R FP-CONF-14 | Machine tests not run, and self-assessment | Guard | N | M conf.not-run | choice
 @applies the report
-If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. Words such as "provisional pass" MUST NOT be used.
+If the machine tests of a level have not been run, each has the result `not-run`, the run's result is `not-run`, and no claim may be made. The report MUST say what ran the machine tests: the reference checker and its version, another tool, or a person. A claim MUST end with `self-assessed` when either of these is true: the machine tests were not run by the reference checker; or the self-report items were answered by the adopter, or by an agent working for the adopter. This is the normal case, including after a clean run of the reference checker. The suffix is dropped only when the reference checker ran the machine tests and a party other than the adopter assessed every applicable self-report item and is named in the report. A checker decides this from `fp-evidence.json`: the suffix stays if any applicable item's `by` is the adopter or lacks `"independent": true`. Words such as "provisional pass" MUST NOT be used.
 @@
 
 ## Checker inputs
@@ -496,6 +504,7 @@ A checker for version 1.0 reads: plain CSS files, and `<style>` blocks in HTML f
 - **Fine detail** (tested against fixed sets in platform units, whatever u is): `border-radius` and its longhands against the radius set; `border-width`, `outline-width` and `outline-offset` against 0, 1, 2 and 3.
 - **Type** (`font-size`, `line-height`): tested by FP-TYPE rules at FP-2 and up, never as lengths. A checker does not compute the cascade: it tests a `line-height` against the `font-size` declared in the same rule (FP-TYPE-13).
 - **Not tested in version 1.0:** `box-shadow`, `transform`, `background-position`, `letter-spacing`, SVG geometry, and everything else.
+- **Never lengths under test:** a width or height written inside the condition of `@media` or `@container` (a breakpoint). Hosts keep their breakpoints (FP-LAYOUT-07), so a breakpoint is not checked, not snapped and never reported as an `FP-OFF` line, in any mode. The declarations inside the block are read as usual.
 @@
 
 @R FP-CONF-09 | What a checker never flags | Guard | N | M conf.not-flagged | choice
@@ -504,7 +513,7 @@ A checker MUST NOT flag: equal-width columns or a host's column grid; equal-widt
 @@
 
 @R FP-CONF-10 | The limits of a check are stated | Guard | N | S conf.limits-stated | choice
-@applies the report
+@applies a checker
 A report MUST state which rules were machine-tested, which were self-reported, which were `n/a` and which were `not-run`. Target sizes, reflow, colour-only states and pause controls cannot be proved from source files. A passing run MUST NOT be described as proof that a product is accessible.
 @@
 
@@ -537,7 +546,7 @@ Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold. A 
 @@
 
 @R FP-A11Y-20 | Every pair in use is declared | Guard | N | S a11y.pairs-complete | choice
-The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
+The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. The marks that count are exactly these: the edge that identifies a control (FP-LINE-02); the focus ring; state marks (FP-STATE-02) and the fill or edge of a state chip; and icons or glyphs that carry meaning without a text label beside them. Decorative hairlines, dividers between sections, shadows and icons that only repeat an adjacent label do not count and are not declared. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
 @@
 
 ## Text

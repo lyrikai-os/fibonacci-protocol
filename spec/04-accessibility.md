@@ -1,6 +1,6 @@
 # 4. Accessibility guardrails
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 These rules are floors. They sit outside the ladder and the type scale, and they always win. Each says when it applies; where it does not, its result is `n/a` (FP-CONF-11).
 
@@ -29,7 +29,7 @@ Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold. A 
 
 ### FP-A11Y-20 · Every pair in use is declared
 
-The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
+The `pairs` list MUST name every combination of foreground and background that the scope uses: each text colour on each background it appears on (placeholder and muted text included); each control edge against the ground beside it; the focus ring against its ground; and each meaningful mark or icon against its background. The marks that count are exactly these: the edge that identifies a control (FP-LINE-02); the focus ring; state marks (FP-STATE-02) and the fill or edge of a state chip; and icons or glyphs that carry meaning without a text label beside them. Decorative hairlines, dividers between sections, shadows and icons that only repeat an adjacent label do not count and are not declared. A checker cannot find pairs on its own, so a missing pair is a failed self-report, not a pass. Evidence: the list of colour tokens used in the scope, each matched to the pairs it appears in.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** always · **Test:** self-report, `a11y.pairs-complete` · **Evidence:** convention (protocol choice)
 
@@ -155,4 +155,4 @@ An interface SHOULD stay usable when the platform forces its own colours. Marks 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

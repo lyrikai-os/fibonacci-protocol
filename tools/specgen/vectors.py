@@ -14,7 +14,7 @@ def hu1(fr):
     return math.floor(Fraction(fr) * 10 + Fraction(1, 2)) / 10
 
 OUT = sys.argv[1]
-VER = "1.0.0-rc.3"
+VER = "1.0.0-rc.4"
 NAME = "Lyrikai: Fibonacci Protocol for UI/UX Design Agents"
 HOME = "https://www.lyrikai.com"
 PHI = (1 + 5 ** 0.5) / 2
@@ -280,6 +280,33 @@ def check_has(files, cfg):
                         "message": f"has.{key} is false but the scope contains {key}"})
     return out
 
+# ---------- self-report evidence (FP-CONF-06) ----------
+RULES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(OUT)), "rules.json"), encoding="utf-8"))["rules"]
+HASKEY = {"motion": "motion", "time limits": "timeLimits", "controls": "controls", "charts": "charts", "generated art": "generatedArt", "states": "states"}
+def condition_true(cond, c, files):
+    if cond in ("always", "the report"): return True
+    if cond in ("the specification", "a checker"): return False
+    if cond.startswith("mode: "): return c["mode"] in cond[6:].replace(" or ", " ").replace(",", " ").split()
+    if cond.startswith("platform: "): return c["platform"] in cond[10:].replace(" or ", " ").replace(",", " ").split()
+    if cond.startswith("has: "): return c["has"][HASKEY[cond[5:]]]
+    if cond == "protocol token files": return any(f.endswith(".tokens.json") for f in files)
+    if cond == "protocol-owned type": return c["level"] == "FP-2" or c["mode"] == "native"
+    raise ValueError(cond)
+def applicable_self_report(c, files):
+    levels = ("Guard", "FP-1", "FP-2") if c["level"] == "FP-2" else ("Guard", "FP-1")
+    return [r["id"] for r in RULES if r["status"] == "normative" and r["test"]["kind"] == "self-report"
+            and r["level"] in levels and condition_true(r["appliesWhen"], c, files)]
+def claim_state(base_claim, c, files, evidence):
+    """base_claim has no suffix. Returns the fields a checker prints after a machine pass."""
+    need = applicable_self_report(c, files); items = (evidence or {}).get("items", {})
+    failed = [i for i in need if items.get(i, {}).get("result") == "fail"]
+    open_ = [i for i in need if i not in items or not items[i].get("evidence")]
+    if failed: return {"result": "fail", "claimState": "none", "failedSelfReport": failed, "openItems": open_}
+    if open_:
+        return {"claimState": "candidate", "candidate": f"candidate · {base_claim} · self-assessed · open {len(open_)}", "openItems": open_, "applicableSelfReport": need}
+    indep = all(items[i].get("independent") is True and items[i]["by"] != evidence["adopter"] for i in need)
+    return {"claimState": "valid", "claim": base_claim + ("" if indep else " · self-assessed"), "openItems": [], "applicableSelfReport": need}
+
 # ---------- vectors ----------
 HASN = {"motion": False, "timeLimits": False, "controls": False, "charts": False, "generatedArt": False, "states": False}
 PAIR = [{"fg": "#1a1a1a", "bg": "#ffffff", "kind": "text"}]
@@ -424,9 +451,28 @@ files = {"src/card.css": ".card { padding: 21px; gap: 8px; border-radius: 13px; 
 c = cfg(mode="overlay", source=["src/**/*.css"], scope=["src/card.css"])
 fs, n_scope = check_lengths({"src/card.css": files["src/card.css"]}, c)
 _, n_all = check_lengths(files, c)
-vec("16-overlay-coverage", "Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged.",
+vec("16-overlay-coverage", "Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged. There is no fp-evidence.json, so every applicable self-report rule is open and the checker prints a candidate line, not a claim.",
     files, c, {"result": "pass", "findings": fs, "coverage": {"inScope": n_scope, "inSource": n_all, "percent": math.floor(Fraction(n_scope * 100, n_all) + Fraction(1, 2))},
-               "claim": f"FP-1 · Overlay · u=1 · web · scope src/card.css · coverage {math.floor(Fraction(n_scope * 100, n_all) + Fraction(1, 2))}% · exceptions 0 · spec {VER} · self-assessed"})
+               **claim_state(f"FP-1 · Overlay · u=1 · web · scope src/card.css · coverage {math.floor(Fraction(n_scope * 100, n_all) + Fraction(1, 2))}% · exceptions 0 · spec {VER}", c, files, None)})
+
+# evidence vectors: the same Overlay input with a complete, an incomplete and an independent evidence file
+base = f"FP-1 · Overlay · u=1 · web · scope src/card.css · coverage {math.floor(Fraction(n_scope * 100, n_all) + Fraction(1, 2))}% · exceptions 0 · spec {VER}"
+need = applicable_self_report(c, files)
+def evidence_file(ids, by, independent=False):
+    items = {i: {"result": "pass", "evidence": "Demonstration content for this test vector: see evidence/" + i + ".md", "by": by} for i in ids}
+    if independent:
+        for i in items: items[i]["independent"] = True
+    return {"fp": VER, "adopter": "Example adopter (demonstration content)", "items": items}
+for nm, about, ev in (
+    ("19-evidence-complete", "Machine tests pass and fp-evidence.json has an entry with evidence for every applicable self-report rule, answered by the adopter. The claim is valid and ends with self-assessed.", evidence_file(need, "Example adopter (demonstration content)")),
+    ("20-evidence-missing", "The same, with one self-report entry missing and one with empty evidence. There is no claim: the checker prints a candidate line and the two open rule IDs.", None),
+    ("21-evidence-independent", "The same as 19, with every entry assessed by a party other than the adopter and marked independent. The claim is valid and the self-assessed suffix is dropped.", evidence_file(need, "Example assessor (demonstration content)", True))):
+    if ev is None:
+        ev = evidence_file(need, "Example adopter (demonstration content)"); del ev["items"][need[0]]; ev["items"][need[1]]["evidence"] = ""
+    fs2 = dict(files); fs2["fp-evidence.json"] = json.dumps(ev, indent=2, ensure_ascii=False) + "\n"
+    exp = {"result": "pass", "findings": [], "coverage": {"inScope": n_scope, "inSource": n_all, "percent": math.floor(Fraction(n_scope * 100, n_all) + Fraction(1, 2))}}
+    exp.update(claim_state(base, c, files, ev))
+    vec(nm, about, fs2, c, exp)
 
 for i, (nm, about, c0) in enumerate(UNDECLARED):
     vec(f"{17 + i}-{nm[3:]}-undeclared", "The twin of " + nm + " with no exceptions declared. The values that cannot be snapped are kept without a snap-drift exception, which fails FP-SNAP-10.",
@@ -451,9 +497,9 @@ open(os.path.join(OUT, "README.md"), "w", encoding="utf-8").write(f"""# Test vec
 
 Each folder holds one case: the input files, an `fp.config.json` that validates against [fp.config.schema.json](../fp.config.schema.json), and `expected.json`, the result a conforming checker gives. [index.json](index.json) lists them.
 
-The expected results are computed from the rule text by a small reference script, not by a published checker. They cover the core machine tests: lengths on the ladder at u = 1 and u = 4, the derived patterns, roles and exceptions, Snap mapping (ties, merges, drift, targets, overrides, order), the type scale in both alignments, contrast on declared pairs, the `n/a` contradiction test and Overlay coverage. They do not yet cover shorthand edge cases, `@media` blocks, themes, or the self-report rules.
+The expected results are computed from the rule text by a small reference script, not by a published checker. They cover the core machine tests: lengths on the ladder at u = 1 and u = 4, the derived patterns, roles and exceptions, Snap mapping (ties, merges, drift, targets, overrides, order), the type scale in both alignments, contrast on declared pairs, the `n/a` contradiction test, Overlay coverage, and the evidence file (valid claim, candidate line, independent assessment). They do not yet cover shorthand edge cases, `@media` blocks, themes, or the self-report rules.
 
-A finding identifies a declaration by file, selector, property and value, once per written value. `checkedValues` and coverage count longhand values after shorthand expansion (FP-MODE-05). Drift is exact when compared with a limit and is shown rounded half-up to one decimal place. A `result` of `exception` means a declared, accepted exception covered the value; `pending` means a pending one did.
+In every vector `result` is the result of the machine tests. Vectors 16 and 19 to 21 also give `claimState` (`valid` or `candidate`), the claim or candidate line, and the open self-report rule IDs (FP-CONF-06). The other vectors have no evidence file and say nothing about a claim. A finding identifies a declaration by file, selector, property and value, once per written value. `checkedValues` and coverage count longhand values after shorthand expansion (FP-MODE-05). Drift is exact when compared with a limit and is shown rounded half-up to one decimal place. A `result` of `exception` means a declared, accepted exception covered the value; `pending` means a pending one did.
 
 | Vector | Expected result | What it shows |
 |---|---|---|

@@ -1,12 +1,12 @@
 # Test vectors
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 Each folder holds one case: the input files, an `fp.config.json` that validates against [fp.config.schema.json](../fp.config.schema.json), and `expected.json`, the result a conforming checker gives. [index.json](index.json) lists them.
 
-The expected results are computed from the rule text by a small reference script, not by a published checker. They cover the core machine tests: lengths on the ladder at u = 1 and u = 4, the derived patterns, roles and exceptions, Snap mapping (ties, merges, drift, targets, overrides, order), the type scale in both alignments, contrast on declared pairs, the `n/a` contradiction test and Overlay coverage. They do not yet cover shorthand edge cases, `@media` blocks, themes, or the self-report rules.
+The expected results are computed from the rule text by a small reference script, not by a published checker. They cover the core machine tests: lengths on the ladder at u = 1 and u = 4, the derived patterns, roles and exceptions, Snap mapping (ties, merges, drift, targets, overrides, order), the type scale in both alignments, contrast on declared pairs, the `n/a` contradiction test, Overlay coverage, and the evidence file (valid claim, candidate line, independent assessment). They do not yet cover shorthand edge cases, `@media` blocks, themes, or the self-report rules.
 
-A finding identifies a declaration by file, selector, property and value, once per written value. `checkedValues` and coverage count longhand values after shorthand expansion (FP-MODE-05). Drift is exact when compared with a limit and is shown rounded half-up to one decimal place. A `result` of `exception` means a declared, accepted exception covered the value; `pending` means a pending one did.
+In every vector `result` is the result of the machine tests. Vectors 16 and 19 to 21 also give `claimState` (`valid` or `candidate`), the claim or candidate line, and the open self-report rule IDs (FP-CONF-06). The other vectors have no evidence file and say nothing about a claim. A finding identifies a declaration by file, selector, property and value, once per written value. `checkedValues` and coverage count longhand values after shorthand expansion (FP-MODE-05). Drift is exact when compared with a limit and is shown rounded half-up to one decimal place. A `result` of `exception` means a declared, accepted exception covered the value; `pending` means a pending one did.
 
 | Vector | Expected result | What it shows |
 |---|---|---|
@@ -25,10 +25,13 @@ A finding identifies a declaration by file, selector, property and value, once p
 | [13-contrast](13-contrast/) | fail | Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals. |
 | [14-na-contradiction](14-na-contradiction/) | fail | has.motion and has.controls are declared false, but the scope has a transition and a button selector. FP-CONF-11 fails twice: a rule may not be marked n/a when its condition is true. |
 | [15-na-consistent](15-na-consistent/) | pass | The same input with has.motion and has.controls declared true. No contradiction. |
-| [16-overlay-coverage](16-overlay-coverage/) | pass | Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged. |
+| [16-overlay-coverage](16-overlay-coverage/) | pass | Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged. There is no fp-evidence.json, so every applicable self-report rule is open and the checker prints a candidate line, not a claim. |
+| [19-evidence-complete](19-evidence-complete/) | pass | Machine tests pass and fp-evidence.json has an entry with evidence for every applicable self-report rule, answered by the adopter. The claim is valid and ends with self-assessed. |
+| [20-evidence-missing](20-evidence-missing/) | pass | The same, with one self-report entry missing and one with empty evidence. There is no claim: the checker prints a candidate line and the two open rule IDs. |
+| [21-evidence-independent](21-evidence-independent/) | pass | The same as 19, with every entry assessed by a party other than the adopter and marked independent. The claim is valid and the self-assessed suffix is dropped. |
 | [17-snap-u1-undeclared](17-snap-u1-undeclared/) | fail | The twin of 06-snap-u1 with no exceptions declared. The values that cannot be snapped are kept without a snap-drift exception, which fails FP-SNAP-10. |
 | [18-snap-u4-undeclared](18-snap-u4-undeclared/) | fail | The twin of 07-snap-u4 with no exceptions declared. The values that cannot be snapped are kept without a snap-drift exception, which fails FP-SNAP-10. |
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
