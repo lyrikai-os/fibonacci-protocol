@@ -3,7 +3,7 @@
   "$extensions": {
     "com.lyrikai.fp": {
       "homepage": "https://www.lyrikai.com",
-      "spec": "1.0.0-rc.1",
+      "spec": "1.0.0-rc.2",
       "unit": 1
     }
   },
@@ -370,6 +370,19 @@
         "unit": "px"
       },
       "$description": "Pill: a radius of at least half the element height.",
+      "$extensions": {
+        "com.lyrikai.fp": {
+          "rule": "FP-RADIUS-03",
+          "level": "FP-1",
+          "status": "normative",
+          "evidence": "convention"
+        }
+      }
+    },
+    "round": {
+      "$type": "number",
+      "$value": 50,
+      "$description": "Round: 50 percent, on an element of equal width and height. Written as 50%.",
       "$extensions": {
         "com.lyrikai.fp": {
           "rule": "FP-RADIUS-03",

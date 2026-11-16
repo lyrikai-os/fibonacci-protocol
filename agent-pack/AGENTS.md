@@ -1,6 +1,6 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: AGENTS.md
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 Copy this file into a project's `AGENTS.md` (or merge it), or place it in the global location your tool reads (see [README.md](README.md)). It is for Codex and other tools that read `AGENTS.md`.
 
@@ -27,6 +27,6 @@ Otherwise do not apply it, and do not suggest it unprompted beyond one line.
 
 End protocol output with this line:
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.1 · MIT License · https://www.lyrikai.com
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.2 · MIT License · https://www.lyrikai.com
 
-MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.1. https://www.lyrikai.com
+MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.2. https://www.lyrikai.com

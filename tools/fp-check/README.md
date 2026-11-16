@@ -1,6 +1,6 @@
 # fp-check
 
-The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0-rc.1.
+The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0-rc.2.
 MIT License. [www.lyrikai.com](https://www.lyrikai.com)
 
 `fp-check` reads an `fp.config.json` and the CSS it names, runs the protocol's machine tests locally (no network, no dependencies, Node 20), and reports one result per rule ID: `pass`, `fail`, `pending`, `n/a`, `not-run`, or `self-report` for the rules only people can answer.
@@ -23,7 +23,7 @@ node tools/fp-check/fp-check.mjs [dir] [--config fp.config.json] [--json] [--exp
 
 Exit codes: `0` pass (or `--expect` matches), `1` fail or pending (or `--expect` differs), `2` not-run or an input error (no configuration, bad option).
 
-A passing run prints the claim string of FP-CONF-04, for example `FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.1 · self-assessed`. It ends in `self-assessed` for as long as self-report rules remain that people have not answered (FP-CONF-14). A failed, pending or not-run run prints no claim.
+A passing run prints the claim string of FP-CONF-04, for example `FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.2 · self-assessed`. It ends in `self-assessed` for as long as self-report rules remain that people have not answered (FP-CONF-14). A failed, pending or not-run run prints no claim.
 
 ### Tests
 
@@ -58,11 +58,15 @@ Machine tests implemented (62 of the 94 machine rules in `rules.json`; the other
 
 Type tests run when `level` is `FP-2`, in every mode (the host's type in an Overlay or Snap scope is replaced by the protocol's, FP-MODE-09). At FP-1 type is not read.
 
-### Heuristics to know about
+### Declarations the checker relies on (spec 1.0.0-rc.2)
 
-- A "declared" phi split (FP-LAYOUT-01) is a two-track `grid-template-columns` of `fr` or `%` whose ratio is within 0.1 of 61.8 to 38.2, or within 5% of phi but not within 0.1, or in a rule whose selector contains `phi`, `golden` or `fp-split`. Equal tracks and other splits are never flagged.
-- A "container" width limit (FP-LAYOUT-05, Native, FP-2) is a `max-width` or `max-inline-size` of 500px or more; a fixed `width` or `inline-size` of 610, 987 or 1597 is refused.
-- `pill` (FP-RADIUS-03) is a radius of 999px or more; the element's height is not known.
+- A phi split (FP-LAYOUT-01) is tested only when `--fp-layout: phi-split` is in the same rule as `grid-template-columns`; it needs two tracks (`fr`, `%`, or `--fp-split-major` and `--fp-split-minor`) at 61.8 to 38.2 within 0.1.
+- A container limit (FP-LAYOUT-05, Native, FP-2) is identified by its `--fp-container-*` token: in `max-width` or `max-inline-size` it passes, in `width` or `inline-size` it fails, and a rule marked `--fp-layout: container` must set its limit with a token. Any other width is an ordinary length.
+- `pill` is `--fp-radius-pill` or the literal `9999px`; `round` is `--fp-radius-round` or `50%`. Any other large radius fails the radius set.
+- The protocol's own `--fp-space-N`, `--fp-container-N` and `--fp-radius-*` properties resolve to their published values when the source does not define them.
+- Merged groups (FP-SNAP-06), including raised `target` tokens, are computed and listed in the report; the published Snap table is a self-report item (FP-SNAP-08) and is not read.
+- Token rules apply only when protocol-format token files are in the scope; otherwise they are `n/a`.
+- The claim always ends in `self-assessed` after a clean run (FP-CONF-14); the report names the tool that ran the tests.
 - `em`, `ex`, `lh` and similar units depend on a font size the checker does not compute; they are not flagged and are listed in the notes. Viewport, container and `%` units are intrinsic (FP-CONF-09).
 - `calc()` is allowed for layout lengths only in the derived patterns; in a radius or stroke it fails. `min()`, `max()` and `clamp()` test each length argument.
 - Accepted exceptions counted in an Overlay claim are those that matched a checked value in the scope.
@@ -86,14 +90,10 @@ Rules are `not-run`, and so is the run, when the machine tests cannot run:
 - a `var()` cannot be resolved inside the source, or a colour in a declared pair cannot be resolved;
 - no file matched `source`.
 
-Inline `style` attributes are not read; a note says so. A Native claim that ships no protocol token file leaves the FP-TOKEN rules `not-run` with a reason; that does not change the run result. A Snap run with no published table leaves FP-SNAP-06 `not-run` with a note, and also does not change the run result.
-
+Inline `style` attributes are not read; a note says so. 
 ## Disagreements with the published vectors
 
-`node --test` fails four vector tests on purpose. See the notes in the pull request or hand-over; in short:
-
-- `08-snap-targets`, `09-snap-targets-fine`: the vector lists no merged groups for `target` tokens. FP-SNAP-06 says two or more host tokens that map to one rung become one value and every merged group is listed by name, so `--control-sm/md/lg` (all raised to 55) are a merge.
-- `11-type-scale-formula`, `12-type-scale-fibonacci`: the vector reports the unused odd step 53 as `type.scale` / FP-TYPE-01 and, under `type.align: fibonacci`, the replaced value 20 as `type.scale` / FP-TYPE-01. By the rule text these are FP-TYPE-02 `type.step-range` ("Odd steps above 4 are not used") and FP-TYPE-03 `type.align` ("that number replaces the rounded value"). The results (fail) and the sizes flagged agree; only the rule and check names differ.
+None against spec 1.0.0-rc.2: all 18 vectors pass. The rc.1 disagreements (target merges in 08 and 09, FP-TYPE-02 and FP-TYPE-03 attribution in 11 and 12) were resolved in the specification.
 
 ## License
 

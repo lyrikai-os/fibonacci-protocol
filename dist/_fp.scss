@@ -26,6 +26,7 @@ $fp-radius-8: 8px;
 $fp-radius-13: 13px;
 $fp-radius-21: 21px;
 $fp-radius-pill: 9999px;
+$fp-radius-round: 50%;
 $fp-line-hairline: 1px;
 $fp-line-stroke-2: 2px;
 $fp-line-stroke-3: 3px;
@@ -102,6 +103,7 @@ $fp-tokens: (
   "radius-13": $fp-radius-13,
   "radius-21": $fp-radius-21,
   "radius-pill": $fp-radius-pill,
+  "radius-round": $fp-radius-round,
   "line-hairline": $fp-line-hairline,
   "line-stroke-2": $fp-line-stroke-2,
   "line-stroke-3": $fp-line-stroke-3,

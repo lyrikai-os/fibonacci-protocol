@@ -1,13 +1,13 @@
 ---
 name: lyrikai-fibonacci
-description: Turns on the Lyrikai Fibonacci Protocol for UI/UX design agents (spec 1.0.0-rc.1) for a conversation, so that every length, radius, type size and target an agent writes or edits comes from one small set of numbers (the Fibonacci ladder times a base unit) while accessibility floors and data honesty always win. Use when the user types "/lyrikai-fibonacci" (verbs on, off, init, check, explain, map), says "use Fibonacci design principles", mentions "Fibonacci Protocol", or asks for a "golden ratio design system", Fibonacci spacing scale or phi-based tokens. It reads or creates fp.config.json, applies the protocol in Overlay, Snap or Native mode, and reports every off-ladder value and every changed host value with rule IDs. Works offline from bundled rules.
+description: Turns on the Lyrikai Fibonacci Protocol for UI/UX design agents (spec 1.0.0-rc.2) for a conversation, so that every length, radius, type size and target an agent writes or edits comes from one small set of numbers (the Fibonacci ladder times a base unit) while accessibility floors and data honesty always win. Use when the user types "/lyrikai-fibonacci" (verbs on, off, init, check, explain, map), says "use Fibonacci design principles", mentions "Fibonacci Protocol", or asks for a "golden ratio design system", Fibonacci spacing scale or phi-based tokens. It reads or creates fp.config.json, applies the protocol in Overlay, Snap or Native mode, and reports every off-ladder value and every changed host value with rule IDs. Works offline from bundled rules.
 ---
 
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: the `/lyrikai-fibonacci` skill
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.1 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-This file is the operating guide. Detail lives in the bundled files at the end. Everything below is generated from the specification, spec 1.0.0-rc.1, so it cannot drift from it. The protocol is a convention for internal consistency. It is not an aesthetic law, and you never say it makes a design better (FP-AGENT-09).
+This file is the operating guide. Detail lives in the bundled files at the end. Everything below is generated from the specification, spec 1.0.0-rc.2, so it cannot drift from it. The protocol is a convention for internal consistency. It is not an aesthetic law, and you never say it makes a design better (FP-AGENT-09).
 
 ## Verbs
 
@@ -22,7 +22,7 @@ This file is the operating guide. Detail lives in the bundled files at the end. 
 | `explain <rule-ID>` | Print the rule's text, level, status, applies-when, test and evidence from `reference/rules.json`. |
 | `map` | Print the Snap table for the user's tokens, with merges, drift and the "what breaks" block. Changes nothing. |
 
-A request for a level that is informative in this version (FP-3, FP-4a, FP-4b) is answered with that fact: it is published as guidance and cannot be claimed in 1.0.0-rc.1 (FP-CONF-05). Version 1.0 claims are FP-1 or FP-2 on the web only. For any other platform, say the same.
+A request for a level that is informative in this version (FP-3, FP-4a, FP-4b) is answered with that fact: it is published as guidance and cannot be claimed in 1.0.0-rc.2 (FP-CONF-05). Version 1.0 claims are FP-1 or FP-2 on the web only. For any other platform, say the same.
 
 ## State: sticky until `off`
 
@@ -91,9 +91,9 @@ Use these every time you write a length or a type size. Look the details up in `
 
 Claim string (FP-CONF-04): `<level> · <mode> · u=<unit> · <platform> · spec <version>`. Overlay adds `scope <globs> · coverage <percent> · exceptions <count>` before the version. Example:
 
-`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.1 · self-assessed`
+`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.2 · self-assessed`
 
-A skill or agent that meets every normative FP-AGENT rule may say it "follows the Fibonacci Protocol agent rules, spec 1.0.0-rc.1". The FP-AGENT rules are not counted in a system's claim (FP-CONF-12).
+A skill or agent that meets every normative FP-AGENT rule may say it "follows the Fibonacci Protocol agent rules, spec 1.0.0-rc.2". The FP-AGENT rules are not counted in a system's claim (FP-CONF-12).
 
 ## Reports
 
@@ -113,7 +113,7 @@ Report in this order: state (mode, level, unit, platform, which values were defa
 
 ## `explain <rule-ID>`
 
-Read `reference/rules.json` (offline copy, spec 1.0.0-rc.1). Find the entry whose `id` matches (case-insensitive). Print: ID and title; text; level; status; applies when; test (`kind`, `check`); evidence (`label`, and `url` or basis if present); the spec file it came from. If the status is `informative`, say it binds no claim in this version. If the ID is unknown, say so and suggest the closest IDs by prefix; never invent a rule. A shell one-liner: `node -e 'const r=require("./reference/rules.json").rules.find(x=>x.id===process.argv[1]);console.log(r||"unknown rule")' FP-SPACE-01`, run from the skill folder.
+Read `reference/rules.json` (offline copy, spec 1.0.0-rc.2). Find the entry whose `id` matches (case-insensitive). Print: ID and title; text; level; status; applies when; test (`kind`, `check`); evidence (`label`, and `url` or basis if present); the spec file it came from. If the status is `informative`, say it binds no claim in this version. If the ID is unknown, say so and suggest the closest IDs by prefix; never invent a rule. A shell one-liner: `node -e 'const r=require("./reference/rules.json").rules.find(x=>x.id===process.argv[1]);console.log(r||"unknown rule")' FP-SPACE-01`, run from the skill folder.
 
 ## `map`: the Snap table
 
@@ -132,7 +132,7 @@ Print one row per token and per in-scope literal: name, role, original, snapped,
 
 When `on` runs, and at the end of every output this skill produces, the last line is exactly:
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.1 · MIT License · https://www.lyrikai.com
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.2 · MIT License · https://www.lyrikai.com
 
 ## Bundled files (work offline)
 
@@ -141,4 +141,4 @@ Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.1 · MIT Li
 - `reference/fp.css`: the ready `--fp-*` tokens at u = 1.
 - `reference/fp.config.example.json`: the quick-start `fp.config.json`.
 
-MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.1. https://www.lyrikai.com
+MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.2. https://www.lyrikai.com

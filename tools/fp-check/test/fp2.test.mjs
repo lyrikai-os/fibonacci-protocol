@@ -72,17 +72,20 @@ test('type: longest line is 80 characters', () => {
   assert.deepEqual(sel(r, 'type.measure-max'), ['.b']);
 });
 
-test('layout: a declared phi split is held to 61.8 to 38.2 within 0.1; equal and host grids are never flagged', () => {
-  const css = '.ok{grid-template-columns:1.618fr 1fr} .ok2{grid-template-columns:1fr 1.618fr} .pct{grid-template-columns:61.8% 38.2%} .eq{grid-template-columns:1fr 1fr} .host{grid-template-columns:repeat(12,1fr)} .side{grid-template-columns:3fr 1fr} .off{grid-template-columns:1.6fr 1fr} .named-phi{grid-template-columns:2fr 1fr}';
-  const r = run({ 'a.css': css.replace('.named-phi', '.golden') }, FP2);
-  assert.deepEqual(sel(r, 'layout.phi-split'), ['.off', '.golden']);
+test('layout: only a split declared with --fp-layout: phi-split is tested (FP-LAYOUT-01)', () => {
+  const d = (cols, extra = '--fp-layout:phi-split;') => `.x{${extra}grid-template-columns:${cols}}`;
+  const css = [d('1.618fr 1fr').replace('.x', '.ok'), d('1fr 1.618fr').replace('.x', '.ok2'), d('61.8% 38.2%').replace('.x', '.pct'), d('1.6fr 1fr').replace('.x', '.off'), d('1fr 1fr 1fr').replace('.x', '.three'),
+    d('1.6fr 1fr', '').replace('.x', '.undeclared'), d('1fr 1fr', '').replace('.x', '.eq'), '.golden{grid-template-columns:2fr 1fr}', d('var(--fp-split-major) var(--fp-split-minor)').replace('.x', '.tok')].join('\n');
+  const r = run({ 'a.css': css }, FP2);
+  assert.deepEqual(sel(r, 'layout.phi-split'), ['.off', '.three']);
 });
 
-test('layout: Native container widths are 610, 987 or 1597 and written as a maximum', () => {
-  const css = '.a{max-width:987px} .b{max-inline-size:1000px} .c{max-width:calc(100% - 21px)} .d{width:987px} .e{max-width:233px}';
+test('layout: container limits are identified by token (FP-LAYOUT-05)', () => {
+  const css = '.a{max-width:var(--fp-container-987)} .b{width:var(--fp-container-987)} .c{--fp-layout:container;max-width:900px} .d{--fp-layout:container;max-inline-size:var(--fp-container-610)} .e{max-width:1000px} .f{width:987px}';
   const r = run({ 'a.css': css }, FP2);
-  assert.deepEqual(sel(r, 'layout.container-widths'), ['.b', '.d']);
-  const overlay = run({ 'a.css': '.b{max-inline-size:610px}' }, { ...FP2, mode: 'overlay' });
+  assert.deepEqual(sel(r, 'layout.container-widths'), ['.b', '.c']);
+  assert.deepEqual(sel(r, 'space.on-ladder'), ['.c', '.e']);
+  const overlay = run({ 'a.css': '.b{width:var(--fp-container-987)}' }, { ...FP2, mode: 'overlay' });
   assert.deepEqual(by(overlay, 'layout.container-widths'), []);
 });
 
@@ -101,7 +104,7 @@ test('web tokens: names, values at u, and the fine pointer target (FP-PLAT-01 to
 
 test('protocol token files: the published master passes every FP-TOKEN machine test', () => {
   const doc = {
-    $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.1', unit: 1 } },
+    $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.2', unit: 1 } },
     space: { $type: 'dimension', 13: { $value: { value: 13, unit: 'px' }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-MATH-03' } } } },
     target: { $type: 'dimension', coarse: { $value: { value: 55, unit: 'px' }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-CTRL-01', pinnedFloor: true } } } },
     type: { $type: 'dimension', 0: { $value: { value: 1, unit: 'rem' }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-TYPE-01', pinnedFloor: true } } } },
@@ -124,15 +127,15 @@ test('protocol token files: the published master passes every FP-TOKEN machine t
 });
 
 test('token.themes: light and dark colour values are two files', () => {
-  const colour = { $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.1', unit: 1 } }, color: { $type: 'color', ink: { $value: { colorSpace: 'srgb', components: [0, 0, 0] }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-COLOR-01' } } } } };
+  const colour = { $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.2', unit: 1 } }, color: { $type: 'color', ink: { $value: { colorSpace: 'srgb', components: [0, 0, 0] }, $extensions: { 'com.lyrikai.fp': { rule: 'FP-COLOR-01' } } } } };
   const r = run({ 'color.light.tokens.json': colour }, { source: ['*.tokens.json'] });
   assert.ok(by(r, 'token.themes').length === 1);
   const both = run({ 'color.light.tokens.json': colour, 'color.dark.tokens.json': colour }, { source: ['*.tokens.json'] });
   assert.equal(by(both, 'token.themes').length, 0);
 });
 
-test('native without token files: the token rules are reported not-run, and the run result is unaffected', () => {
+test('without protocol-format token files the token rules are n/a (FP-CONF-11)', () => {
   const r = run({ 'a.css': '.a{gap:8px}' });
-  assert.equal(r.rules.find((x) => x.check === 'token.dtcg').result, 'not-run');
+  assert.equal(r.rules.find((x) => x.check === 'token.dtcg').result, 'n/a');
   assert.equal(r.result, 'pass');
 });

@@ -22,7 +22,7 @@ function project(css, cfg = {}) {
 test('exit 0 on a pass, 1 on a fail', () => {
   const ok = project('.a{gap:8px}'); const bad = project('.a{gap:7px}');
   try {
-    const a = fp(ok); assert.equal(a.status, 0); assert.match(a.stdout, /RESULT: PASS/); assert.match(a.stdout, /CLAIM:  FP-1 · Native · u=1 · web · spec 1\.0\.0-rc\.1 · self-assessed/);
+    const a = fp(ok); assert.equal(a.status, 0); assert.match(a.stdout, /RESULT: PASS/); assert.match(a.stdout, /CLAIM:  FP-1 · Native · u=1 · web · spec 1\.0\.0-rc\.2 · self-assessed/);
     const b = fp(bad); assert.equal(b.status, 1); assert.match(b.stdout, /RESULT: FAIL/); assert.match(b.stdout, /FP-SPACE-01/);
   } finally { fs.rmSync(ok, { recursive: true }); fs.rmSync(bad, { recursive: true }); }
 });
@@ -42,7 +42,7 @@ test('--json prints the report; --config picks another file', () => {
   const dir = project('.a{gap:8px}');
   try {
     const j = JSON.parse(fp(dir, '--json').stdout);
-    assert.equal(j.result, 'pass'); assert.equal(j.spec, '1.0.0-rc.1'); assert.ok(Array.isArray(j.rules));
+    assert.equal(j.result, 'pass'); assert.equal(j.spec, '1.0.0-rc.2'); assert.ok(Array.isArray(j.rules));
     fs.copyFileSync(path.join(dir, 'fp.config.json'), path.join(dir, 'other.json'));
     assert.equal(JSON.parse(fp(dir, '--config', 'other.json', '--json').stdout).config, 'other.json');
   } finally { fs.rmSync(dir, { recursive: true }); }

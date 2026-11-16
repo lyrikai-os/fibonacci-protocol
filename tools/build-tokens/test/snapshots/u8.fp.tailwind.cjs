@@ -29,7 +29,8 @@ module.exports = {
       "8": "8px",
       "13": "13px",
       "21": "21px",
-      "pill": "9999px"
+      "pill": "9999px",
+      "round": "50%"
     },
     "fontSize": {
       "0": [

@@ -220,6 +220,8 @@ test('CSS: ladder, radius, containers, focus, hairline (FP-MATH-03, FP-RADIUS-01
   for (const n of [610, 987, 1597]) assert.equal(css[`--fp-container-${n}`], `${n}px`);
   for (const n of [2, 3, 5, 8, 13, 21]) assert.equal(css[`--fp-radius-${n}`], `${n}px`);
   assert.equal(css['--fp-radius-pill'], '9999px');
+  assert.equal(css['--fp-radius-round'], '50%');
+  assert.ok(!('--fp-radius-0' in css));
   assert.equal(css['--fp-focus-gap'], '2px');
   assert.equal(css['--fp-focus-ring'], '3px');
   assert.equal(css['--fp-line-hairline'], '1px');
@@ -297,6 +299,7 @@ test('Tailwind preset: ladder, radius, type with leading, durations, z-index, wi
   assert.equal(theme.spacing[0], '0px');
   assert.equal(theme.borderRadius[13], '13px');
   assert.equal(theme.borderRadius.pill, '9999px');
+  assert.equal(theme.borderRadius.round, '50%');
   for (const [k, px] of Object.entries(TYPE_BODY16)) {
     const lead = k === 'n1' ? 1.382 : k === '0' ? 1.618 : Number(k) <= 3 ? 1.236 : 1.146;
     assert.deepEqual(theme.fontSize[k], [`${px / 16}rem`, { lineHeight: String(lead) }], `fontSize ${k}`);

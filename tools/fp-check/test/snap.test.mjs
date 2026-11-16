@@ -1,12 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
 import { run, by } from './helpers.mjs';
 import { mapLength, mapTarget, nearest, driftPct, findMerges, findOrderBreaches, ladderTarget } from '../lib/snap.mjs';
-import { runCheck } from '../lib/check.mjs';
-import { baseConfig } from './helpers.mjs';
 
 const snap = (css, over = {}) => run({ 'a.css': css }, { mode: 'snap', snap: { source: ['a.css'] }, ...over });
 const row = (r, t) => r.mapping.find((m) => m.token === t);
@@ -138,15 +133,15 @@ test('Snap: control heights need the target or drawn role (FP-SNAP-11)', () => {
   assert.deepEqual(by(r, 'snap.control-height').map((f) => f.selector), ['a.btn']);
 });
 
-test('Snap: a published table is verified when it exists', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fp-check-snap-'));
-  try {
-    fs.writeFileSync(path.join(dir, 'a.css'), ':root{--a:4px;--b:6px}');
-    fs.writeFileSync(path.join(dir, 'fp.config.json'), JSON.stringify(baseConfig({ mode: 'snap', snap: { source: ['a.css'] } })));
-    assert.deepEqual(runCheck({ dir }).advisoryNotRun, ['snap.merge-listed']);
-    fs.writeFileSync(path.join(dir, 'fp-snap.md'), '| --a | 4 | 5 |');
-    assert.equal(runCheck({ dir }).result, 'fail');
-    fs.writeFileSync(path.join(dir, 'fp-snap.md'), '| --a | 4 | 5 |\n| --b | 6 | 5 |');
-    assert.equal(runCheck({ dir }).result, 'pass');
-  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+test('Snap: merges are computed and listed by the checker; no table file is needed (FP-SNAP-06)', () => {
+  const r = snap(':root{--a:4px;--b:6px}');
+  assert.equal(r.result, 'pass');
+  assert.deepEqual(r.merges, [{ role: 'space', rung: 5, tokens: ['--a', '--b'] }]);
+  assert.equal(r.rules.find((x) => x.check === 'snap.merge-listed').result, 'pass');
+  assert.equal(r.rules.find((x) => x.id === 'FP-SNAP-08').result, 'self-report');
+});
+
+test('Snap: raised targets that end at one value are a merge', () => {
+  const r = snap(':root{--c-a:32px;--c-b:44px}', { roles: [{ match: '--c-*', role: 'target' }] });
+  assert.deepEqual(r.merges, [{ role: 'target', rung: 55, tokens: ['--c-a', '--c-b'] }]);
 });

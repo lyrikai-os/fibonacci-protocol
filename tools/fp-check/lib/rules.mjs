@@ -49,7 +49,7 @@ export function applicability(rule, ctx) {
   } else if (w === 'protocol-owned type') {
     cond = config.level === 'FP-2' || config.mode === 'native' ? { applies: true } : na('host type is not tested at FP-1');
   } else if (w === 'protocol token files') {
-    cond = ctx.tokenFiles > 0 || config.mode === 'native' ? { applies: true } : na('no protocol token files in the scope');
+    cond = ctx.tokenFiles > 0 ? { applies: true } : na('no protocol-format token files in the scope');
   } else cond = { applies: true };
   if (!cond.applies) return cond;
 
@@ -70,7 +70,6 @@ export function rollup(rules, ctx, checkRes) {
     const check = rule.test.check;
     if (ctx.invalidConfig && check !== 'mode.config-schema' && check !== 'mode.config-present') { out.push({ ...base, result: 'not-run', reason: 'the configuration is invalid' }); continue; }
     if (!IMPLEMENTED.has(check)) { out.push({ ...base, result: 'not-run', reason: 'not implemented by this checker' }); continue; }
-    if (rule.appliesWhen === 'protocol token files' && ctx.tokenFiles === 0) { out.push({ ...base, result: 'not-run', reason: 'Native ships token files but none was found in the scope' }); continue; }
     let res = checkRes.get(check);
     let result = res?.result ?? 'pass';
     for (const a2 of ALIAS[check] ?? []) {

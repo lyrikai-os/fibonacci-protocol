@@ -1,6 +1,6 @@
 {
   "name": "Lyrikai Fibonacci Protocol",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "color": {
     "themes": [
       {
@@ -211,6 +211,11 @@
         "name": "radius-pill",
         "value": "9999px",
         "usage": "Pill: a radius of at least half the element height."
+      },
+      {
+        "name": "radius-round",
+        "value": "50%",
+        "usage": "Round: 50 percent, on an element of equal width and height. Written as 50%."
       }
     ]
   },

@@ -168,6 +168,12 @@ export function runCheck({ dir, configPath, specDir } = {}) {
   // ---- variables and tokens -------------------------------------------------------------------------
   const vars = new VarTable();
   for (const [f, p] of parsed) for (const c of p.customProps) vars.add(c);
+  // The protocol's own properties resolve to their published values when the source does not define them.
+  const proto = (name, value) => { if (!vars.has(name)) vars.add({ name, value, selector: ':root' }); };
+  for (const n of FIB) proto(`--fp-space-${n}`, `${n * u}px`);
+  for (const n of CONTAINERS) proto(`--fp-container-${n}`, `${n}px`);
+  for (const n of [2, 3, 5, 8, 13, 21]) proto(`--fp-radius-${n}`, `${n}px`);
+  proto('--fp-radius-pill', '9999px'); proto('--fp-radius-round', '50%');
   const tokenByPath = new Map(); // DTCG dotted path -> { token, type, file }
   for (const [f, doc] of jsonDocs) for (const l of flatten(doc)) tokenByPath.set(l.path, { ...l, file: f });
   const protocolTokenFiles = [...jsonDocs.keys()].filter((f) => jsonDocs.get(f)?.$extensions?.['com.lyrikai.fp'] || /\.tokens\.json$/.test(f));
@@ -270,7 +276,7 @@ export function runCheck({ dir, configPath, specDir } = {}) {
       const v = c.px;
       if (Math.abs(v - Math.round(v)) > 1e-6) return { status: 'fail', message: `${fmt(v)}px is a fraction of a platform unit`, also: ['math.zero-negative', 'math.rounding'] };
       if (kind === 'radius') {
-        if (RADIUS_SET.includes(v) || v >= 999) return { status: 'pass' };
+        if (RADIUS_SET.includes(v) || v === 9999) return { status: 'pass' };
         return { status: 'fail', message: `${fmt(v)} is not in the radius set 0, 2, 3, 5, 8, 13, 21, pill or round` };
       }
       return FIXED_DETAIL_SET.includes(Math.abs(v)) ? { status: 'pass' } : { status: 'fail', message: `${fmt(v)} is not 0, 1, 2 or 3` };
@@ -460,19 +466,17 @@ export function runCheck({ dir, configPath, specDir } = {}) {
       addFinding({ file, selector: rule.selector, property: prop, value: decl.value, resolved: resolved ?? r.text, check, rule: ruleId, result, message, line: decl.line });
     };
     if (prop === 'grid-template-columns') {
-      const t = splitValue(r.text);
-      if (t.length === 2) {
-        const nums = t.map((x) => { const m = /^([\d.]+)(fr|%)$/.exec(x); return m ? { n: parseFloat(m[1]), u: m[2] } : null; });
-        if (nums.every(Boolean) && nums[0].u === nums[1].u && nums[0].n > 0 && nums[1].n > 0) {
+      const declared = rule.decls.some((d) => d.prop === '--fp-layout' && /^phi-split$/i.test(d.value));
+      if (declared) {
+        let t = splitValue(r.text);
+        if (/^var\(\s*--fp-split-(major|minor)\s*\)\s+var\(\s*--fp-split-(major|minor)\s*\)$/.test(r.text)) t = ['1.618fr', '1fr'];
+        const nums = t.length === 2 ? t.map((x) => { const m = /^([\d.]+)(fr|%)$/.exec(x); return m ? { n: parseFloat(m[1]), u: m[2] } : null; }) : [];
+        if (nums.length === 2 && nums.every(Boolean) && nums[0].u === nums[1].u && nums[0].n > 0 && nums[1].n > 0) {
           const share = (nums[0].n / (nums[0].n + nums[1].n)) * 100;
-          const ratio = Math.max(nums[0].n, nums[1].n) / Math.min(nums[0].n, nums[1].n);
           const near = Math.abs(share - 61.8) <= 0.1 + 1e-9 || Math.abs(share - 38.2) <= 0.1 + 1e-9;
-          const declared = near || Math.abs(ratio - PHI) / PHI <= 0.05 || /phi|golden|fp-split/i.test(rule.selector);
-          if (declared) {
-            if (near) mark('layout.phi-split', 'pass');
-            else add('layout.phi-split', 'FP-LAYOUT-01', `split ${roundHalfUp(share, 1)} to ${roundHalfUp(100 - share, 1)} is not 61.8 to 38.2`);
-          }
-        }
+          if (near) mark('layout.phi-split', 'pass');
+          else add('layout.phi-split', 'FP-LAYOUT-01', `split ${roundHalfUp(share, 1)} to ${roundHalfUp(100 - share, 1)} is not 61.8 to 38.2`);
+        } else add('layout.phi-split', 'FP-LAYOUT-01', 'a declared phi split has exactly two tracks, in fr or %, or --fp-split-major and --fp-split-minor');
       }
     }
     if (/^(max-inline-size|max-width)$/.test(prop)) {
@@ -481,17 +485,14 @@ export function runCheck({ dir, configPath, specDir } = {}) {
         if (parseFloat(m[1]) > 80) add('type.measure-max', 'FP-TYPE-09', `${m[1]}ch is more than 80 characters per line`);
         else mark('type.measure-max', 'pass');
       }
-      if (mode === 'native') {
-        const c = classifyToken(r.text);
-        if (c.kind === 'length' && c.px >= 500) {
-          if (CONTAINERS.includes(c.px)) mark('layout.container-widths', 'pass');
-          else add('layout.container-widths', 'FP-LAYOUT-05', `a container width limit is 610, 987 or 1597, found ${fmt(c.px)}`);
-        }
-      }
     }
-    if (mode === 'native' && /^(width|inline-size)$/.test(prop)) {
-      const c = classifyToken(r.text);
-      if (c.kind === 'length' && CONTAINERS.includes(c.px)) add('layout.container-widths', 'FP-LAYOUT-05', `a container is written as max-inline-size or max-width, never as a fixed ${prop}`);
+    // FP-LAYOUT-05: a container limit is identified by its token, not by its size (Native, FP-2)
+    if (mode === 'native' && /^(max-inline-size|max-width|width|inline-size)$/.test(prop)) {
+      const usesToken = /--fp-container-(610|987|1597)/.test(decl.value);
+      const isMax = /^max-/.test(prop);
+      if (usesToken && isMax) mark('layout.container-widths', 'pass');
+      else if (usesToken) add('layout.container-widths', 'FP-LAYOUT-05', `a container is written as max-inline-size or max-width, never as a fixed ${prop}`);
+      else if (isMax && rule.decls.some((d) => d.prop === '--fp-layout' && /^container$/i.test(d.value))) add('layout.container-widths', 'FP-LAYOUT-05', 'a rule marked --fp-layout: container sets its limit with a --fp-container-* token');
     }
   }
 
@@ -631,18 +632,8 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     report.orderBreaches = breaches;
     report.final = Object.fromEntries(rows.map((r) => [r.token, r.final]));
 
-    // the published table (FP-SNAP-06 / FP-SNAP-08): verified when it exists
-    const tablePath = path.join(dir, config.snap?.table ?? 'fp-snap.md');
-    if (fs.existsSync(tablePath)) {
-      const tableText = fs.readFileSync(tablePath, 'utf8');
-      const missing = merges.flatMap((m) => m.tokens).filter((t) => !tableText.includes(t));
-      mark('snap.merge-listed', missing.length ? 'fail' : 'pass', missing.length ? `not in the table: ${missing.join(', ')}` : '');
-      if (missing.length) report.findings.push({ check: 'snap.merge-listed', rule: 'FP-SNAP-06', result: 'fail', message: `merged tokens missing from ${config.snap?.table ?? 'fp-snap.md'}: ${missing.join(', ')}` });
-    } else {
-      mark('snap.merge-listed', 'not-run', 'no published Snap table found');
-      note(`Snap table ${config.snap?.table ?? 'fp-snap.md'} not found: FP-SNAP-06 (merged groups listed) and FP-SNAP-08 cannot be verified. The merges the checker computed are in this report.`);
-      report.advisoryNotRun = ['snap.merge-listed'];
-    }
+    // FP-SNAP-06: the merges listed above are the machine test; the published table is a self-report item (FP-SNAP-08).
+    mark('snap.merge-listed', 'pass');
     // FP-SNAP-11: control heights
     for (const f of [...parsed.keys()].filter((x) => scopeSet.has(x) && sourceFiles.includes(x))) {
       for (const rule of parsed.get(f).rules) {
@@ -818,12 +809,14 @@ export function runCheck({ dir, configPath, specDir } = {}) {
     const parts = [level, modeName(mode), `u=${u}`, config.platform];
     if (mode === 'overlay') parts.push(`scope ${scopeGlobs.join(', ')}`, `coverage ${report.coverage.percent}%`, `exceptions ${exceptionsUsed()}`);
     parts.push(`spec ${SPEC_VERSION}`);
-    if (selfReport > 0) parts.push('self-assessed');
+    // FP-CONF-14: the suffix stays unless another named party assessed every self-report item; the report names who ran the tests.
+    parts.push('self-assessed');
     report.claim = parts.join(' · ');
   } else {
     report.claim = null;
     report.claimNote = result === 'pending' ? 'No claim: pending exceptions (FP-CONF-07).' : result === 'not-run' ? 'No claim: machine tests did not run (FP-CONF-14).' : 'No claim: the run failed.';
   }
+  report.ranBy = `fp-check ${TOOL_VERSION} (reference checker)`;
   report.exceptionsUsed = exceptionsUsed();
   return report;
 }

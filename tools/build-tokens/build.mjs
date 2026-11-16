@@ -189,6 +189,7 @@ const isType = (t) => t.path[0] === 'type';
 /** CSS text of a token value. Type sizes are rem (FP-TOKEN-09); other px stay px. */
 export function cssValue(t) {
   const v = t.value;
+  if (t.id === 'radius.round') return `${num(v)}%`;
   switch (t.type) {
     case 'dimension':
       if (v.unit === 'px' && isType(t)) return `${num(v.value / REM_BASE)}rem`;

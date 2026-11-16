@@ -93,7 +93,7 @@ test('dtcg: flatten, aliases and dimension values', () => {
 });
 
 test('dtcg: FP-TOKEN-03 names must not begin with $ (as a token) or hold { } .', () => {
-  const p = checkTokenDoc({ $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.1', unit: 1 } }, 'a.b': { $type: 'dimension', 'x{y}': { $value: { value: 1, unit: 'px' } } } }, 'x.tokens.json');
+  const p = checkTokenDoc({ $extensions: { 'com.lyrikai.fp': { homepage: 'https://www.lyrikai.com', spec: '1.0.0-rc.2', unit: 1 } }, 'a.b': { $type: 'dimension', 'x{y}': { $value: { value: 1, unit: 'px' } } } }, 'x.tokens.json');
   assert.equal(p['token.names'].length, 2);
   assert.equal(checkTokenDoc({}, 'x.json')['token.dtcg'].length, 1);
 });

@@ -47,9 +47,9 @@ test('min(), max() and clamp() test each length argument', () => {
 });
 
 test('fixed sets: radius, border-width, outline-width, outline-offset (u does not change them)', () => {
-  const css = '.a{border-radius:13px 8px 0 21px;border-width:1px 2px 3px 0;outline:2px solid;outline-offset:-1px} .b{border-radius:9999px} .c{border-radius:50%} .d{border-radius:12px} .e{border:4px solid red} .f{outline-offset:5px} .g{border-radius:0.8125rem}';
+  const css = '.a{border-radius:13px 8px 0 21px;border-width:1px 2px 3px 0;outline:2px solid;outline-offset:-1px} .b{border-radius:9999px} .c{border-radius:50%} .d{border-radius:12px} .h{border-radius:999px} .e{border:4px solid red} .f{outline-offset:5px} .g{border-radius:0.8125rem}';
   const r = run({ 'a.css': css }, { unit: 4 });
-  assert.deepEqual(fails(r).map((f) => [f.selector, f.check]), [['.d', 'radius.set'], ['.e', 'math.fixed-detail'], ['.f', 'math.fixed-detail']]);
+  assert.deepEqual(fails(r).map((f) => [f.selector, f.check]).sort(), [['.d', 'radius.set'], ['.e', 'math.fixed-detail'], ['.f', 'math.fixed-detail'], ['.h', 'radius.set']]);
 });
 
 test('not tested in 1.0: box-shadow, transform, background-position, letter-spacing, z-index, intrinsic units', () => {
@@ -107,7 +107,7 @@ test('scope narrows what is tested; Overlay coverage counts both (FP-MODE-05)', 
   const r = run({ 'a.css': '.a{padding:21px}', 'b.css': '.b{padding:20px}' }, { mode: 'overlay', scope: ['a.css'] });
   assert.equal(r.result, 'pass');
   assert.deepEqual(r.coverage, { inScope: 4, inSource: 8, percent: 50 });
-  assert.match(r.claim, /^FP-1 · Overlay · u=1 · web · scope a\.css · coverage 50% · exceptions 0 · spec 1\.0\.0-rc\.1 · self-assessed$/);
+  assert.match(r.claim, /^FP-1 · Overlay · u=1 · web · scope a\.css · coverage 50% · exceptions 0 · spec 1\.0\.0-rc\.2 · self-assessed$/);
   const rounded = run({ 'a.css': '.a{width:1px}', 'b.css': '.b{width:1px;height:1px}' }, { mode: 'overlay', scope: ['a.css'] });
   assert.equal(rounded.coverage.percent, 33);
   const half = run({ 'a.css': '.a{width:1px;height:1px;top:1px}', 'b.css': '.b{width:1px;height:1px;top:1px;left:1px;right:1px}' }, { mode: 'overlay', scope: ['a.css'] });
@@ -121,8 +121,8 @@ test('Overlay: a scope with no checked declarations is not claimed', () => {
 });
 
 test('claim string: Native and Snap forms', () => {
-  assert.equal(run({ 'a.css': '.a{gap:8px}' }).claim, 'FP-1 · Native · u=1 · web · spec 1.0.0-rc.1 · self-assessed');
-  assert.equal(run({ 'a.css': '.a{gap:8px}' }, { unit: 4 }).claim, 'FP-1 · Native · u=4 · web · spec 1.0.0-rc.1 · self-assessed');
+  assert.equal(run({ 'a.css': '.a{gap:8px}' }).claim, 'FP-1 · Native · u=1 · web · spec 1.0.0-rc.2 · self-assessed');
+  assert.equal(run({ 'a.css': '.a{gap:8px}' }, { unit: 4 }).claim, 'FP-1 · Native · u=4 · web · spec 1.0.0-rc.2 · self-assessed');
 });
 
 test('has.motion and has.controls: contradictions fail; true is not contradicted; other has values are not read', () => {
