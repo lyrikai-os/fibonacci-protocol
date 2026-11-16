@@ -2,6 +2,7 @@
 
 
 Part of the Fibonacci Protocol fixtures, https://www.lyrikai.com (MIT unless this folder says otherwise).
+
 Values in this folder come from the public package `@primer/primitives`, version 11.10.0, licence MIT, Copyright (c) 2018 GitHub Inc. (notice in `LICENSE-primer`). The name is used only to identify the source; no endorsement is implied.
 
 | What | Exact file |

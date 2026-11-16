@@ -18,7 +18,7 @@ body {
   background: var(--bgColor-muted);
   border: 1px solid var(--borderColor-default);
   border-radius: var(--fp-radius-8);
-  padding: var(--base-size-16) var(--base-size-24);
+  padding: 6px var(--base-size-24);
   max-inline-size: 66ch;
 }
 
@@ -31,11 +31,11 @@ body {
 .card-meta {
   margin: 0;
   color: var(--fgColor-muted);
-  font-size: 0.875rem;
+  font-size: var(--fp-type-n1);
   line-height: var(--fp-leading-small);
 }
 
-button.btn {
+.btn {
   box-sizing: border-box;
   min-block-size: var(--control-medium-size);
   padding: 0 var(--control-medium-paddingInline-normal);

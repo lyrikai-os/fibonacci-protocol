@@ -1,0 +1,9 @@
+{
+  "fixture": "primer-snap",
+  "fault": "unsnappable-literal-6",
+  "about": "A literal 6px padding in the scope: 6 drifts 33.3% from its nearest rung, cannot be snapped, and has no declared exception.",
+  "exit": 1,
+  "mustFail": [
+    "FP-SNAP-10"
+  ]
+}

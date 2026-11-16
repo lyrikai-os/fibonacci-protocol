@@ -4,7 +4,6 @@
   "about": "A literal 16px padding in the scoped card. 16 is on no rung at u = 1.",
   "exit": 1,
   "mustFail": [
-    "FP-MODE-04",
     "FP-SPACE-01"
   ]
 }

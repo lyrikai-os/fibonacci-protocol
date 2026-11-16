@@ -2,6 +2,7 @@
 
 
 Part of the Fibonacci Protocol fixtures, https://www.lyrikai.com (MIT unless this folder says otherwise).
+
 This fixture is derived from an in-house template; see the Lineage note in spec/index.md. It is a corrected copy: the template's token values were taken as the starting point and changed where they did not meet the protocol's guardrails. This file lists every change. Anything not listed was kept (space ladder 1 to 377, radius 2 / 5 / 8 / 13 / 21, container widths 610 / 987 / 1597, the φ split, colour slot values, uppercase tracked labels).
 
 The fixture is a subset: it has the desk colour slots (light and dark), the accent, focus and two status slots, one button, one chip, one card, one console layout and one loop. The template's other parts are not carried over.

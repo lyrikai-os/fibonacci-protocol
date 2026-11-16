@@ -1,6 +1,6 @@
 # Fixtures
 
-Three sample systems, one per integration mode, that show an existing design system adopting **Lyrikai: Fibonacci Protocol for UI/UX Design Agents** ([www.lyrikai.com](https://www.lyrikai.com)), plus seeded-fault copies that the checker must catch. Spec 1.0.0-rc.2.
+Three sample systems, one per integration mode, that show an existing design system adopting **Lyrikai: Fibonacci Protocol for UI/UX Design Agents** ([www.lyrikai.com](https://www.lyrikai.com)), plus seeded-fault copies that the checker must catch. Spec 1.0.0-rc.3.
 
 | Folder | Mode and level | What it shows |
 |---|---|---|
@@ -16,11 +16,11 @@ Each folder in `faults/` is a full copy of its fixture with exactly one change, 
 
 | Fixture | Faults |
 |---|---|
-| primer-snap | `control-height-no-role` (FP-SNAP-11), `off-scale-font-size` (FP-TYPE-01), `failing-contrast` (FP-A11Y-01), `motion-false-with-transition` (FP-CONF-11), `undeclared-drift` (FP-SNAP-10) |
-| material-overlay | `unsnapped-padding-16` (FP-MODE-04, FP-SPACE-01), `host-token-off-ladder` (FP-MODE-04, FP-SPACE-01), `failing-contrast` (FP-A11Y-01), `motion-false-with-transition` (FP-CONF-11), `pill-radius-999` (FP-RADIUS-01) |
+| primer-snap | `control-height-no-role` (FP-SNAP-11), `unsnappable-literal-6` (FP-SNAP-10), `failing-contrast` (FP-A11Y-01), `motion-false-with-transition` (FP-CONF-11), `undeclared-drift` (FP-SNAP-10) |
+| material-overlay | `unsnapped-padding-16` (FP-SPACE-01), `host-token-off-ladder` (FP-SPACE-01), `failing-contrast` (FP-A11Y-01), `motion-false-with-transition` (FP-CONF-11), `pill-radius-999` (FP-RADIUS-01) |
 | native | `unsnapped-padding-16` (FP-SPACE-01, FP-MODE-06), `off-scale-font-size` (FP-TYPE-01), `body-below-anchor` (FP-A11Y-07), `failing-contrast` (FP-A11Y-01), `motion-false-with-animation` (FP-CONF-11) |
 
-In Snap, a bare 16 px literal is not a fault: it is mapped to its rung and listed (FP-SNAP-02), so the Snap fixture's unsnapped-length fault is a control height without a role instead.
+In Snap, a bare literal that maps to a rung is listed and passes in fp-check (see the hand-over note); the Snap fixture therefore seeds an unsnappable literal (6 px) instead of an unsnapped 16.
 
 ## Run
 

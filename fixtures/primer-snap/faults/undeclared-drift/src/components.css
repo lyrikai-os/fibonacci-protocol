@@ -35,7 +35,7 @@ body {
   line-height: var(--fp-leading-small);
 }
 
-button.btn {
+.btn {
   box-sizing: border-box;
   min-block-size: var(--control-medium-size);
   padding: 0 var(--control-medium-paddingInline-normal);

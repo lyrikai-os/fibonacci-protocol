@@ -1,5 +1,5 @@
 {
-  "fp": "1.0.0-rc.2",
+  "fp": "1.0.0-rc.3",
   "mode": "snap",
   "level": "FP-2",
   "platform": "web",
@@ -17,6 +17,7 @@
     { "fg": "--fgColor-onEmphasis", "bg": "--bgColor-accent-emphasis", "kind": "text" },
     { "fg": "--borderColor-emphasis", "bg": "--bgColor-default", "kind": "mark" }
   ],
+  "controls": [".btn"],
   "roles": [
     { "match": "--control-*-size", "role": "target" }
   ],

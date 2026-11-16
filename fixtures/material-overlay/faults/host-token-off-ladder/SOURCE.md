@@ -2,6 +2,7 @@
 
 
 Part of the Fibonacci Protocol fixtures, https://www.lyrikai.com (MIT unless this folder says otherwise).
+
 Values in `host/md-sys.css` come from the public package `@material/web`, version 2.5.0, licence Apache-2.0, Copyright 2023 Google LLC (notice in `LICENSE-material` and `NOTICE`). The name is used only to identify the source; no endorsement is implied.
 
 | What | Exact file |

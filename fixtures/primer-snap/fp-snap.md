@@ -1,6 +1,6 @@
 # Snap table: Primer base sizes at u = 4
 
-Published with fp.config.json (https://www.lyrikai.com) (FP-SNAP-08). Spec 1.0.0-rc.2. Host values: `@primer/primitives` 11.10.0 (MIT, Copyright (c) 2018 GitHub Inc.); see SOURCE.md. The name is used only to identify the source; no endorsement is implied.
+Published with fp.config.json (https://www.lyrikai.com) (FP-SNAP-08). Spec 1.0.0-rc.3. Host values: `@primer/primitives` 11.10.0 (MIT, Copyright (c) 2018 GitHub Inc.); see SOURCE.md. The name is used only to identify the source; no endorsement is implied.
 
 Mode snap, u = 4, level FP-2 (the protocol's type scale replaces host type in scope). Values in px (Primer writes rem; 1rem = 16px).
 
