@@ -14,6 +14,6 @@
     "test": "node --test tools/",
     "build:pack": "node tools/build-pack/build-pack.mjs",
     "check:pack": "node tools/build-pack/build-pack.mjs --check",
-    "build:spec": "python3 -I tools/specgen/gen.py"
+    "build:spec": "python3 -I tools/specgen/gen.py spec && python3 -I tools/specgen/vectors.py spec/test-vectors"
   }
 }
