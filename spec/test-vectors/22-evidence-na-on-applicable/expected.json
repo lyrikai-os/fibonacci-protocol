@@ -1,0 +1,39 @@
+{
+  "vector": "22-evidence-na-on-applicable",
+  "spec": "1.0.0-rc.5",
+  "about": "The same as 19, but one applicable self-report rule is answered n/a. Applicability comes from the configuration alone, so this fails conf.evidence (FP-CONF-06); the machine result is fail and there is no claim and no candidate.",
+  "result": "fail",
+  "findings": [
+    {
+      "item": "FP-MODE-07",
+      "check": "conf.evidence",
+      "rule": "FP-CONF-06",
+      "result": "fail",
+      "message": "answered n/a, but the configuration makes this rule applicable"
+    }
+  ],
+  "coverage": {
+    "inScope": 11,
+    "inSource": 22,
+    "percent": 50
+  },
+  "outputFirstLine": "MACHINE TESTS: FAIL",
+  "claimState": "none",
+  "openItems": [],
+  "applicableSelfReport": [
+    "FP-MATH-04",
+    "FP-MODE-03",
+    "FP-MODE-07",
+    "FP-A11Y-16",
+    "FP-A11Y-20",
+    "FP-A11Y-03",
+    "FP-A11Y-04",
+    "FP-A11Y-19",
+    "FP-A11Y-13",
+    "FP-A11Y-14",
+    "FP-SPACE-03",
+    "FP-RADIUS-02",
+    "FP-HONEST-03",
+    "FP-HONEST-05"
+  ]
+}

@@ -1,6 +1,6 @@
 # 5.5 UI: motion
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 This page is informative in version 1.0. The accessibility rules for motion and time (FP-A11Y-09, FP-A11Y-10, FP-A11Y-11, FP-A11Y-18) are normative now.
 
@@ -54,4 +54,4 @@ A notice that offers Undo and goes away by itself is a time limit and MUST meet 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

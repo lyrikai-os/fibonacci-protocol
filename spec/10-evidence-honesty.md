@@ -1,6 +1,6 @@
 # 10. Evidence and honesty
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 ## Labels
 
@@ -22,7 +22,7 @@ A conformance claim or report, and the protocol's own text, MUST NOT describe φ
 
 The following MUST NOT be claimed: that the Parthenon, the Great Pyramid, the Mona Lisa, or any company logo was designed on φ; that φ is the ratio people find most pleasing; that people are "wired" for φ; that Fibonacci numbers are universal in nature.
 
-- **Level:** Guard · **Status:** normative · **Applies when:** always · **Test:** self-report, `honest.banned-claims` · **Evidence:** cited ([source](https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf))
+- **Level:** Guard · **Status:** normative · **Applies when:** always · **Test:** self-report, `honest.banned-claims` · **Evidence:** convention; basis: [cited source](https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf)
 
 
 ### FP-HONEST-04 · A claim says what was tested
@@ -72,4 +72,4 @@ Where this specification discusses preference for φ, it MUST state the null and
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

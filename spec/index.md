@@ -1,8 +1,8 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-**Status:** release candidate 1.0.0-rc.4. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
+**Status:** release candidate 1.0.0-rc.5. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
 
 ## What this is
 
@@ -29,7 +29,7 @@ This is the smallest adoption. It changes nothing your system already has.
 **1. Add the tokens.** Copy this block into your CSS.
 
 ```css
-/* Fibonacci Protocol 1.0.0-rc.4 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
+/* Fibonacci Protocol 1.0.0-rc.5 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
 :root {
   --fp-space-1: 1px;
   --fp-space-2: 2px;
@@ -67,7 +67,7 @@ This is the smallest adoption. It changes nothing your system already has.
 
 ```json
 {
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "mode": "overlay",
   "level": "FP-1",
   "platform": "web",
@@ -142,7 +142,7 @@ This is the complete list for a web, Overlay, FP-1 claim, generated from [rules.
 | [FP-CTRL-01](05-ui/controls.md) | Protocol targets are at least the ladder target | self-report | only if `has.controls` is true in your configuration |
 | [FP-CTRL-02](05-ui/controls.md) | Drawn height and hit area are separate | self-report | only if `has.controls` is true in your configuration |
 | [FP-CTRL-03](05-ui/controls.md) | Small interactive parts | self-report | only if `has.controls` is true in your configuration |
-| [FP-CTRL-04](05-ui/controls.md) | Host controls keep their size if they meet the floor | self-report | always |
+| [FP-CTRL-04](05-ui/controls.md) | Host controls keep their size if they meet the floor | self-report | only if `has.controls` is true in your configuration |
 | [FP-VIZ-01](07-data-viz.md) | φ frames, never data | self-report | only if `has.charts` is true in your configuration |
 | [FP-VIZ-04](07-data-viz.md) | Bars start at zero and are equally wide | self-report | only if `has.charts` is true in your configuration |
 | [FP-VIZ-05](07-data-viz.md) | No bent scales, no blended measures | self-report | only if `has.charts` is true in your configuration |
@@ -167,7 +167,7 @@ If you later go on to FP-2, note one rule that catches people out: every CSS rul
 
 **5. State the claim.** It exists only when the machine tests pass and every self-report item in the list has an entry with evidence. Until then the checker prints a candidate line and the number of items still open, which is not a claim. The claim has exactly this form:
 
-`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed`
+`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.5 · self-assessed`
 
 ### Running the checker
 
@@ -207,7 +207,7 @@ In version 1.0 a claim names FP-1 or FP-2 and the platform `web` (FP-CONF-05). O
 1. Write an `fp.config.json` (FP-MODE-01, FP-MODE-02; schema in [fp.config.schema.json](fp.config.schema.json)).
 2. Run the machine tests for the level and answer the self-report items with evidence, in `fp-evidence.json` (FP-CONF-06; schema in [fp-evidence.schema.json](fp-evidence.schema.json)).
 3. Resolve every pending exception; a result with pending exceptions is not a pass (FP-CONF-07).
-4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.4 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
+4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.5 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
 
 A claim says what was tested. It never says that a design is more beautiful, more natural or better (FP-HONEST-04). A passing run is not a statement that a product is accessible (FP-CONF-10).
 
@@ -219,7 +219,7 @@ Each rule has an ID, a title, the rule text, and five fields:
 - **Status**: normative (binding, tested) or informative (published guidance that binds no claim in this version).
 - **Applies when**: the condition under which the rule is tested. Where the condition is false the result is `n/a`.
 - **Test**: `machine` (it can be decided from source files; the name is the check's name) or `self-report` (the adopter or agent answers with evidence).
-- **Evidence**: the label describes the rule itself. `cited`: the rule restates a requirement of the linked source. `convention`: common practice with no controlled evidence. `convention (protocol choice)`: a choice made by this protocol. `contested`: published evidence points both ways. A convention may add a **basis**: a cited source for the fact the choice rests on. A basis does not make the rule itself a cited requirement.
+- **Evidence**: the label describes the rule itself. `cited`: the rule restates a requirement of the linked source (a standard or a format). A source that only states a fact, such as a paper or a measurement, is never a citation for a rule: it is a basis. `convention`: common practice with no controlled evidence. `convention (protocol choice)`: a choice made by this protocol. `contested`: published evidence points both ways. A convention may add a **basis**: a cited source for the fact the choice rests on. A basis does not make the rule itself a cited requirement.
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119). **In an informative rule** these words say what the rule will require once it becomes normative; in this version they bind no claim. **In a normative rule**, MUST and MUST NOT decide pass or fail; SHOULD is a recommendation: not following it does not fail the rule, and the report says "recommendation not followed" with the reason. A rule whose condition is "the specification" or "a checker" binds this document or a checker, not an adopter's system, and is never part of a system's run. Rule IDs have the form `FP-<AREA>-NN` and are never reused. FP-CONF-13 was never assigned. Level names (FP-1 to FP-4b) never take a second number, so the two cannot be confused.
 
@@ -272,11 +272,13 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 - **Claim**: the one-line statement of what was tested (FP-CONF-04).
 - **Coverage**: in Overlay, the checked values inside the scope divided by those in the whole source, counted after shorthands are expanded to longhands (FP-MODE-05). It measures how much of the product the claim is about. It does not measure how many declarations use protocol tokens: inside the scope every checked value is on the ladder or a declared exception.
 - **Drift**: how far a snapped value moved, as a share of the original: |rung − value| / value.
+- **Candidate**: the line a checker prints when the machine tests pass but self-report rules are open. It is not a claim.
 - **Exception**: an off-ladder value that is declared, with a reason, in `fp.config.json`.
 - **Floor**: a minimum set by an accessibility standard or a platform, pinned outside the scale.
 - **Guard**: the rules every claim rests on: accessibility, honesty and conformance mechanics.
 - **Host**: the existing design system that adopts the protocol.
 - **Ladder**: the Fibonacci numbers 1 to 377, each multiplied by the base unit u, plus the container widths 610, 987 and 1597.
+- **Open**: said of an applicable self-report rule with no entry, or no evidence, in `fp-evidence.json`.
 - **φ split**: a division of a length into 61.8% and 38.2%.
 - **Protocol-owned**: a token or value the protocol supplies (`--fp-*`), as opposed to one the host already had.
 - **Rung**: one value on the ladder.
@@ -287,7 +289,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 
 | ID | Title | Level | Status | Applies when | Test | Evidence |
 |---|---|---|---|---|---|---|
-| [FP-MATH-01](01-core-math.md) | Constants | FP-1 | normative | a checker | machine: `math.constants` | cited ([source](https://en.wikipedia.org/wiki/Golden_angle)) |
+| [FP-MATH-01](01-core-math.md) | Constants | FP-1 | normative | a checker | machine: `math.constants` | convention; basis: [cited source](https://doi.org/10.1016/0025-5564(79)90080-4) |
 | [FP-MATH-02](01-core-math.md) | Compute from the closed form | FP-4a | informative | has: generated art | machine: `math.no-approximate-angle` | convention (protocol choice) |
 | [FP-MATH-03](01-core-math.md) | The length ladder | FP-1 | normative | always | machine: `math.ladder` | convention (protocol choice) |
 | [FP-MATH-04](01-core-math.md) | The ladder covers lengths only | FP-1 | normative | always | self-report: `math.ladder-scope` | convention (protocol choice) |
@@ -385,7 +387,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [FP-CTRL-01](05-ui/controls.md) | Protocol targets are at least the ladder target | Guard | normative | has: controls | self-report: `ctrl.target-rung` | convention (protocol choice); basis: [cited source](https://developer.apple.com/design/human-interface-guidelines/accessibility) |
 | [FP-CTRL-02](05-ui/controls.md) | Drawn height and hit area are separate | Guard | normative | has: controls | self-report: `ctrl.hit-area` | convention (protocol choice) |
 | [FP-CTRL-03](05-ui/controls.md) | Small interactive parts | Guard | normative | has: controls | self-report: `ctrl.small-parts` | convention (protocol choice) |
-| [FP-CTRL-04](05-ui/controls.md) | Host controls keep their size if they meet the floor | Guard | normative | mode: overlay or snap | self-report: `ctrl.host` | convention (protocol choice) |
+| [FP-CTRL-04](05-ui/controls.md) | Host controls keep their size if they meet the floor | Guard | normative | has: controls | self-report: `ctrl.host` | convention (protocol choice) |
 | [FP-CTRL-05](05-ui/controls.md) | Space between targets | Guard | informative | has: controls | self-report: `ctrl.spacing` | convention (protocol choice); basis: [cited source](https://support.google.com/accessibility/android/answer/7101858) |
 | [FP-MOTION-01](05-ui/motion.md) | Interaction durations | FP-3 | informative | has: motion | machine: `motion.durations` | convention (protocol choice); basis: [cited source](https://www.nngroup.com/articles/animation-duration/) |
 | [FP-MOTION-02](05-ui/motion.md) | Duration by role | FP-3 | informative | has: motion | self-report: `motion.roles` | convention |
@@ -409,8 +411,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [FP-STATE-07](05-ui/layers-colour-state.md) | Done has no hue | FP-3 | informative | has: states | self-report: `state.done` | convention (protocol choice) |
 | [FP-STATE-08](05-ui/layers-colour-state.md) | Tint | FP-3 | informative | has: states | machine: `state.tint` | convention (protocol choice) |
 | [FP-STATE-09](05-ui/layers-colour-state.md) | Disabled | FP-3 | informative | has: controls | self-report: `state.disabled` | convention (protocol choice) |
-| [FP-ART-01](06-art.md) | Golden-angle placement | FP-4a | informative | has: generated art | machine: `art.golden-angle` | cited ([source](https://en.wikipedia.org/wiki/Golden_angle)) |
-| [FP-ART-02](06-art.md) | Vogel spiral | FP-4a | informative | has: generated art | machine: `art.vogel` | cited ([source](https://mathworld.wolfram.com/VogelSpiral.html)) |
+| [FP-ART-01](06-art.md) | Golden-angle placement | FP-4a | informative | has: generated art | machine: `art.golden-angle` | convention; basis: [cited source](https://doi.org/10.1016/0025-5564(79)90080-4) |
+| [FP-ART-02](06-art.md) | Vogel spiral | FP-4a | informative | has: generated art | machine: `art.vogel` | convention; basis: [cited source](https://doi.org/10.1016/0025-5564(79)90080-4) |
 | [FP-ART-03](06-art.md) | Fibonacci counts | FP-4a | informative | has: generated art | self-report: `art.counts` | convention |
 | [FP-ART-04](06-art.md) | Captions state the rule and the real count | FP-4a | informative | has: generated art | self-report: `art.captions` | convention (protocol choice) |
 | [FP-ART-05](06-art.md) | Same inputs, same output | FP-4a | informative | has: generated art | machine: `art.determinism` | convention (protocol choice) |
@@ -421,17 +423,17 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [FP-ART-10](06-art.md) | Accessible name | FP-4a | informative | has: generated art | machine: `art.svg-name` | convention (protocol choice); basis: [cited source](https://www.w3.org/TR/WCAG22/) |
 | [FP-ART-11](06-art.md) | Art that moves | FP-4a | informative | has: generated art | self-report: `art.motion` | convention (protocol choice) |
 | [FP-VIZ-01](07-data-viz.md) | φ frames, never data | Guard | normative | has: charts | self-report: `viz.frames-not-data` | convention (protocol choice) |
-| [FP-VIZ-04](07-data-viz.md) | Bars start at zero and are equally wide | Guard | normative | has: charts | self-report: `viz.bars` | cited ([source](https://ar5iv.arxiv.org/html/1907.02035)) |
+| [FP-VIZ-04](07-data-viz.md) | Bars start at zero and are equally wide | Guard | normative | has: charts | self-report: `viz.bars` | convention; basis: [cited source](https://ar5iv.arxiv.org/html/1907.02035) |
 | [FP-VIZ-05](07-data-viz.md) | No bent scales, no blended measures | Guard | normative | has: charts | self-report: `viz.scales` | convention (protocol choice) |
 | [FP-VIZ-06](07-data-viz.md) | Not measured is not zero | Guard | normative | has: charts | self-report: `viz.not-measured` | convention (protocol choice) |
 | [FP-VIZ-02](07-data-viz.md) | The data sets the aspect | FP-4b | informative | has: charts | self-report: `viz.aspect` | contested ([source](https://www.tableau.com/research/publications/empirical-model-slope-ratio-comparisons)) |
-| [FP-VIZ-03](07-data-viz.md) | Nice-number ticks | FP-4b | informative | has: charts | machine: `viz.ticks` | cited ([source](https://www.ri.cmu.edu/publications/nice-numbers-for-graph-labels)) |
-| [FP-VIZ-07](07-data-viz.md) | Sequential colour | FP-4b | informative | has: charts | self-report: `viz.sequential` | cited ([source](https://bids.github.io/colormap/)) |
+| [FP-VIZ-03](07-data-viz.md) | Nice-number ticks | FP-4b | informative | has: charts | machine: `viz.ticks` | convention; basis: [cited source](https://www.ri.cmu.edu/publications/nice-numbers-for-graph-labels) |
+| [FP-VIZ-07](07-data-viz.md) | Sequential colour | FP-4b | informative | has: charts | self-report: `viz.sequential` | convention; basis: [cited source](https://bids.github.io/colormap/) |
 | [FP-VIZ-08](07-data-viz.md) | Categorical colour | FP-4b | informative | has: charts | self-report: `viz.categorical` | convention |
 | [FP-VIZ-09](07-data-viz.md) | Bar gaps and ends | FP-4b | informative | has: charts | self-report: `viz.bar-gaps` | convention (protocol choice) |
 | [FP-VIZ-10](07-data-viz.md) | Stat tiles | FP-4b | informative | has: charts | self-report: `viz.stat-tile` | convention (protocol choice) |
 | [FP-VIZ-11](07-data-viz.md) | Sparklines | FP-4b | informative | has: charts | self-report: `viz.sparkline` | convention (protocol choice) |
-| [FP-VIZ-12](07-data-viz.md) | Dot fields | FP-4b | informative | has: charts | self-report: `viz.dot-field` | convention (protocol choice); basis: [cited source](https://mathworld.wolfram.com/VogelSpiral.html) |
+| [FP-VIZ-12](07-data-viz.md) | Dot fields | FP-4b | informative | has: charts | self-report: `viz.dot-field` | convention (protocol choice); basis: [cited source](https://doi.org/10.1016/0025-5564(79)90080-4) |
 | [FP-PLAT-01](08-platforms/web.md) | Web units | FP-1 | normative | platform: web | machine: `plat.web-units` | convention (protocol choice); basis: [cited source](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
 | [FP-PLAT-02](08-platforms/web.md) | Web custom properties | FP-1 | normative | platform: web | machine: `plat.web-tokens` | convention (protocol choice) |
 | [FP-PLAT-03](08-platforms/web.md) | Web pointer queries | Guard | normative | platform: web | machine: `plat.web-pointer` | convention (protocol choice) |
@@ -460,7 +462,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in 
 | [FP-AGENT-11](09-agent-protocol.md) | About line | Agent | normative | always | self-report: `agent.about-line` | convention (protocol choice) |
 | [FP-HONEST-01](10-evidence-honesty.md) | Every rule carries an evidence label | Guard | normative | the specification | machine: `honest.labels` | convention (protocol choice) |
 | [FP-HONEST-02](10-evidence-honesty.md) | Banned words | Guard | normative | the report | machine: `honest.banned-words` | convention (protocol choice) |
-| [FP-HONEST-03](10-evidence-honesty.md) | Claims that are never made | Guard | normative | always | self-report: `honest.banned-claims` | cited ([source](https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf)) |
+| [FP-HONEST-03](10-evidence-honesty.md) | Claims that are never made | Guard | normative | always | self-report: `honest.banned-claims` | convention; basis: [cited source](https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf) |
 | [FP-HONEST-04](10-evidence-honesty.md) | A claim says what was tested | Guard | normative | the report | machine: `honest.claim-wording` | convention (protocol choice) |
 | [FP-HONEST-05](10-evidence-honesty.md) | Invent nothing | Guard | normative | always | self-report: `honest.invent-nothing` | convention (protocol choice) |
 | [FP-HONEST-06](10-evidence-honesty.md) | Null results are stated | Guard | normative | the specification | self-report: `honest.null-results` | convention (protocol choice); basis: [cited source](https://pmc.ncbi.nlm.nih.gov/articles/PMC4937063) |
@@ -485,4 +487,4 @@ MIT License. Third-party values used as test fixtures keep their own licences an
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

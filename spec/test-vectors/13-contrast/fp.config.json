@@ -1,5 +1,5 @@
 {
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "mode": "native",
   "level": "FP-1",
   "platform": "web",
@@ -44,7 +44,20 @@
     {
       "fg": "--large",
       "bg": "--ground",
-      "kind": "large-text"
+      "kind": "large-text",
+      "size": {
+        "px": 24,
+        "weight": 400
+      }
+    },
+    {
+      "fg": "--large",
+      "bg": "--ground",
+      "kind": "large-text",
+      "size": {
+        "px": 20,
+        "weight": 400
+      }
     }
   ]
 }

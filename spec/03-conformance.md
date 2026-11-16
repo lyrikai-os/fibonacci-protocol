@@ -1,6 +1,6 @@
 # 3. Conformance
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 ## Levels
 
@@ -27,7 +27,7 @@ FP-4a (art and illustration) and FP-4b (data visualisation) each require only th
 
 ### FP-CONF-04 · The claim string
 
-A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped. When the machine tests pass but self-report rules are still open (FP-CONF-06), there is no claim yet. A checker then prints a candidate line instead, in the form `candidate · <the claim string> · open <count>`, and lists the open rule IDs. A candidate line MUST NOT be published or quoted as a claim.
+A claim MUST be written as `<level> · <mode> · u=<unit> · <platform> · spec <version>`. An Overlay claim MUST add `scope <globs> · coverage <percent> · exceptions <count>` before the version. A claim MUST end with ` · self-assessed` unless FP-CONF-14 allows it to be dropped. When the machine tests pass but self-report rules are still open (FP-CONF-06), there is no claim yet. A checker then prints a candidate line instead, in the form `candidate · <the claim string> · open <count>`, and lists the open rule IDs. In its text output a checker heads the machine result `MACHINE TESTS: PASS` (or `FAIL`, `PENDING`, `NOT-RUN`), never `RESULT: PASS`, so that a pass of the machine tests above a candidate line is not read as a claim. A candidate line MUST NOT be published or quoted as a claim.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** machine, `conf.claim-format` · **Evidence:** convention (protocol choice)
 
@@ -50,7 +50,7 @@ The FP-AGENT rules describe an agent or a skill, not a design system. They MUST 
 
 ### FP-CONF-11 · Not applicable
 
-Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example "no charts", "platform is web", "mode is overlay"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement, which MUST be honest: `has.states` is true wherever the scope shows status of any kind (badges, alerts, validation messages, progress, online or offline marks).
+Every rule states when it applies. Where that condition is false for the system under test, the rule's result MUST be `n/a`, with a reason of one line (for example "no charts", "platform is web", "mode is overlay"). An `n/a` result is not a failure and needs no evidence beyond the reason. A rule MUST NOT be marked `n/a` when its condition is true: `n/a` comes from the configuration alone, and an `n/a` written into `fp-evidence.json` for an applicable rule fails FP-CONF-06. The `has:` conditions are read from `has` in the configuration, and a checker MUST fail this rule when the source contradicts a `false`: `has.motion` is contradicted by any `animation`, `transition` or `@keyframes` in the scope, and by a `<marquee>` element or an SVG `<animate>`, `<animateTransform>` or `<animateMotion>` element in any HTML file the checker reads; `has.controls` by any selector in the scope that names `button`, `a`, `input`, `select`, `textarea`, `summary`, `[role="button"]`, `:focus`, `:focus-visible` or `:hover`, and by any of these elements in an HTML file the checker reads: `button`, `a` with `href`, `input`, `select`, `textarea`, `summary`, or an element whose `role` is `button`, `link`, `checkbox`, `radio`, `tab` or `switch`. The other four (`timeLimits`, `charts`, `generatedArt`, `states`) cannot be read from CSS in version 1.0 and are the adopter's statement, which MUST be honest: `has.states` is true wherever the scope shows status of any kind (badges, alerts, validation messages, progress, online or offline marks).
 
 - **Level:** Guard · **Status:** normative · **Applies when:** a checker · **Test:** machine, `conf.not-applicable` · **Evidence:** convention (protocol choice)
 
@@ -79,15 +79,20 @@ FP-CONF-13 was never assigned; the number is not in use.
 
 ### FP-CONF-06 · Machine tests, self-report and the evidence file
 
-Each rule names its test. A machine test is one that can be decided from the inputs listed under "Checker inputs", locally, with no network. A self-report item MUST be answered with evidence: a measurement, a screenshot, a file reference or a recorded check. A self-report item that applies and has no evidence counts as failed. A SHOULD inside a normative rule is a recommendation: not following it is reported as "recommendation not followed", with the reason, and does not fail the rule.
+Each rule names its test. A machine test is one that can be decided from the inputs listed under "Checker inputs", locally, with no network. A self-report item MUST be answered with evidence: a measurement, a screenshot, a file reference or a recorded check. A self-report item that applies and has no evidence is open (see below): it is not a failure and not `not-run`, and it holds back the claim. A SHOULD inside a normative rule is a recommendation: not following it is reported as "recommendation not followed", with the reason, and does not fail the rule.
 
-Self-report answers are recorded in a file, `fp-evidence.json`, beside `fp.config.json`. It MUST validate against [fp-evidence.schema.json](fp-evidence.schema.json). It holds `fp` (the spec version), `adopter` (who is making the claim), and `items`: one entry for each applicable self-report rule, keyed by rule ID, with `result` (`pass`, `fail` or `n/a`), `evidence` (text, a file path or a URL; for `n/a`, the reason) and `by` (who assessed it). An entry MAY add `"independent": true` when `by` is neither the adopter nor a person or agent working for the adopter.
+Self-report answers are recorded in a file, `fp-evidence.json`, beside `fp.config.json`. It MUST validate against [fp-evidence.schema.json](fp-evidence.schema.json). It holds `fp` (the spec version), `adopter` (who is making the claim), and `items`: one entry for each applicable self-report rule, keyed by rule ID, with `result` (`pass` or `fail`), `evidence` (text, a file path or a URL) and `by` (who assessed it). An entry MAY add `"independent": true` when `by` is neither the adopter nor a person or agent working for the adopter.
 
 A self-report rule is applicable when it is normative, its level is within the claim (Guard, FP-1, and FP-2 for an FP-2 claim), and its applies-when condition is true for the configuration. A checker works this list out from `rules.json` and the configuration, and reads the file:
 
-- an applicable rule with no entry, or with empty `evidence`, is **open**;
-- an entry with `result` `fail` fails the run;
+- an applicable rule with no entry, or with empty `evidence`, is **open**. "Open" is the only word for this state;
+- an entry with `result` `fail` fails this rule and the run;
+- an entry with `result` `n/a` on an applicable rule fails this rule and the run. Whether a rule applies is decided only by the configuration (`mode`, `level`, `platform`, `has`, `roles`), never by the evidence file. An adopter who believes a rule does not apply changes the declaration that makes it apply, and a checker can contradict that declaration (FP-CONF-11). A rule that applies but finds nothing to act on (a scope with no status messages, for FP-A11Y-19) is answered `pass`, with that fact as the evidence. An `n/a` entry is accepted only for a rule the configuration already makes not applicable, where it changes nothing;
 - the claim is valid only when the machine tests pass, no exception is pending, and no applicable self-report rule is open.
+
+Two things are reported separately and never merged. The **machine result** (`result` in a report: `pass`, `fail`, `pending` or `not-run`) covers the machine tests, this one included. The **claim state** (`claimState`) is `valid` when there is a claim, `candidate` when the machine result is `pass` but rules are open, and `none` otherwise.
+
+`"independent": true` is a statement by whoever writes the file. A checker cannot verify it; it only reads it. A reader who relies on a claim without the `self-assessed` suffix is relying on that statement and on the named assessor.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** the report · **Test:** machine, `conf.evidence` · **Evidence:** convention (protocol choice)
 
@@ -148,4 +153,4 @@ A report MUST state which rules were machine-tested, which were self-reported, w
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

@@ -1,6 +1,6 @@
 # 7. Data visualisation (FP-4b)
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 In a chart, the data decides. φ and the ladder may shape the frame around the data. They never shape the data.
 
@@ -19,7 +19,7 @@ Rules marked Guard are normative in version 1.0, apply to any system that shows 
 
 A bar's length encodes its value, so a bar chart's value axis MUST start at zero, and bars in one series MUST have equal thickness. A line chart MAY start its axis elsewhere, with the axis labelled.
 
-- **Level:** Guard · **Status:** normative · **Applies when:** has: charts · **Test:** self-report, `viz.bars` · **Evidence:** cited ([source](https://ar5iv.arxiv.org/html/1907.02035))
+- **Level:** Guard · **Status:** normative · **Applies when:** has: charts · **Test:** self-report, `viz.bars` · **Evidence:** convention; basis: [cited source](https://ar5iv.arxiv.org/html/1907.02035)
 
 
 ### FP-VIZ-05 · No bent scales, no blended measures
@@ -49,7 +49,7 @@ A chart container MAY use 1.618 : 1 or a pair of rungs such as 34 : 21. Where th
 
 Axis ticks SHOULD fall on 1, 2 or 5 times a power of ten. Ticks MUST NOT be placed on Fibonacci numbers for the sake of the protocol.
 
-- **Level:** FP-4b · **Status:** informative · **Applies when:** has: charts · **Test:** machine, `viz.ticks` · **Evidence:** cited ([source](https://www.ri.cmu.edu/publications/nice-numbers-for-graph-labels))
+- **Level:** FP-4b · **Status:** informative · **Applies when:** has: charts · **Test:** machine, `viz.ticks` · **Evidence:** convention; basis: [cited source](https://www.ri.cmu.edu/publications/nice-numbers-for-graph-labels)
 
 
 ## Colour
@@ -58,7 +58,7 @@ Axis ticks SHOULD fall on 1, 2 or 5 times a power of ten. Ticks MUST NOT be plac
 
 A sequential colour ramp SHOULD rise or fall in lightness without reversing and SHOULD be perceptually uniform: use an established map such as viridis, or build the ramp in OKLCH.
 
-- **Level:** FP-4b · **Status:** informative · **Applies when:** has: charts · **Test:** self-report, `viz.sequential` · **Evidence:** cited ([source](https://bids.github.io/colormap/))
+- **Level:** FP-4b · **Status:** informative · **Applies when:** has: charts · **Test:** self-report, `viz.sequential` · **Evidence:** convention; basis: [cited source](https://bids.github.io/colormap/)
 
 
 ### FP-VIZ-08 · Categorical colour
@@ -95,8 +95,8 @@ A sparkline SHOULD have no axes, SHOULD label its last value, and MUST share one
 
 A unit chart (one dot per item) MAY arrange its dots by the Vogel spiral (FP-ART-02). The count of dots MUST be the real count.
 
-- **Level:** FP-4b · **Status:** informative · **Applies when:** has: charts · **Test:** self-report, `viz.dot-field` · **Evidence:** convention (protocol choice); basis: [cited source](https://mathworld.wolfram.com/VogelSpiral.html)
+- **Level:** FP-4b · **Status:** informative · **Applies when:** has: charts · **Test:** self-report, `viz.dot-field` · **Evidence:** convention (protocol choice); basis: [cited source](https://doi.org/10.1016/0025-5564(79)90080-4)
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

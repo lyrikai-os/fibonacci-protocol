@@ -1,6 +1,6 @@
 # 2. Integration modes
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 A system that already exists adopts the protocol in one of three modes. The mode is declared in a file, so that a person, an agent and a checker all read the same thing.
 
@@ -15,7 +15,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 
 ### FP-MODE-02 · Configuration fields
 
-The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.4`).
+The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.5`).
 
 | Field | Type | Required | Values and default |
 |---|---|---|---|
@@ -32,7 +32,7 @@ The file MUST validate against [fp.config.schema.json](fp.config.schema.json). T
 | `source` | array of globs | yes | Every file the product ships that holds lengths. |
 | `scope` | array of globs | no | The files the claim covers. Default: the same as `source`. |
 | `themes` | array | no | Each: `name`, and where the theme's colour values are found: `selector` (for example `[data-theme="dark"]`), `media` (for example `(prefers-color-scheme: dark)`) or `files` (globs). Default: one unnamed theme read from `:root`. Every theme the product ships MUST be listed, and every pair is tested in every theme. |
-| `pairs` | array | yes | Each: `fg`, `bg` (token addresses or hex colours) and `kind`: `text`, `large-text` or `mark`. Every pair in use in the scope is listed (FP-A11Y-20). |
+| `pairs` | array | yes | Each: `fg`, `bg` (token addresses or hex colours) and `kind`: `text`, `large-text` or `mark`. A `large-text` pair also needs `size`: `px` (the smallest size the pair is used at) and `weight` (FP-A11Y-02). Every pair in use in the scope is listed (FP-A11Y-20). |
 | `roles` | array | no | Each: `match` (a token address or glob) and `role`: `icon`, `type`, `breakpoint`, `target`, `drawn` or `micro` (FP-MODE-10). Used in every mode. |
 | `controls` | array of strings | no | Class selectors of interactive elements that are not interactive by their element name or ARIA role, for example `.btn` or `.nav-item` (FP-SNAP-11). |
 | `snap.source` | array of globs | yes in Snap | The files that hold the host's tokens as they are now, after snapping. The original values are kept in the Snap table, which is the record of what changed. |
@@ -47,7 +47,7 @@ The file MUST validate against [fp.config.schema.json](fp.config.schema.json). T
 
 ```json
 {
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "mode": "snap",
   "level": "FP-1",
   "platform": "web",
@@ -137,7 +137,7 @@ Inside the declared scope, every checked declaration (the list is in [03-conform
 
 ### FP-MODE-05 · Overlay coverage and exceptions are reported
 
-An Overlay report MUST state coverage: the checked values inside the scope, divided by the checked values in the whole `source`. Checked values are counted one way only: every checked declaration is expanded to its longhands (`padding: 12px 16px` becomes four values, `gap: 8px` two), and each longhand whose value is a length other than 0 or an intrinsic value counts once. The percentage is rounded half-up to a whole number. It MUST also state the number of accepted exceptions inside the scope. Both figures MUST appear in the claim (FP-CONF-04). A scope with no checked declarations MUST NOT be claimed. There is no minimum coverage: the figure is published so that a reader can judge the claim.
+An Overlay report MUST state coverage: the checked values inside the scope, divided by the checked values in the whole `source`. The numerator counts values in files matched by `scope` only; the denominator counts values in every file matched by `source`, the scope's files included. Checked values are counted one way only: every checked declaration is expanded to its longhands (`padding: 12px 16px` becomes four values, `gap: 8px` two), and each longhand whose value is a length other than 0 or an intrinsic value counts once. The percentage is rounded half-up to a whole number. It MUST also state the number of accepted exceptions inside the scope. Both figures MUST appear in the claim (FP-CONF-04). A scope with no checked declarations MUST NOT be claimed. There is no minimum coverage: the figure is published so that a reader can judge the claim.
 
 - **Level:** FP-1 · **Status:** normative · **Applies when:** mode: overlay · **Test:** machine, `mode.overlay-coverage` · **Evidence:** convention (protocol choice)
 
@@ -244,4 +244,4 @@ An adopter MAY change: colour slot values, typefaces and weights, the words show
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

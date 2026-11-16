@@ -1,6 +1,6 @@
 {
   "name": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents",
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.5",
   "license": "MIT",
   "homepage": "https://www.lyrikai.com",
   "vectors": [
@@ -126,7 +126,17 @@
     },
     {
       "vector": "13-contrast",
-      "about": "Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals.",
+      "about": "Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals. A large-text pair states its size: 24 px qualifies and is tested at 3:1; 20 px at weight 400 does not and is tested as text at 4.5:1, so it fails.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "24-contrast-definitions",
+      "about": "A colour with two unconditional :root definitions is tested against both, and both must pass: --ink fails on its second definition. Where a definition is !important only that one is tested: --muted passes. A pair that cannot be resolved (--missing) is not-run, never pass.",
       "result": "fail",
       "inputs": [
         "input.css"
@@ -166,6 +176,16 @@
       "expected": "expected.json"
     },
     {
+      "vector": "23-na-contradiction-html",
+      "about": "has.motion and has.controls are declared false, but the HTML file holds a button and an animated SVG, and its style block has :focus selectors: FP-CONF-11 fails for both. Separately, a :focus rule removes the outline with no replacement, which is a machine finding under FP-A11Y-12; the :focus-visible rule beside it sets a box-shadow and is not flagged.",
+      "result": "fail",
+      "inputs": [
+        "index.html"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
       "vector": "19-evidence-complete",
       "about": "Machine tests pass and fp-evidence.json has an entry with evidence for every applicable self-report rule, answered by the adopter. The claim is valid and ends with self-assessed.",
       "result": "pass",
@@ -179,8 +199,20 @@
     },
     {
       "vector": "20-evidence-missing",
-      "about": "The same, with one self-report entry missing and one with empty evidence. There is no claim: the checker prints a candidate line and the two open rule IDs.",
+      "about": "The same, with one self-report entry missing and one with empty evidence. There is no claim: the machine result is pass, the checker's output begins MACHINE TESTS: PASS, and it prints a candidate line and the two open rule IDs.",
       "result": "pass",
+      "inputs": [
+        "fp-evidence.json",
+        "src/card.css",
+        "src/legacy.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "22-evidence-na-on-applicable",
+      "about": "The same as 19, but one applicable self-report rule is answered n/a. Applicability comes from the configuration alone, so this fails conf.evidence (FP-CONF-06); the machine result is fail and there is no claim and no candidate.",
+      "result": "fail",
       "inputs": [
         "fp-evidence.json",
         "src/card.css",

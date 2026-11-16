@@ -1,6 +1,6 @@
 # 4. Accessibility guardrails
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 These rules are floors. They sit outside the ladder and the type scale, and they always win. Each says when it applies; where it does not, its result is `n/a` (FP-CONF-11).
 
@@ -15,14 +15,14 @@ Where a ladder value, a type step, a φ proportion or a Snap mapping would break
 
 ### FP-A11Y-01 · Contrast floors
 
-Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. Where a host colour fails, the floor wins in every mode: the colour is changed by the smallest amount that passes, and the change is reported. Who is asked first, and when, is set once in FP-AGENT-03.
+Text MUST have a contrast ratio of at least 4.5:1 against its background. Large text MUST have at least 3:1. Control edges, focus rings and meaningful marks MUST have at least 3:1 against adjacent colours. The test runs on every pair declared in `fp.config.json` (`text` 4.5:1; `large-text` and `mark` 3:1), in every declared theme; every theme the product ships MUST be declared. A state colour MUST also pass on its own tint fill. A checker resolves each colour within the theme's scope (`:root` for the default theme). Where a colour has more than one unconditional definition there, the pair is tested against every one of them and all must pass; a checker does not guess which the browser will use. The exception is `!important`: if any definition carries it, only the `!important` definitions are tested. A pair that a checker cannot resolve to colours has the result `not-run`, never `pass`. Where a host colour fails, the floor wins in every mode: the colour is changed by the smallest amount that passes, and the change is reported. Who is asked first, and when, is set once in FP-AGENT-03.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** always · **Test:** machine, `a11y.contrast` · **Evidence:** cited ([source](https://www.w3.org/TR/WCAG22/))
 
 
 ### FP-A11Y-02 · Large text and no rounding
 
-Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold. A contrast ratio MUST NOT be rounded: 4.499:1 fails.
+Large text is text of at least 24 px, or at least 18.67 px (14 pt) when bold (a weight of 700 or more). A `large-text` pair MUST state its text size in `size` (`px` and `weight`); a checker tests that size against these two thresholds, and a pair whose size does not qualify is tested as `text`, at 4.5:1. A contrast ratio MUST NOT be rounded: 4.499:1 fails.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** always · **Test:** machine, `a11y.contrast-exact` · **Evidence:** cited ([source](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html))
 
@@ -121,7 +121,7 @@ A message that reports a result or a state without taking focus (a toast, an "Un
 
 ### FP-A11Y-12 · Focus is always visible
 
-Every keyboard-operable element MUST show a visible focus indicator when it has keyboard focus, and the indicator MUST NOT be removed (WCAG 2.2, 2.4.7). The indicator MUST have at least 3:1 contrast against adjacent colours (1.4.11). The protocol's own ring is a gap of 2 and a ring of 3, in platform units at every u, drawn in the `focus` slot, which MUST NOT be a state colour; a host in Overlay or Snap MAY keep its own indicator if it meets the first two sentences. Evidence: a screenshot of each kind of control with keyboard focus, and the ring and its ground declared as a `mark` pair that passes.
+Every keyboard-operable element MUST show a visible focus indicator when it has keyboard focus, and the indicator MUST NOT be removed (WCAG 2.2, 2.4.7). The indicator MUST have at least 3:1 contrast against adjacent colours (1.4.11). The protocol's own ring is a gap of 2 and a ring of 3, in platform units at every u, drawn in the `focus` slot, which MUST NOT be a state colour; a host in Overlay or Snap MAY keep its own indicator if it meets the first two sentences. Evidence: a screenshot of each kind of control with keyboard focus, and the ring and its ground declared as a `mark` pair that passes. One part of this rule is read by machine, as the finding `a11y.focus-outline-removed`: a CSS rule whose selector contains `:focus` or `:focus-visible` and that sets `outline` to `none` or `0` (or `outline-width` to `0`) fails this rule, unless the same CSS rule also sets `box-shadow`, `border`, `border-color`, `background`, `background-color` or `text-decoration` as the replacement indicator.
 
 - **Level:** Guard · **Status:** normative · **Applies when:** has: controls · **Test:** self-report, `a11y.focus` · **Evidence:** cited ([source](https://www.w3.org/TR/WCAG22/#focus-visible))
 
@@ -155,4 +155,4 @@ An interface SHOULD stay usable when the platform forces its own colours. Marks 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

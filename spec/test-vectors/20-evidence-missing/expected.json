@@ -1,7 +1,7 @@
 {
   "vector": "20-evidence-missing",
-  "spec": "1.0.0-rc.4",
-  "about": "The same, with one self-report entry missing and one with empty evidence. There is no claim: the checker prints a candidate line and the two open rule IDs.",
+  "spec": "1.0.0-rc.5",
+  "about": "The same, with one self-report entry missing and one with empty evidence. There is no claim: the machine result is pass, the checker's output begins MACHINE TESTS: PASS, and it prints a candidate line and the two open rule IDs.",
   "result": "pass",
   "findings": [],
   "coverage": {
@@ -9,8 +9,9 @@
     "inSource": 22,
     "percent": 50
   },
+  "outputFirstLine": "MACHINE TESTS: PASS",
   "claimState": "candidate",
-  "candidate": "candidate · FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed · open 2",
+  "candidate": "candidate · FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.5 · self-assessed · open 2",
   "openItems": [
     "FP-MATH-04",
     "FP-MODE-03"
@@ -28,7 +29,6 @@
     "FP-A11Y-14",
     "FP-SPACE-03",
     "FP-RADIUS-02",
-    "FP-CTRL-04",
     "FP-HONEST-03",
     "FP-HONEST-05"
   ]

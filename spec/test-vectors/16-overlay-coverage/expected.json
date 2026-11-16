@@ -1,6 +1,6 @@
 {
   "vector": "16-overlay-coverage",
-  "spec": "1.0.0-rc.4",
+  "spec": "1.0.0-rc.5",
   "about": "Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged. There is no fp-evidence.json, so every applicable self-report rule is open and the checker prints a candidate line, not a claim.",
   "result": "pass",
   "findings": [],
@@ -9,8 +9,9 @@
     "inSource": 22,
     "percent": 50
   },
+  "outputFirstLine": "MACHINE TESTS: PASS",
   "claimState": "candidate",
-  "candidate": "candidate · FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed · open 15",
+  "candidate": "candidate · FP-1 · Overlay · u=1 · web · scope src/card.css · coverage 50% · exceptions 0 · spec 1.0.0-rc.5 · self-assessed · open 14",
   "openItems": [
     "FP-MATH-04",
     "FP-MODE-03",
@@ -24,7 +25,6 @@
     "FP-A11Y-14",
     "FP-SPACE-03",
     "FP-RADIUS-02",
-    "FP-CTRL-04",
     "FP-HONEST-03",
     "FP-HONEST-05"
   ],
@@ -41,7 +41,6 @@
     "FP-A11Y-14",
     "FP-SPACE-03",
     "FP-RADIUS-02",
-    "FP-CTRL-04",
     "FP-HONEST-03",
     "FP-HONEST-05"
   ]

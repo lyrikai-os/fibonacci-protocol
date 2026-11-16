@@ -1,6 +1,6 @@
 # 6. Art and illustration (FP-4a)
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 This section is informative in version 1.0. It covers art that is grown by the sequence: dot fields, spirals, branching forms.
 
@@ -12,14 +12,14 @@ The golden angle and Fibonacci counts are the one place where these numbers are 
 
 Elements placed around a centre or along a stem SHOULD be turned by the golden angle from one to the next: the n-th element sits at angle n × 137.50776°, computed from the closed form (FP-MATH-02).
 
-- **Level:** FP-4a · **Status:** informative · **Applies when:** has: generated art · **Test:** machine, `art.golden-angle` · **Evidence:** cited ([source](https://en.wikipedia.org/wiki/Golden_angle))
+- **Level:** FP-4a · **Status:** informative · **Applies when:** has: generated art · **Test:** machine, `art.golden-angle` · **Evidence:** convention; basis: [cited source](https://doi.org/10.1016/0025-5564(79)90080-4)
 
 
 ### FP-ART-02 · Vogel spiral
 
 A filled disc of elements SHOULD use Vogel's model: the n-th element at radius c × √n and angle n × the golden angle, where c sets the spacing.
 
-- **Level:** FP-4a · **Status:** informative · **Applies when:** has: generated art · **Test:** machine, `art.vogel` · **Evidence:** cited ([source](https://mathworld.wolfram.com/VogelSpiral.html))
+- **Level:** FP-4a · **Status:** informative · **Applies when:** has: generated art · **Test:** machine, `art.vogel` · **Evidence:** convention; basis: [cited source](https://doi.org/10.1016/0025-5564(79)90080-4)
 
 
 ### FP-ART-03 · Fibonacci counts
@@ -113,4 +113,4 @@ Animated art is subject to FP-A11Y-09, FP-A11Y-10 and FP-A11Y-11. Under reduced 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

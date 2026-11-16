@@ -1,6 +1,6 @@
 # 5.4 UI: controls and targets
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 Two numbers are in play. The **target floor** is the least a target may be. The **ladder target** is the smallest rung at or above that floor: it is what the protocol's own controls use.
 
@@ -37,9 +37,9 @@ A mark, glyph or chip that acts as a control MUST have the full hit area of FP-C
 
 ### FP-CTRL-04 · Host controls keep their size if they meet the floor
 
-A host control that is not given the `target` role is not tested against the ladder. It MUST meet the target minimum of its platform (FP-A11Y-05). A host target of 44 or 48 therefore passes as it is; it does not have to become 55.
+In Overlay and Snap, a host control that is not given the `target` role is not tested against the ladder. It MUST meet the target minimum of its platform (FP-A11Y-05). A host target of 44 or 48 therefore passes as it is; it does not have to become 55.
 
-- **Level:** Guard · **Status:** normative · **Applies when:** mode: overlay or snap · **Test:** self-report, `ctrl.host` · **Evidence:** convention (protocol choice)
+- **Level:** Guard · **Status:** normative · **Applies when:** has: controls · **Test:** self-report, `ctrl.host` · **Evidence:** convention (protocol choice)
 
 
 ### FP-CTRL-05 · Space between targets
@@ -61,4 +61,4 @@ A table of 34-high rows with a control in each row is the common hard case.
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

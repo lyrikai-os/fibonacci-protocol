@@ -1,5 +1,5 @@
 {
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "adopter": "Example adopter (demonstration content)",
   "items": {
     "FP-MATH-04": {
@@ -60,11 +60,6 @@
     "FP-RADIUS-02": {
       "result": "pass",
       "evidence": "Demonstration content for this test vector: see evidence/FP-RADIUS-02.md",
-      "by": "Example adopter (demonstration content)"
-    },
-    "FP-CTRL-04": {
-      "result": "pass",
-      "evidence": "Demonstration content for this test vector: see evidence/FP-CTRL-04.md",
       "by": "Example adopter (demonstration content)"
     },
     "FP-HONEST-03": {

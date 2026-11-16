@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:lyrikai:fibonacci-protocol:fp-evidence:1.0.0-rc.4",
+  "$id": "urn:lyrikai:fibonacci-protocol:fp-evidence:1.0.0-rc.5",
   "title": "fp-evidence.json",
-  "description": "Self-report answers for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.4. Kept beside fp.config.json. MIT License. https://www.lyrikai.com . Defined by rule FP-CONF-06 in spec/03-conformance.md.",
+  "description": "Self-report answers for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.5. Kept beside fp.config.json. MIT License. https://www.lyrikai.com . Defined by rule FP-CONF-06 in spec/03-conformance.md.",
   "type": "object",
   "additionalProperties": false,
   "required": ["fp", "adopter", "items"],
@@ -29,11 +29,11 @@
           "required": ["result", "evidence", "by"],
           "properties": {
             "result": {
-              "description": "pass: the rule is met. fail: it is not; the run fails. n/a: the rule does not apply; evidence gives the reason.",
+              "description": "pass: the rule is met. fail: it is not; the run fails. n/a is accepted only for a rule that the configuration already makes not applicable; on an applicable rule it fails conf.evidence (FP-CONF-06), because applicability is decided by fp.config.json alone.",
               "enum": ["pass", "fail", "n/a"]
             },
             "evidence": {
-              "description": "Text, a file path or a URL that shows the result. For n/a, the reason. An empty string leaves the rule open.",
+              "description": "Text, a file path or a URL that shows the result. An empty string leaves the rule open.",
               "type": "string"
             },
             "by": {
@@ -42,7 +42,7 @@
               "minLength": 1
             },
             "independent": {
-              "description": "True only when by is neither the adopter nor a person or agent working for the adopter (FP-CONF-14).",
+              "description": "True only when by is neither the adopter nor a person or agent working for the adopter (FP-CONF-14). This is a statement by whoever writes the file; a checker reads it and cannot verify it.",
               "type": "boolean",
               "default": false
             }

@@ -1,6 +1,6 @@
 # 8.2 Platforms: iOS and macOS
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](../index.md)
 
 This page is published as guidance in version 1.0; claims for these platforms begin with version 1.1 (FP-CONF-05). The numbers are cited from Apple's Human Interface Guidelines. No Apple text or table is reproduced.
 
@@ -26,4 +26,4 @@ In SwiftUI a type step SHOULD use a system text style where that style's default
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

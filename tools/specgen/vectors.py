@@ -14,7 +14,7 @@ def hu1(fr):
     return math.floor(Fraction(fr) * 10 + Fraction(1, 2)) / 10
 
 OUT = sys.argv[1]
-VER = "1.0.0-rc.4"
+VER = "1.0.0-rc.5"
 NAME = "Lyrikai: Fibonacci Protocol for UI/UX Design Agents"
 HOME = "https://www.lyrikai.com"
 PHI = (1 + 5 ** 0.5) / 2
@@ -256,24 +256,63 @@ def lum(hexc):
     lin = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in ch]
     return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
 
+def definitions(files, name):
+    """Every unconditional definition of a colour in the default theme's scope; !important ones win (FP-A11Y-01)."""
+    if not name.startswith("--"): return [name]
+    defs = [v for t in files.values() for sel, ds in parse_css(t) if sel in (":root", "html") for p, v in ds if p == name]
+    imp = [d for d in defs if d.endswith("!important")]
+    return [d.replace("!important", "").strip() for d in (imp or defs)]
+
 def check_contrast(files, cfg):
-    props = {}
-    for t in files.values(): props.update(custom_props(parse_css(t)))
     out = []
     for p in cfg["pairs"]:
-        fg, bg = (resolve(f"var({x})", props) if x.startswith("--") else x for x in (p["fg"], p["bg"]))
-        a, b = sorted((lum(fg), lum(bg)), reverse=True); ratio = (a + 0.05) / (b + 0.05)
         need = 4.5 if p["kind"] == "text" else 3.0
-        out.append({"fg": p["fg"], "bg": p["bg"], "kind": p["kind"], "ratio": math.floor(ratio * 1000) / 1000, "required": need,
-                    "check": "a11y.contrast", "rule": "FP-A11Y-01", "result": "pass" if ratio >= need else "fail"})
+        row = {"fg": p["fg"], "bg": p["bg"], "kind": p["kind"]}
+        if p["kind"] == "large-text":
+            s = p["size"]; large = s["px"] >= 24 or (s["px"] >= 18.67 and s["weight"] >= 700)
+            row["size"] = s; row["qualifiesAsLarge"] = large
+            if not large: need = 4.5
+        fgs, bgs = definitions(files, p["fg"]), definitions(files, p["bg"])
+        if not fgs or not bgs:
+            row.update(ratio=None, required=need, definitionsTested=0, check="a11y.contrast", rule="FP-A11Y-01", result="not-run")
+        else:
+            ratios = []
+            for f in fgs:
+                for b in bgs:
+                    hi, lo = sorted((lum(f), lum(b)), reverse=True); ratios.append((hi + 0.05) / (lo + 0.05))
+            row.update(ratio=math.floor(min(ratios) * 1000) / 1000, required=need, definitionsTested=len(ratios),
+                       check="a11y.contrast", rule="FP-A11Y-01", result="pass" if min(ratios) >= need else "fail")
+        out.append(row)
+    return out
+
+def contrast_result(pairs):
+    return "fail" if any(x["result"] == "fail" for x in pairs) else "not-run" if any(x["result"] == "not-run" for x in pairs) else "pass"
+
+def css_of(name, text):
+    """The CSS a checker reads from a file: all of a .css file, the <style> blocks of an .html file."""
+    return "\n".join(re.findall(r"<style[^>]*>(.*?)</style>", text, flags=re.S)) if name.endswith(".html") else text
+
+def check_focus(files):
+    """a11y.focus-outline-removed (FP-A11Y-12)."""
+    out = []
+    for n, t in files.items():
+        for sel, decls in parse_css(css_of(n, t)):
+            d = dict(decls)
+            if ":focus" in sel and (d.get("outline") in ("none", "0") or d.get("outline-width") == "0"):
+                if not any(k in d for k in ("box-shadow", "border", "border-color", "background", "background-color", "text-decoration")):
+                    out.append({"file": n, "selector": sel, "property": "outline", "value": d.get("outline", "0"), "check": "a11y.focus-outline-removed", "rule": "FP-A11Y-12", "result": "fail"})
     return out
 
 # ---------- n/a contradiction ----------
 def check_has(files, cfg):
     text = "\n".join(files.values()); out = []
+    text = "\n".join(css_of(n, t) for n, t in files.items())
     sels = " ".join(s for s, _ in parse_css(text))
     motion = bool(re.search(r"(^|[\s;{])(animation|transition)(-[\w-]+)?\s*:|@keyframes", text))
     controls = bool(re.search(r"(^|[\s,>+~(])(button|a|input|select|textarea|summary)(?=[\s,.:#\[>+~{]|$)|\[role=\"button\"\]|:focus|:hover", sels))
+    html = "\n".join(t for n, t in files.items() if n.endswith(".html"))
+    if re.search(r"<(marquee|animate|animateTransform|animateMotion)\b", html): motion = True
+    if re.search(r"<(button|input|select|textarea|summary)\b|<a\b[^>]*\bhref\b|\brole=[\"\'](button|link|checkbox|radio|tab|switch)[\"\']", html): controls = True
     for key, seen in (("motion", motion), ("controls", controls)):
         if cfg["has"][key] is False and seen:
             out.append({"has": key, "declared": False, "check": "conf.not-applicable", "rule": "FP-CONF-11", "result": "fail",
@@ -300,12 +339,16 @@ def claim_state(base_claim, c, files, evidence):
     """base_claim has no suffix. Returns the fields a checker prints after a machine pass."""
     need = applicable_self_report(c, files); items = (evidence or {}).get("items", {})
     failed = [i for i in need if items.get(i, {}).get("result") == "fail"]
+    na = [i for i in need if items.get(i, {}).get("result") == "n/a"]
     open_ = [i for i in need if i not in items or not items[i].get("evidence")]
-    if failed: return {"result": "fail", "claimState": "none", "failedSelfReport": failed, "openItems": open_}
+    if failed or na:
+        return {"result": "fail", "outputFirstLine": "MACHINE TESTS: FAIL", "claimState": "none", "openItems": open_, "applicableSelfReport": need,
+                "findings": [{"item": i, "check": "conf.evidence", "rule": "FP-CONF-06", "result": "fail",
+                              "message": "answered fail" if i in failed else "answered n/a, but the configuration makes this rule applicable"} for i in need if i in failed or i in na]}
     if open_:
-        return {"claimState": "candidate", "candidate": f"candidate · {base_claim} · self-assessed · open {len(open_)}", "openItems": open_, "applicableSelfReport": need}
+        return {"outputFirstLine": "MACHINE TESTS: PASS", "claimState": "candidate", "candidate": f"candidate · {base_claim} · self-assessed · open {len(open_)}", "openItems": open_, "applicableSelfReport": need}
     indep = all(items[i].get("independent") is True and items[i]["by"] != evidence["adopter"] for i in need)
-    return {"claimState": "valid", "claim": base_claim + ("" if indep else " · self-assessed"), "openItems": [], "applicableSelfReport": need}
+    return {"outputFirstLine": "MACHINE TESTS: PASS", "claimState": "valid", "claim": base_claim + ("" if indep else " · self-assessed"), "openItems": [], "applicableSelfReport": need}
 
 # ---------- vectors ----------
 HASN = {"motion": False, "timeLimits": False, "controls": False, "charts": False, "generatedArt": False, "states": False}
@@ -432,10 +475,20 @@ for nm, al, about in (("11-type-scale-formula", "formula", "Type sizes by formul
 css = ":root { --ink: #1a1a1a; --ground: #ffffff; --muted-ok: #767676; --muted-bad: #777777; --edge-ok: #949494; --edge-bad: #959595; --large: #949494; }\n"
 c = cfg(pairs=[{"fg": "--ink", "bg": "--ground", "kind": "text"}, {"fg": "--muted-ok", "bg": "--ground", "kind": "text"},
                {"fg": "--muted-bad", "bg": "--ground", "kind": "text"}, {"fg": "--edge-ok", "bg": "--ground", "kind": "mark"},
-               {"fg": "--edge-bad", "bg": "--ground", "kind": "mark"}, {"fg": "--large", "bg": "--ground", "kind": "large-text"}])
+               {"fg": "--edge-bad", "bg": "--ground", "kind": "mark"}, {"fg": "--large", "bg": "--ground", "kind": "large-text", "size": {"px": 24, "weight": 400}},
+               {"fg": "--large", "bg": "--ground", "kind": "large-text", "size": {"px": 20, "weight": 400}}])
 p = check_contrast({"input.css": css}, c)
-vec("13-contrast", "Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals.",
-    {"input.css": css}, c, {"result": "fail" if any(x["result"] == "fail" for x in p) else "pass", "pairs": p})
+vec("13-contrast", "Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals. A large-text pair states its size: 24 px qualifies and is tested at 3:1; 20 px at weight 400 does not and is tested as text at 4.5:1, so it fails.",
+    {"input.css": css}, c, {"result": contrast_result(p), "pairs": p})
+
+css = """:root { --ink: #1a1a1a; --ground: #ffffff; --muted: #595959 !important; }
+:root { --ink: #dddddd; --muted: #c0c0c0; }
+"""
+c = cfg(pairs=[{"fg": "--ink", "bg": "--ground", "kind": "text"}, {"fg": "--muted", "bg": "--ground", "kind": "text"},
+               {"fg": "--missing", "bg": "--ground", "kind": "text"}])
+p = check_contrast({"input.css": css}, c)
+vec("24-contrast-definitions", "A colour with two unconditional :root definitions is tested against both, and both must pass: --ink fails on its second definition. Where a definition is !important only that one is tested: --muted passes. A pair that cannot be resolved (--missing) is not-run, never pass.",
+    {"input.css": css}, c, {"result": contrast_result(p), "pairs": p})
 
 css = """.card { padding: 21px; transition: opacity 144ms; }
 button:focus-visible { outline-width: 3px; outline-offset: 2px; }
@@ -455,6 +508,22 @@ vec("16-overlay-coverage", "Overlay: only the scope is tested. Coverage is the c
     files, c, {"result": "pass", "findings": fs, "coverage": {"inScope": n_scope, "inSource": n_all, "percent": math.floor(Fraction(n_scope * 100, n_all) + Fraction(1, 2))},
                **claim_state(f"FP-1 · Overlay · u=1 · web · scope src/card.css · coverage {math.floor(Fraction(n_scope * 100, n_all) + Fraction(1, 2))}% · exceptions 0 · spec {VER}", c, files, None)})
 
+html = """<!doctype html>
+<html lang="en"><head><title>Demonstration content</title>
+<style>
+.card { padding: 21px; }
+.link:focus { outline: none; }
+.link:focus-visible { outline: 0; box-shadow: 0 0 0 3px currentColor; }
+</style></head>
+<body><div class="card"><button type="button">Save</button>
+<svg viewBox="0 0 8 8" role="img"><title>Demonstration mark</title><circle cx="4" cy="4" r="2"><animate attributeName="r" values="2;3;2" dur="2s" repeatCount="2"/></circle></svg>
+</div></body></html>
+"""
+c23 = cfg(source=["index.html"])
+f23 = check_has({"index.html": html}, c23) + check_focus({"index.html": html})
+vec("23-na-contradiction-html", "has.motion and has.controls are declared false, but the HTML file holds a button and an animated SVG, and its style block has :focus selectors: FP-CONF-11 fails for both. Separately, a :focus rule removes the outline with no replacement, which is a machine finding under FP-A11Y-12; the :focus-visible rule beside it sets a box-shadow and is not flagged.",
+    {"index.html": html}, c23, {"result": "fail", "findings": f23})
+
 # evidence vectors: the same Overlay input with a complete, an incomplete and an independent evidence file
 base = f"FP-1 · Overlay · u=1 · web · scope src/card.css · coverage {math.floor(Fraction(n_scope * 100, n_all) + Fraction(1, 2))}% · exceptions 0 · spec {VER}"
 need = applicable_self_report(c, files)
@@ -465,8 +534,11 @@ def evidence_file(ids, by, independent=False):
     return {"fp": VER, "adopter": "Example adopter (demonstration content)", "items": items}
 for nm, about, ev in (
     ("19-evidence-complete", "Machine tests pass and fp-evidence.json has an entry with evidence for every applicable self-report rule, answered by the adopter. The claim is valid and ends with self-assessed.", evidence_file(need, "Example adopter (demonstration content)")),
-    ("20-evidence-missing", "The same, with one self-report entry missing and one with empty evidence. There is no claim: the checker prints a candidate line and the two open rule IDs.", None),
+    ("20-evidence-missing", "The same, with one self-report entry missing and one with empty evidence. There is no claim: the machine result is pass, the checker's output begins MACHINE TESTS: PASS, and it prints a candidate line and the two open rule IDs.", None),
+    ("22-evidence-na-on-applicable", "The same as 19, but one applicable self-report rule is answered n/a. Applicability comes from the configuration alone, so this fails conf.evidence (FP-CONF-06); the machine result is fail and there is no claim and no candidate.", "NA"),
     ("21-evidence-independent", "The same as 19, with every entry assessed by a party other than the adopter and marked independent. The claim is valid and the self-assessed suffix is dropped.", evidence_file(need, "Example assessor (demonstration content)", True))):
+    if ev == "NA":
+        ev = evidence_file(need, "Example adopter (demonstration content)"); ev["items"][need[2]].update(result="n/a", evidence="We think this rule does not apply to us.")
     if ev is None:
         ev = evidence_file(need, "Example adopter (demonstration content)"); del ev["items"][need[0]]; ev["items"][need[1]]["evidence"] = ""
     fs2 = dict(files); fs2["fp-evidence.json"] = json.dumps(ev, indent=2, ensure_ascii=False) + "\n"
@@ -499,7 +571,7 @@ Each folder holds one case: the input files, an `fp.config.json` that validates 
 
 The expected results are computed from the rule text by a small reference script, not by a published checker. They cover the core machine tests: lengths on the ladder at u = 1 and u = 4, the derived patterns, roles and exceptions, Snap mapping (ties, merges, drift, targets, overrides, order), the type scale in both alignments, contrast on declared pairs, the `n/a` contradiction test, Overlay coverage, and the evidence file (valid claim, candidate line, independent assessment). They do not yet cover shorthand edge cases, `@media` blocks, themes, or the self-report rules.
 
-In every vector `result` is the result of the machine tests. Vectors 16 and 19 to 21 also give `claimState` (`valid` or `candidate`), the claim or candidate line, and the open self-report rule IDs (FP-CONF-06). The other vectors have no evidence file and say nothing about a claim. A finding identifies a declaration by file, selector, property and value, once per written value. `checkedValues` and coverage count longhand values after shorthand expansion (FP-MODE-05). Drift is exact when compared with a limit and is shown rounded half-up to one decimal place. A `result` of `exception` means a declared, accepted exception covered the value; `pending` means a pending one did.
+In every vector `result` is the result of the machine tests. Vectors 16 and 19 to 22 also give `claimState` (`valid`, `candidate` or `none`), the claim or candidate line, the open self-report rule IDs, and `outputFirstLine`, the heading a checker's text output begins with (FP-CONF-04, FP-CONF-06). The other vectors have no evidence file and say nothing about a claim. A finding identifies a declaration by file, selector, property and value, once per written value. `checkedValues` and coverage count longhand values after shorthand expansion (FP-MODE-05). Drift is exact when compared with a limit and is shown rounded half-up to one decimal place. A `result` of `exception` means a declared, accepted exception covered the value; `pending` means a pending one did.
 
 | Vector | Expected result | What it shows |
 |---|---|---|

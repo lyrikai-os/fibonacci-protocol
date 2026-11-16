@@ -1,6 +1,6 @@
 {
   "vector": "17-snap-u1-undeclared",
-  "spec": "1.0.0-rc.4",
+  "spec": "1.0.0-rc.5",
   "about": "The twin of 06-snap-u1 with no exceptions declared. The values that cannot be snapped are kept without a snap-drift exception, which fails FP-SNAP-10.",
   "result": "fail",
   "mapping": [

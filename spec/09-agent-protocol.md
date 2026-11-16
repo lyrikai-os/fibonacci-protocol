@@ -1,6 +1,6 @@
 # 9. Agent protocol
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 This section is written for a design agent: any model or tool that makes or edits a design on a person's behalf. It is the source from which the agent pack and the `/lyrikai-fibonacci` skill are generated.
 
@@ -59,7 +59,7 @@ When no one is available to answer, an agent MUST NOT wait. It applies what it h
 
 ### FP-AGENT-05 · Done-checks
 
-Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires. The agent records each self-report item it assessed in `fp-evidence.json` (FP-CONF-06), with itself and the adopter it works for as `by`; items it could not assess stay open, and the agent then reports a candidate line, not a claim.
+Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires. The agent records each self-report item it assessed in `fp-evidence.json` (FP-CONF-06), with itself and the adopter it works for as `by`; items it could not assess stay open, and the agent then reports a candidate line, not a claim. An agent MUST NOT answer `n/a` for an applicable rule, and MUST NOT describe a pass of the machine tests as a pass of the protocol.
 
 - **Level:** Agent · **Status:** normative · **Applies when:** always · **Test:** self-report, `agent.done-checks` · **Evidence:** convention (protocol choice)
 
@@ -155,4 +155,4 @@ The skill's output MUST end with a line that names the protocol, the spec versio
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

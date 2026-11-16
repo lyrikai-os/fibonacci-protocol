@@ -5,12 +5,14 @@ The golden angle and Fibonacci counts are the one place where these numbers are 
 
 ## Growth rules
 
-@R FP-ART-01 | Golden-angle placement | FP-4a | I | M art.golden-angle | cited https://en.wikipedia.org/wiki/Golden_angle
+@R FP-ART-01 | Golden-angle placement | FP-4a | I | M art.golden-angle | conv
+@basis https://doi.org/10.1016/0025-5564(79)90080-4
 @applies has: generated art
 Elements placed around a centre or along a stem SHOULD be turned by the golden angle from one to the next: the n-th element sits at angle n × 137.50776°, computed from the closed form (FP-MATH-02).
 @@
 
-@R FP-ART-02 | Vogel spiral | FP-4a | I | M art.vogel | cited https://mathworld.wolfram.com/VogelSpiral.html
+@R FP-ART-02 | Vogel spiral | FP-4a | I | M art.vogel | conv
+@basis https://doi.org/10.1016/0025-5564(79)90080-4
 @applies has: generated art
 A filled disc of elements SHOULD use Vogel's model: the n-th element at radius c × √n and angle n × the golden angle, where c sets the spacing.
 @@
@@ -92,7 +94,8 @@ Rules marked Guard are normative in version 1.0, apply to any system that shows 
 φ, Fibonacci numbers and the ladder MAY set a chart's container ratio, margins, gaps and legend spacing. They MUST NOT set a scale, a tick position, a bar's length or thickness, an area that encodes a value, or a baseline.
 @@
 
-@R FP-VIZ-04 | Bars start at zero and are equally wide | Guard | N | S viz.bars | cited https://ar5iv.arxiv.org/html/1907.02035
+@R FP-VIZ-04 | Bars start at zero and are equally wide | Guard | N | S viz.bars | conv
+@basis https://ar5iv.arxiv.org/html/1907.02035
 @applies has: charts
 A bar's length encodes its value, so a bar chart's value axis MUST start at zero, and bars in one series MUST have equal thickness. A line chart MAY start its axis elsewhere, with the axis labelled.
 @@
@@ -114,14 +117,16 @@ A value that has not been measured MUST be shown as not measured (an empty mark 
 A chart container MAY use 1.618 : 1 or a pair of rungs such as 34 : 21. Where the data calls for another aspect (for example to keep line slopes readable), the data's aspect MUST win. The research on the best aspect for slope reading does not agree, so no single aspect is prescribed.
 @@
 
-@R FP-VIZ-03 | Nice-number ticks | FP-4b | I | M viz.ticks | cited https://www.ri.cmu.edu/publications/nice-numbers-for-graph-labels
+@R FP-VIZ-03 | Nice-number ticks | FP-4b | I | M viz.ticks | conv
+@basis https://www.ri.cmu.edu/publications/nice-numbers-for-graph-labels
 @applies has: charts
 Axis ticks SHOULD fall on 1, 2 or 5 times a power of ten. Ticks MUST NOT be placed on Fibonacci numbers for the sake of the protocol.
 @@
 
 ## Colour
 
-@R FP-VIZ-07 | Sequential colour | FP-4b | I | S viz.sequential | cited https://bids.github.io/colormap/
+@R FP-VIZ-07 | Sequential colour | FP-4b | I | S viz.sequential | conv
+@basis https://bids.github.io/colormap/
 @applies has: charts
 A sequential colour ramp SHOULD rise or fall in lightness without reversing and SHOULD be perceptually uniform: use an established map such as viridis, or build the ramp in OKLCH.
 @@
@@ -150,7 +155,7 @@ A sparkline SHOULD have no axes, SHOULD label its last value, and MUST share one
 
 @R FP-VIZ-12 | Dot fields | FP-4b | I | S viz.dot-field | choice
 @applies has: charts
-@basis https://mathworld.wolfram.com/VogelSpiral.html
+@basis https://doi.org/10.1016/0025-5564(79)90080-4
 A unit chart (one dot per item) MAY arrange its dots by the Vogel spiral (FP-ART-02). The count of dots MUST be the real count.
 @@
 
@@ -289,7 +294,7 @@ When no one is available to answer, an agent MUST NOT wait. It applies what it h
 ## Before saying "done"
 
 @R FP-AGENT-05 | Done-checks | Agent | N | S agent.done-checks | choice
-Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires. The agent records each self-report item it assessed in `fp-evidence.json` (FP-CONF-06), with itself and the adopter it works for as `by`; items it could not assess stay open, and the agent then reports a candidate line, not a claim.
+Before reporting that work is done, an agent MUST: run the machine tests with the reference checker (`node tools/fp-check/fp-check.mjs`) if it is available, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. The claim ends with `self-assessed` as FP-CONF-14 requires. The agent records each self-report item it assessed in `fp-evidence.json` (FP-CONF-06), with itself and the adopter it works for as `by`; items it could not assess stay open, and the agent then reports a candidate line, not a claim. An agent MUST NOT answer `n/a` for an applicable rule, and MUST NOT describe a pass of the machine tests as a pass of the protocol.
 @@
 
 @R FP-AGENT-14 | The report file | Agent | N | M agent.report-file | choice
@@ -372,7 +377,8 @@ Every rule in this specification MUST carry exactly one label: `cited`, with a s
 A conformance claim or report, and the protocol's own text, MUST NOT describe φ, Fibonacci numbers or a design that uses them as: sacred, divine, perfect, magic, nature's code, a universal law, the most beautiful, or scientifically proven. The names of the musical intervals used for type ratios ("perfect fourth", "perfect fifth") and this list itself are excepted.
 @@
 
-@R FP-HONEST-03 | Claims that are never made | Guard | N | S honest.banned-claims | cited https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf
+@R FP-HONEST-03 | Claims that are never made | Guard | N | S honest.banned-claims | conv
+@basis https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf
 The following MUST NOT be claimed: that the Parthenon, the Great Pyramid, the Mona Lisa, or any company logo was designed on φ; that φ is the ratio people find most pleasing; that people are "wired" for φ; that Fibonacci numbers are universal in nature.
 @@
 

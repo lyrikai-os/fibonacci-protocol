@@ -207,8 +207,8 @@ A mark, glyph or chip that acts as a control MUST have the full hit area of FP-C
 @@
 
 @R FP-CTRL-04 | Host controls keep their size if they meet the floor | Guard | N | S ctrl.host | choice
-@applies mode: overlay or snap
-A host control that is not given the `target` role is not tested against the ladder. It MUST meet the target minimum of its platform (FP-A11Y-05). A host target of 44 or 48 therefore passes as it is; it does not have to become 55.
+@applies has: controls
+In Overlay and Snap, a host control that is not given the `target` role is not tested against the ladder. It MUST meet the target minimum of its platform (FP-A11Y-05). A host target of 44 or 48 therefore passes as it is; it does not have to become 55.
 @@
 
 @R FP-CTRL-05 | Space between targets | Guard | I | S ctrl.spacing | choice

@@ -1,6 +1,6 @@
 # 1. Core math
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 This section defines the numbers everything else uses: the constants, the length ladder, the base unit and the rounding rules.
 
@@ -20,7 +20,7 @@ This section defines the numbers everything else uses: the constants, the length
 
 A checker, a generator or a protocol token file MUST use the values in the constants table, to at least the precision shown. φ is (1 + √5) / 2. The golden angle is 360° / φ², which is 137.50776° (2.39996323 radians).
 
-- **Level:** FP-1 · **Status:** normative · **Applies when:** a checker · **Test:** machine, `math.constants` · **Evidence:** cited ([source](https://en.wikipedia.org/wiki/Golden_angle))
+- **Level:** FP-1 · **Status:** normative · **Applies when:** a checker · **Test:** machine, `math.constants` · **Evidence:** convention; basis: [cited source](https://doi.org/10.1016/0025-5564(79)90080-4)
 
 
 ### FP-MATH-02 · Compute from the closed form
@@ -112,4 +112,4 @@ Two properties are arithmetic and useful. First, adjacent rungs add up to the ne
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

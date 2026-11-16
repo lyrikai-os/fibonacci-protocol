@@ -1,6 +1,6 @@
 {
   "vector": "05-roles-and-exceptions",
-  "spec": "1.0.0-rc.4",
+  "spec": "1.0.0-rc.5",
   "about": "Overlay tests resolved values. A host token that resolves to a rung passes; an icon-role token is not tested; a host token that is not a rung fails unless it is a declared exception (addressed by token or by selector). A pending exception makes the run pending when nothing else fails; here .b fails outright.",
   "result": "fail",
   "checkedValues": 17,

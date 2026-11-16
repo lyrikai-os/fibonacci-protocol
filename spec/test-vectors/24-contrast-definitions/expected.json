@@ -1,0 +1,41 @@
+{
+  "vector": "24-contrast-definitions",
+  "spec": "1.0.0-rc.5",
+  "about": "A colour with two unconditional :root definitions is tested against both, and both must pass: --ink fails on its second definition. Where a definition is !important only that one is tested: --muted passes. A pair that cannot be resolved (--missing) is not-run, never pass.",
+  "result": "fail",
+  "pairs": [
+    {
+      "fg": "--ink",
+      "bg": "--ground",
+      "kind": "text",
+      "ratio": 1.358,
+      "required": 4.5,
+      "definitionsTested": 2,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "fail"
+    },
+    {
+      "fg": "--muted",
+      "bg": "--ground",
+      "kind": "text",
+      "ratio": 7.004,
+      "required": 4.5,
+      "definitionsTested": 1,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "pass"
+    },
+    {
+      "fg": "--missing",
+      "bg": "--ground",
+      "kind": "text",
+      "ratio": null,
+      "required": 4.5,
+      "definitionsTested": 0,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "not-run"
+    }
+  ]
+}
