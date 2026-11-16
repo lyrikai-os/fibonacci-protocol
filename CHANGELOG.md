@@ -25,7 +25,24 @@ The fourth release candidate. A claim now needs evidence, not only machine tests
 - `showcase/` gains `fp-evidence.json`, with answers for 22 of its 27 applicable self-report items, each from a measurement made in a browser; five stay open, so the page is a candidate. The measurements found three controls below the target size (a standalone link, the navigation links and the skip link); they were fixed.
 - `README.md` and `CONTRIBUTING.md` describe the evidence step, valid claims against candidates, and the report file.
 
-## 1.0.0-rc.3
+## 1.0.0-rc.5
+
+The fifth release candidate, after two final whole-diff reviews.
+
+### Specification
+
+- An applicable self-report item can no longer be answered `n/a`: whether a rule applies is decided by the configuration alone, so such an entry fails the rule and the run. Open items are called open, not pending.
+- A checker's text output heads the machine result `MACHINE TESTS: PASS` (or `FAIL`, `PENDING`, `NOT-RUN`), never `RESULT: PASS`, so that a pass above a candidate line is not read as a claim. `"independent": true` is stated to be an unverifiable statement by whoever writes the evidence file.
+- A `large-text` contrast pair declares its `size`; HTML that contradicts a `has` flag is tested; removing a focus outline is a fail; contrast is tested against every definition of a colour; evidence labels were corrected where a source only states a fact. There are 24 test vectors.
+
+### Repository
+
+- `npm test` now runs `node --test tools/ fixtures/`, so the fixtures are covered.
+- `package.json` gains `repository`, `bugs` and `author`; a `.gitignore` is added (`node_modules/`, `.DS_Store`, `*.log`, `*.fp-original`).
+- The showcase is at rc.5. Its one `n/a` answer (FP-A11Y-19) is now a `pass` stating the fact (no status messages; grep count 0), and a newly applicable item, FP-CTRL-04, is answered from the earlier measurements. It stays a candidate with five judgement items open.
+- `README.md` explains that `fp-check` needs a clone of this repository, the `independent` caveat, the `MACHINE TESTS` heading, and names the licences of the two fixtures that carry third-party notices.
+
+## 1.0.0-rc.3 (superseded in rc.4: candidate)
 
 The third release candidate. It follows the fixtures, a pilot of agents using the skill, and a hardening review of the checker.
 
@@ -49,7 +66,7 @@ The third release candidate. It follows the fixtures, a pilot of agents using th
 ### Repository
 
 - Fixtures for each mode (Primer for Snap, Material 3 for Overlay in an Apache-2.0 folder, and Native), each with seeded-fault copies.
-- `README.md`, `CONTRIBUTING.md`, this file and `showcase/index.html`, which passes `fp-check` as a self-assessed FP-2 Native claim and uses the split tokens as its grid tracks.
+- `README.md`, `CONTRIBUTING.md`, this file and `showcase/index.html`, which passes `fp-check` as a self-assessed FP-2 Native claim (superseded in rc.4: candidate) and uses the split tokens as its grid tracks.
 
 ## 1.0.0-rc.2
 

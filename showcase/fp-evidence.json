@@ -1,5 +1,5 @@
 {
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "adopter": "Lyrikai (showcase authors)",
   "items": {
     "FP-A11Y-13": {
@@ -43,8 +43,8 @@
       "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
     },
     "FP-A11Y-19": {
-      "result": "n/a",
-      "evidence": "No status messages exist on the page: no form submission, toast, live region (no aria-live, role=status or role=alert; grep count 0) and no content that changes after an action except the theme button's own label.",
+      "result": "pass",
+      "evidence": "No status messages on this page: no form submission, toast, live region or content that changes after an action (grep for aria-live, role=status, role=alert and <form> in showcase/index.html: count 0). The only change after an action is the theme button's own label.",
       "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
     },
     "FP-A11Y-20": {
@@ -110,6 +110,11 @@
     "FP-HONEST-05": {
       "result": "pass",
       "evidence": "A visible banner at the top reads 'Demonstration content', and says every name, figure and state is a sample and none is real data; the chart has a 'Sample data' caption and 'Sample' labels; the art is captioned as sample art with its real count (144 placed of 144). Confirmed in the rendered text.",
+      "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
+    },
+    "FP-CTRL-04": {
+      "result": "pass",
+      "evidence": "The page has no host design system: every control is protocol-owned and styled from --fp-target, so no host control is kept at a host size. Measured sizes (coarse 55, fine-only 34, all 18 targets at or above it) are under FP-A11Y-05, and both are above the platform floors (44 coarse, 24 fine).",
       "by": "Claude (Builder agent for the showcase authors), Browser pane, 2026-11-16"
     }
   }

@@ -1,12 +1,12 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Version 1.0.0-rc.4 · release candidate · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Version 1.0.0-rc.5 · release candidate · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 One small set of numbers and one ratio, used the same way everywhere in a design system, so that a person or an agent reaching for a value always reaches for the same few. This repository holds the specification, the design tokens, a checker, and a skill that makes a design agent follow the protocol.
 
 **Status: release candidate.** The text is proposed for release as 1.0.0 and is published for final review. It is not yet a release. See [CHANGELOG.md](CHANGELOG.md).
 
-See it working: [showcase/index.html](showcase/index.html) is a static page built on `dist/fp.css`, in light and dark, with sample content labelled as sample. Open the file in a browser; it needs no server and loads no external scripts.
+See it working: [showcase/index.html](showcase/index.html) is a static page built on `dist/fp.css` (a candidate, not a claim: its machine tests pass and a few judgement items are open), in light and dark, with sample content labelled as sample. Open the file in a browser; it needs no server and loads no external scripts.
 
 ## What it is, and what it is not
 
@@ -68,7 +68,7 @@ You need Node.js 20 or later. There are no packages to install.
 
 ```json
 {
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "mode": "native",
   "level": "FP-1",
   "platform": "web",
@@ -91,17 +91,18 @@ For Overlay, set `"mode": "overlay"` and add `"scope"`, the part of the source w
 node tools/fp-check/fp-check.mjs path/to/your/project
 ```
 
-It runs the machine tests locally, with no network, and prints one result per rule. With no evidence file yet, a clean run ends in a **candidate** line, not a claim:
+It runs the machine tests locally, with no network, and prints one result per rule. Its text output heads the machine result `MACHINE TESTS: PASS` (or `FAIL`, `PENDING`, `NOT-RUN`), never "result" or "claim", because a pass of the machine tests is not a claim. With no evidence file yet, a clean run shows that heading above a **candidate** line:
 
 ```text
-CANDIDATE (not a claim): candidate · FP-1 · Native · u=1 · web · spec 1.0.0-rc.4 · self-assessed · open 21
+MACHINE TESTS: PASS
+CANDIDATE (not a claim): candidate · FP-1 · Native · u=1 · web · spec 1.0.0-rc.5 · self-assessed · open 21
 ```
 
 **5. Answer the self-report items.** Some rules only people can decide (target sizes, reflow, colour-only states and the like). The run lists the ones that apply. Write your answers in `fp-evidence.json`, beside `fp.config.json` ([schema](spec/fp-evidence.schema.json)):
 
 ```json
 {
-  "fp": "1.0.0-rc.4",
+  "fp": "1.0.0-rc.5",
   "adopter": "Your team or name",
   "items": {
     "FP-A11Y-13": { "result": "pass", "evidence": "Measured at 320 px: no horizontal scroll outside the data table.", "by": "Your name" }
@@ -109,11 +110,13 @@ CANDIDATE (not a claim): candidate · FP-1 · Native · u=1 · web · spec 1.0.0
 }
 ```
 
-Each item is `pass`, `fail` or `n/a` (with the reason), with evidence that says what was measured and what was found, and who assessed it. An item with no entry, or with empty evidence, is **open**. Never answer an item you did not check. When every applicable item is answered and the machine tests pass, the run prints the claim and `claimState` is `valid`.
+Each item is `pass` or `fail`, with evidence that says what was measured and what was found, and who assessed it. An item with no entry, or with empty evidence, is **open**. An applicable item is never answered `n/a`: whether a rule applies is decided by `fp.config.json` alone, so state the fact as a `pass` (for example "no status messages on this page") or leave the item open. Never answer an item you did not check. When every applicable item is answered and the machine tests pass, the run prints the claim and `claimState` is `valid`.
 
 Exit codes: `0` the machine tests pass (the claim is valid or still a candidate), `1` a rule failed, an exception is pending or an item was answered `fail`, `2` the tests could not run (bad input, nothing to check). With `--json`, read `claimState` (`valid` or `candidate`), `claim` (null for a candidate) and `openItems`. See [tools/fp-check/README.md](tools/fp-check/README.md) for options and for what it does not check. Check contrast on its own with `node tools/contrast/contrast.mjs '#fg' '#bg'`.
 
 ## Install the `/lyrikai-fibonacci` skill
+
+`fp-check` and the other tools need a clone of this repository; they are not part of the skill. The skill on its own works offline from its bundled rules and gives you the self-report path: the agent applies the rules, answers the self-report items with evidence and writes `fp-report.md`, but the machine tests are only run if the agent can run `tools/fp-check/fp-check.mjs` from a clone, and otherwise it says which it used (its own script, or by hand).
 
 The skill makes a design agent follow the protocol when asked. It works offline from bundled rules. Switch it on with `/lyrikai-fibonacci on` (or say "use Fibonacci design principles") and off with `/lyrikai-fibonacci off`. Folder paths come from each tool's own documentation as read in November 2026; if a path no longer works, follow the linked page. The full install notes are in [agent-pack/README.md](agent-pack/README.md).
 
@@ -136,7 +139,7 @@ Check the install by asking `/lyrikai-fibonacci explain FP-SPACE-01`: it should 
 | [`dist/`](dist/fp.css) | Generated tokens: CSS, SCSS, Tailwind preset and design-tool list, at u = 1, 4 (`u4/`) and 8 (`u8/`). |
 | [`skills/lyrikai-fibonacci/`](skills/lyrikai-fibonacci/SKILL.md) | The `/lyrikai-fibonacci` skill (Agent Skills format) with its offline reference. |
 | [`agent-pack/`](agent-pack/README.md) | `AGENTS.md`, a Cursor rule and `FP-AGENT.md`, for tools that do not read skills. |
-| [`showcase/`](showcase/index.html) | A static demonstration page that passes `fp-check` as a self-assessed FP-2 Native claim. |
+| [`showcase/`](showcase/index.html) | A static demonstration page. Its machine tests pass under `fp-check`; because a few self-report items are still open, it is a candidate, not a claim. |
 | [`fixtures/`](fixtures/README.md) | Three sample systems, one per mode, with seeded-fault copies the checker must catch. |
 | [`tools/fp-check/`](tools/fp-check/README.md) | The reference conformance checker. |
 | [`tools/contrast/`](tools/contrast/README.md) | A WCAG 2.x contrast checker. |
@@ -151,7 +154,7 @@ Check the install by asking `/lyrikai-fibonacci explain FP-SPACE-01`: it should 
 npm test
 ```
 
-This runs `node --test tools/`, which covers the checker (278 tests, including all 21 published test vectors), the fixtures suite (each sample system must pass and each seeded fault must fail; run with `node --test fixtures/`), the token and pack generators, the contrast tool and the release guard. No dependencies are needed. Other scripts are in [package.json](package.json): `npm run build:spec`, `build:tokens`, `build:pack`, `check:pack` and `fp-check`. To propose a change to a rule, read [CONTRIBUTING.md](CONTRIBUTING.md).
+This runs `node --test tools/ fixtures/` (Node 20, no dependencies). It covers the checker (289 tests, including all 24 published test vectors), the fixtures suite (each sample system is checked and each seeded fault must be caught; 21 tests), the token and pack generators, the contrast tool and the release guard. Other scripts are in [package.json](package.json): `npm run build:spec`, `build:tokens`, `build:pack`, `check:pack` and `fp-check`. To propose a change to a rule, read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## How to claim conformance
 
@@ -161,13 +164,13 @@ This runs `node --test tools/`, which covers the checker (278 tests, including a
 4. Run `fp-check` again. A **valid claim** is printed only when the machine tests pass and no item is open:
 
 ```text
-FP-2 · Native · u=1 · web · spec 1.0.0-rc.4 · self-assessed
-FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.4 · self-assessed
+FP-2 · Native · u=1 · web · spec 1.0.0-rc.5 · self-assessed
+FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.5 · self-assessed
 ```
 
 If items are open the checker prints `candidate · <claim string> · open <n>` and lists the open rule IDs. A candidate line is not a claim: do not publish it or quote it as one.
 
-The claim format is `<level> · <mode> · u=<unit> · <platform> · spec <version>`, with `scope <globs> · coverage <percent> · exceptions <count>` added before the version in Overlay. The claim ends in `self-assessed` unless every applicable item was assessed by someone other than the adopter (marked `"independent": true` in `fp-evidence.json`, with a different `by`).
+The claim format is `<level> · <mode> · u=<unit> · <platform> · spec <version>`, with `scope <globs> · coverage <percent> · exceptions <count>` added before the version in Overlay. The claim ends in `self-assessed` unless every applicable item was assessed by someone other than the adopter (marked `"independent": true` in `fp-evidence.json`, with a different `by`). `"independent": true` is a statement by whoever writes the file; the checker cannot verify it, only read it. A reader who relies on a claim without the suffix is relying on that statement and on the named assessor.
 
 A claim says what was tested. It never says that a design is more beautiful, more natural or better, and a passing run is not a statement that a product is accessible. A system's claim and an agent's claim are separate: the agent rules do not count toward a system's claim.
 
@@ -177,7 +180,10 @@ An agent that uses the skill writes its report to `fp-report.md` beside `fp.conf
 
 ## Licence
 
-MIT License; see [LICENSE](LICENSE). Third-party values used as test fixtures keep their own licences and notices in their own folders: a fixture under `fixtures/` carries its own Apache-2.0 notice, and another keeps its own MIT notice.
+This repository is MIT licensed; see [LICENSE](LICENSE) (`package.json` says `MIT` too). Two fixtures carry third-party values and keep their own notices in their own folders:
+
+- `fixtures/material-overlay/` is **Apache-2.0** (token values from Google's `@material/web`); see its `NOTICE` and `LICENSE-material`.
+- `fixtures/primer-snap/` keeps GitHub's **MIT** notice for the Primer values; see `LICENSE-primer`.
 
 ## Lineage
 
@@ -185,4 +191,4 @@ The protocol grew out of design systems built in-house at Lyrikai during 2026; s
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.4 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

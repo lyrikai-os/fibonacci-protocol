@@ -11,11 +11,19 @@
   },
   "scripts": {
     "build:tokens": "node tools/build-tokens/build.mjs --all",
-    "test": "node --test tools/",
+    "test": "node --test tools/ fixtures/",
     "build:pack": "node tools/build-pack/build-pack.mjs",
     "check:pack": "node tools/build-pack/build-pack.mjs --check",
     "build:spec": "python3 -I tools/specgen/gen.py spec && python3 -I tools/specgen/vectors.py spec/test-vectors",
     "fp-check": "node tools/fp-check/fp-check.mjs",
     "test:fp-check": "node --test tools/fp-check"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lyrikai-os/fibonacci-protocol.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lyrikai-os/fibonacci-protocol/issues"
+  },
+  "author": "Lyrikai (https://www.lyrikai.com)"
 }
