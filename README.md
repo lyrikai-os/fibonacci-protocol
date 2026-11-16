@@ -1,6 +1,6 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Version 1.0.0-rc.2 · release candidate · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Version 1.0.0-rc.3 · release candidate · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 One small set of numbers and one ratio, used the same way everywhere in a design system, so that a person or an agent reaching for a value always reaches for the same few. This repository holds the specification, the design tokens, a checker, and a skill that makes a design agent follow the protocol.
 
@@ -56,7 +56,7 @@ What changes between versions is how much of this is normative, that is, binding
 | iOS, macOS and Android | informative; body anchors and target floors are stated | normative | |
 | Print, slides and email | informative | informative | normative |
 
-In version 1.0 a claim names **FP-1 or FP-2** and the platform **web**. Everything else is published as guidance and cannot be claimed yet. There are 185 rules (125 normative, 60 informative); [spec/index.md](spec/index.md) lists them all.
+In version 1.0 a claim names **FP-1 or FP-2** and the platform **web**. Everything else is published as guidance and cannot be claimed yet. There are 186 rules (126 normative, 60 informative); [spec/index.md](spec/index.md) lists them all.
 
 ## Quick start: five minutes, Overlay or Native on the web
 
@@ -68,7 +68,7 @@ You need Node.js 20 or later. There are no packages to install.
 
 ```json
 {
-  "fp": "1.0.0-rc.2",
+  "fp": "1.0.0-rc.3",
   "mode": "native",
   "level": "FP-1",
   "platform": "web",
@@ -131,7 +131,7 @@ Check the install by asking `/lyrikai-fibonacci explain FP-SPACE-01`: it should 
 npm test
 ```
 
-This runs `node --test tools/`, which covers the checker (against all 18 published test vectors), the token and pack generators, the contrast tool and the release guard. No dependencies are needed. Other scripts are in [package.json](package.json): `npm run build:spec`, `build:tokens`, `build:pack`, `check:pack` and `fp-check`. To propose a change to a rule, read [CONTRIBUTING.md](CONTRIBUTING.md).
+This runs `node --test tools/`, which covers the checker (265 tests, including all 18 published test vectors), the fixtures suite (each sample system must pass and each seeded fault must fail; run with `node --test fixtures/`), the token and pack generators, the contrast tool and the release guard. No dependencies are needed. Other scripts are in [package.json](package.json): `npm run build:spec`, `build:tokens`, `build:pack`, `check:pack` and `fp-check`. To propose a change to a rule, read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## How to claim conformance
 
@@ -141,8 +141,8 @@ This runs `node --test tools/`, which covers the checker (against all 18 publish
 4. State the claim in the fixed form, as printed by `fp-check`:
 
 ```text
-FP-2 · Snap · u=1 · web · spec 1.0.0-rc.2 · self-assessed
-FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.2 · self-assessed
+FP-2 · Snap · u=1 · web · spec 1.0.0-rc.3 · self-assessed
+FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.3 · self-assessed
 ```
 
 The format is `<level> · <mode> · u=<unit> · <platform> · spec <version>`, with `scope <globs> · coverage <percent> · exceptions <count>` added before the version in Overlay. The claim ends in `self-assessed` unless someone other than the adopter assessed the self-report items and is named in the report.
@@ -159,4 +159,4 @@ The protocol grew out of design systems built in-house at Lyrikai during 2026; s
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.2 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.3 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

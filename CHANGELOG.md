@@ -2,7 +2,33 @@
 
 *Lyrikai: Fibonacci Protocol for UI/UX Design Agents · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-This file lists what changed between release candidates of the specification, the tokens and the tools. The specification is proposed for release as 1.0.0 and is published for final review; neither entry below is a release. Rule IDs are never reused, and a change to what a rule means is listed here.
+This file lists what changed between release candidates of the specification, the tokens and the tools. The specification is proposed for release as 1.0.0 and is published for final review; none of the entries below is a release. Rule IDs are never reused, and a change to what a rule means is listed here.
+
+## 1.0.0-rc.3
+
+The third release candidate. It follows the fixtures, a pilot of agents using the skill, and a hardening review of the checker.
+
+### Specification
+
+- **Agents.** The floor-versus-consent rule is stated once, in FP-AGENT-03. A new rule, FP-AGENT-13, covers working in the adopter's files. There are now 186 rules (126 normative, 60 informative).
+- **Configuration.** The `fp.config.json` field table is part of the text of FP-MODE-02.
+- **Splits.** The split tokens are written as `fr` tracks, so they can be used directly as grid tracks.
+- **Snap.** One drift bound is stated, in place of two.
+- The version string is `1.0.0-rc.3` everywhere.
+
+### Tokens and agent pack
+
+- `--fp-split-major` and `--fp-split-minor` are `1.618fr` and `1fr`; `--fp-radius-round` is `50%`; the Tailwind preset has fixes. `dist/` is regenerated.
+- The agent pack bundles the configuration schema, carries the revised consent wording and adds a first-run checklist.
+
+### Checker
+
+- `fp-check` tests a `var()` against every definition, matches themes after normalising them, handles radius, relative units and computed type sizes, treats Snap literals and controls, applies the single drift bound and reports each off-ladder value once. It resolves a bare `var(--fp-*)` to its published default. Every probe from an adversarial review is a regression test: 265 tests, and 18 of 18 vectors pass.
+
+### Repository
+
+- Fixtures for each mode (Primer for Snap, Material 3 for Overlay in an Apache-2.0 folder, and Native), each with seeded-fault copies.
+- `README.md`, `CONTRIBUTING.md`, this file and `showcase/index.html`, which passes `fp-check` as a self-assessed FP-2 Native claim and uses the split tokens as its grid tracks.
 
 ## 1.0.0-rc.2
 
@@ -31,7 +57,7 @@ The second release candidate. It follows an independent build of the checker, `f
 
 ### Repository
 
-- A showcase page, `showcase/index.html`, built on `dist/fp.css`, with its own `fp.config.json`; it passes `fp-check` as a self-assessed FP-2 Native claim.
+- A showcase page, `showcase/index.html`, built on `dist/fp.css`, with its own `fp.config.json`.
 - Fixtures for each mode (Snap, Overlay, Native) with seeded-fault copies the checker must catch; see `fixtures/README.md`.
 - `README.md`, `CONTRIBUTING.md` and this file.
 
