@@ -1,0 +1,258 @@
+{
+  "vector": "17-snap-u1-undeclared",
+  "spec": "1.0.0-rc.1",
+  "about": "The twin of 06-snap-u1 with no exceptions declared. The values that cannot be snapped are kept without a snap-drift exception, which fails FP-SNAP-10.",
+  "result": "fail",
+  "mapping": [
+    {
+      "token": "--space-2",
+      "role": "space",
+      "original": 2,
+      "snapped": 2,
+      "drift": 0.0
+    },
+    {
+      "token": "--space-4",
+      "role": "space",
+      "original": 4,
+      "snapped": 5,
+      "drift": 25.0
+    },
+    {
+      "token": "--space-6",
+      "role": "space",
+      "original": 6,
+      "snapped": 5,
+      "drift": 16.7
+    },
+    {
+      "token": "--space-8",
+      "role": "space",
+      "original": 8,
+      "snapped": 8,
+      "drift": 0.0
+    },
+    {
+      "token": "--space-12",
+      "role": "space",
+      "original": 12,
+      "snapped": 13,
+      "drift": 8.3
+    },
+    {
+      "token": "--space-16",
+      "role": "space",
+      "original": 16,
+      "snapped": 13,
+      "drift": 18.8
+    },
+    {
+      "token": "--space-20",
+      "role": "space",
+      "original": 20,
+      "snapped": 21,
+      "drift": 5.0
+    },
+    {
+      "token": "--space-24",
+      "role": "space",
+      "original": 24,
+      "snapped": 21,
+      "drift": 12.5
+    },
+    {
+      "token": "--space-28",
+      "role": "space",
+      "original": 28,
+      "snapped": 34,
+      "drift": 21.4
+    },
+    {
+      "token": "--space-32",
+      "role": "space",
+      "original": 32,
+      "snapped": 34,
+      "drift": 6.3
+    },
+    {
+      "token": "--space-36",
+      "role": "space",
+      "original": 36,
+      "snapped": 34,
+      "drift": 5.6
+    },
+    {
+      "token": "--space-40",
+      "role": "space",
+      "original": 40,
+      "snapped": 34,
+      "drift": 15.0
+    },
+    {
+      "token": "--space-44",
+      "role": "space",
+      "original": 44,
+      "snapped": 34,
+      "drift": 22.7
+    },
+    {
+      "token": "--space-48",
+      "role": "space",
+      "original": 48,
+      "snapped": 55,
+      "drift": 14.6
+    },
+    {
+      "token": "--space-64",
+      "role": "space",
+      "original": 64,
+      "snapped": 55,
+      "drift": 14.1
+    },
+    {
+      "token": "--space-80",
+      "role": "space",
+      "original": 80,
+      "snapped": 89,
+      "drift": 11.3
+    },
+    {
+      "token": "--space-96",
+      "role": "space",
+      "original": 96,
+      "snapped": 89,
+      "drift": 7.3
+    },
+    {
+      "token": "--space-112",
+      "role": "space",
+      "original": 112,
+      "snapped": 89,
+      "drift": 20.5
+    },
+    {
+      "token": "--space-128",
+      "role": "space",
+      "original": 128,
+      "snapped": 144,
+      "drift": 12.5
+    },
+    {
+      "token": "--radius-sm",
+      "role": "radius",
+      "original": 4,
+      "snapped": 5,
+      "drift": 25.0
+    },
+    {
+      "token": "--radius-md",
+      "role": "radius",
+      "original": 6,
+      "snapped": 5,
+      "drift": 16.7
+    },
+    {
+      "token": "--radius-lg",
+      "role": "radius",
+      "original": 12,
+      "snapped": 13,
+      "drift": 8.3
+    },
+    {
+      "token": "--radius-xl",
+      "role": "radius",
+      "original": 16,
+      "snapped": 13,
+      "drift": 18.8
+    },
+    {
+      "token": "--radius-2xl",
+      "role": "radius",
+      "original": 32,
+      "snapped": null,
+      "nearest": 21,
+      "drift": 34.4,
+      "note": "drift over 25%: kept unchanged as an exception (snap-drift)"
+    }
+  ],
+  "merges": [
+    {
+      "role": "space",
+      "rung": 5,
+      "tokens": [
+        "--space-4",
+        "--space-6"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 13,
+      "tokens": [
+        "--space-12",
+        "--space-16"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 21,
+      "tokens": [
+        "--space-20",
+        "--space-24"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 34,
+      "tokens": [
+        "--space-28",
+        "--space-32",
+        "--space-36",
+        "--space-40",
+        "--space-44"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 55,
+      "tokens": [
+        "--space-48",
+        "--space-64"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 89,
+      "tokens": [
+        "--space-80",
+        "--space-96",
+        "--space-112"
+      ]
+    },
+    {
+      "role": "radius",
+      "rung": 5,
+      "tokens": [
+        "--radius-sm",
+        "--radius-md"
+      ]
+    },
+    {
+      "role": "radius",
+      "rung": 13,
+      "tokens": [
+        "--radius-lg",
+        "--radius-xl"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "token": "--radius-2xl",
+      "value": "32px",
+      "check": "snap.unsnappable",
+      "rule": "FP-SNAP-10",
+      "result": "fail",
+      "message": "kept unchanged; no snap-drift exception is declared"
+    }
+  ]
+}

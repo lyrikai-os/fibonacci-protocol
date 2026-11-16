@@ -1,0 +1,366 @@
+=== spec/05-ui/space-radius.md | 5.1 UI: space, radius, lines | 5
+## Space
+
+@R FP-SPACE-01 | Lengths are on the ladder | FP-1 | N | M space.on-ladder | choice
+Every checked layout length in scope (the list is in [03-conformance.md](../03-conformance.md)) MUST resolve to one of: a rung of the declared u; 0; an intrinsic value; a derived value (FP-SPACE-04); or a declared exception (FP-SPACE-05). The test is on the resolved value in every mode, so a host token passes where its value is a rung.
+@@
+
+@R FP-SPACE-02 | Role table | FP-1 | I | S space.roles | conv
+@applies mode: native
+In Native at u = 1, rungs SHOULD be used for these roles: 1 hairline; 2 bars and strips; 3 rings and tight gaps; 5 inner gaps; 8 gaps between controls and padding inside pills; 13 gaps and small padding; 21 card and figure padding; 34 panel padding; 55 page top and rows; 89 gaps between sections; 144, 233 and 377 box sizes; 610, 987 and 1597 container widths.
+@@
+
+@R FP-SPACE-03 | Choose a rung by role | FP-1 | N | S space.by-role | conv
+@applies mode: native or overlay
+In Native and in Overlay a new value MUST be chosen by its role, not by rounding a remembered number to the nearest rung. Nearest-rung arithmetic belongs to Snap only (FP-SNAP-02).
+@@
+
+@R FP-SPACE-04 | Derived values | FP-1 | N | M space.derived | choice
+A length that is not a rung is allowed when it is exactly one of two derived patterns, written as a single operation with no chaining: (a) a φ split of a container: the container multiplied by 0.618 or 0.382; (b) a container minus one ladder token. A container is a runtime box (`100%`, `100vw`, `100vh`, `100cqi`, and their logical and dynamic forms) or a container-width token (610, 987 or 1597 platform units). A checker MUST verify that the container operand is one of these: a container width counts only when written as its token (`var(--fp-container-987)`), so a literal `987px` inside `calc()` is not a container and fails. A split of a container-width token is written as a rounded fixed value (FP-MATH-08); a split of a runtime box is left to the browser and is not rounded. Arithmetic on two rungs is not a derived pattern: every whole number is a sum of Fibonacci numbers, so allowing it would allow anything.
+@@
+
+@R FP-SPACE-05 | Exceptions are declared | FP-1 | N | M space.exceptions | choice
+Any other off-ladder length MUST be listed in `exceptions` in `fp.config.json` with its value, where it is used, a reason (`floor`, `host-token`, `data`, `content`, `platform` or `snap-drift`), the rule it departs from and a status. An exception with the reason `data` MUST also name its data source. An undeclared off-ladder length, including undeclared arithmetic, fails.
+@@
+
+## Radius
+
+@R FP-RADIUS-01 | Radius set | FP-1 | N | M radius.set | choice
+A corner radius MUST resolve to one of 0, 2, 3, 5, 8, 13 or 21, in platform units at every u, or `pill`, or `round` (50%). Suggested roles: 2 for bars and strips, 8 for small tiles, 13 for cards and figures, 21 for outer frames. In Snap, a host radius maps to the nearest value of this set (FP-SNAP-02).
+@@
+
+@R FP-RADIUS-02 | Nested radii | FP-1 | N | S radius.nesting | conv
+The radius of an inner corner SHOULD equal the outer radius minus the padding between them, with a floor of 0, so the corners stay concentric. When the padding is the value one or two below the outer radius in the set, the result is itself in the set (21 − 8 = 13, 13 − 8 = 5, 13 − 5 = 8, 8 − 5 = 3), because adjacent Fibonacci numbers differ by the one before. A result that is not in the set MUST be rounded down to the next value in the set.
+@@
+
+@R FP-RADIUS-03 | Pill and round | FP-1 | N | M radius.pill-round | conv
+`pill` is a radius of at least half the element's height (for example 9999px). `round` is 50% on an element of equal width and height. A bar or strip SHOULD use 2, not `pill`.
+@@
+
+## Lines, tone and elevation
+
+{{tone}}
+
+@R FP-LINE-01 | Hairlines | FP-1 | I | S line.hairline | choice
+A hairline is 1 platform unit wide. Its strength SHOULD be ink at tone-5, tone-4 or tone-3 (0.090, 0.146, 0.236).
+@@
+
+@R FP-LINE-02 | A hairline is never the only edge of a control | Guard | N | S line.control-edge | cited https://www.w3.org/TR/WCAG22/
+@applies has: controls
+A hairline is decoration. The edge that identifies a control MUST have at least 3:1 contrast against the adjacent colour (WCAG 2.2, 1.4.11). In the protocol's own colour slots that edge is the `control` slot. A hairline at tone-3 is under 2:1 on a plain ground and cannot serve as a control edge. Evidence: the edge and ground declared as a `mark` pair that passes.
+@@
+
+@R FP-LINE-03 | Tone ladder | FP-1 | I | S line.tone | choice
+Opacity steps SHOULD come from the tone ladder: 0.618, 0.382, 0.236, 0.146 and 0.090. An opacity MUST NOT take text under 4.5:1 or a meaningful mark under 3:1 (FP-A11Y-01).
+@@
+
+@R FP-LINE-04 | Elevation | FP-1 | I | S line.elevation | conv
+@applies mode: native
+A Native system SHOULD separate surfaces with hairlines and ground steps rather than shadows, blur or glow. This is a recommendation for the Native profile only: a host in Overlay or Snap keeps its elevation. Where a Native system does write a shadow, its offset and blur SHOULD be rungs. Shadows are not tested in version 1.0.
+@@
+
+=== spec/05-ui/type.md | 5.2 UI: type | 5
+Type has its own scale. It is not the length ladder, and type sizes are tested by ratio, not as lengths.
+
+These rules apply at FP-2 and above, in any mode, and to any system that uses the protocol's type tokens. At FP-1 in Overlay or Snap the host's type is not tested (FP-MODE-09).
+
+## The scale
+
+@R FP-TYPE-01 | The type scale formula | FP-2 | N | M type.scale | choice
+@basis https://alistapart.com/article/more-meaningful-typography/
+Every type size MUST equal round(body × φ^(k/2)) for a whole number k, where body is the body size (FP-A11Y-07) and rounding is half-up to a whole px, pt or sp. Each step multiplies by √φ (about 1.272), so every second step is exactly φ apart. The only other accepted values are a declared Fibonacci substitute (FP-TYPE-03) and the micro token (FP-TYPE-05). The idea of a modular type scale is established practice; this ratio and these steps are the protocol's choice.
+@@
+
+Web and Android (body 16):
+
+{{type16}}
+
+iOS (body 17 pt at the default Dynamic Type size):
+
+{{type17}}
+
+macOS (body 13 pt):
+
+{{type13}}
+
+@R FP-TYPE-02 | Step ranges | FP-2 | N | M type.step-range | choice
+Interface text MUST use steps −1 to 4. Display text (large, short, few words) MUST use even steps from 4 upward, so that display sizes are whole φ steps apart. Odd steps above 4 are not used.
+@@
+
+@R FP-TYPE-03 | Fibonacci substitution | FP-2 | N | M type.align | choice
+A system MAY set `type.align` to `fibonacci`. Then, at any step where a Fibonacci number lies within 4% of the unrounded value, that number replaces the rounded value (on the web: 21, 34, 55 and 89 in place of 20, 33, 53 and 86). The choice applies to the whole system. The default is `formula`.
+@@
+
+@R FP-TYPE-04 | Units | FP-2 | N | M type.units | choice
+@basis https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
+On the web a protocol type size MUST be written in `rem` (size ÷ 16), and the root font size MUST NOT be set in px. On Android it MUST be written in `sp`. On iOS and macOS it MUST be applied so that it follows the user's text size setting.
+@@
+
+@R FP-TYPE-05 | Micro text | FP-2 | N | M type.micro | choice
+"Micro" is a named floor value, not a step of the scale: 11 px on the web, 11 sp on Android, 11 pt on iOS, 10 pt on macOS. It is accepted only through the `--fp-type-micro` token or a token given the `micro` role; a bare 11 fails the scale test. Micro MUST be used only for non-interactive metadata.
+@@
+
+@R FP-TYPE-06 | Control labels | FP-2 | N | S type.control-label | choice
+The label of a control MUST be at least the larger of step −1 and 13 (px, pt or sp). On macOS, where step −1 is 10, this means 13.
+@@
+
+@R FP-TYPE-12 | Replacing a host's type sizes | FP-2 | N | S type.host-mapping | choice
+@applies mode: overlay or snap
+To reach FP-2, each host type size in the scope is replaced by a step. The role fixes or bounds the step, and the ratio chooses within the bound. Body text (paragraphs, and the default text of the page) becomes step 0, whatever its old size. The value typed into an input becomes step 0. Every other text maps to the usable step (FP-TYPE-02) nearest in ratio (the smallest |ln(size ÷ step)|), a tie going to the larger step, and then: a control label (button, link, tab, field label) is raised to step −1 if it fell below it; a heading keeps the step the ratio gives, which may be step 0 or −1 for a small heading. No text maps below step −1 unless it is non-interactive metadata, which MAY become micro. Host line heights are replaced by the leading of FP-TYPE-07. The mapping MUST be listed in the report, one row per host size.
+@@
+
+Nearest step for common host sizes, body 16 (role still comes first):
+
+{{typemap}}
+
+## Leading
+
+{{leading}}
+
+@R FP-TYPE-07 | Leading by size and role | FP-2 | N | M type.leading | choice
+@basis https://developer.apple.com/design/human-interface-guidelines/typography
+Line height MUST follow the text's role first and its step second: 1.618 for running text (paragraphs of prose at body size); 1.5 for dense body (body-size text in tables, lists and forms); 1.382 for small text, for any single-line label and for the value in an input, at any interface step; 1.236 for a heading at any step up to 3, including a small heading at step 0 or −1; 1.146 for display text and headings at step 4 and above. 1.618 MUST NOT be used for anything except running text. Platforms tighten leading as size grows, which these values follow; the values themselves, and 1.618 for running text in particular, are this protocol's convention and are looser than any platform default.
+@@
+
+@R FP-TYPE-08 | Line height is unitless | FP-2 | N | M type.leading-unitless | choice
+@applies platform: web
+@basis https://www.w3.org/TR/WCAG22/
+A protocol line height MUST be a unitless ratio, not a fixed length, so that it scales with the text and survives a user's spacing override (FP-A11Y-04).
+@@
+
+@R FP-TYPE-13 | Line height is declared with the size | FP-2 | N | M type.leading-declared | choice
+@applies platform: web
+Every CSS rule that sets a protocol `font-size` MUST set `line-height` in the same rule. A checker does not compute inheritance, so it tests each `line-height` against the `font-size` beside it; a `font-size` with no `line-height` in its rule fails this rule.
+@@
+
+## Measure
+
+@R FP-TYPE-09 | Longest line | FP-2 | N | M type.measure-max | choice
+@basis https://www.w3.org/TR/WCAG22/
+A column of running text MUST NOT exceed 80 characters per line (40 for Chinese, Japanese and Korean text). On the web this is written as `max-inline-size` in `ch`. The figure is the one WCAG gives at level AAA (1.4.8); requiring it at this level is the protocol's choice.
+@@
+
+@R FP-TYPE-10 | Target measure | FP-2 | I | S type.measure-target | contested https://webtypography.net/2.1.2
+Running text SHOULD be set at 45 to 75 characters per line; the default is `max-inline-size: 66ch`. This range is a print convention. On screens the evidence that line length matters much is weak.
+@@
+
+@R FP-TYPE-11 | No typeface is required | FP-2 | I | S type.typeface | choice
+The protocol names no typeface, weight, tracking or letter case. These are the adopter's choices.
+@@
+
+=== spec/05-ui/layout.md | 5.3 UI: layout | 5
+@R FP-LAYOUT-01 | The φ split | FP-2 | N | M layout.phi-split | conv
+A two-part layout whose parts have unequal weight and both hold content (text and figure, main and detail) SHOULD split 61.8 to 38.2, written `1.618fr 1fr`. Only a split that is declared as a φ split is tested: its ratio MUST be 61.8 to 38.2 within 0.1. A navigation rail or sidebar of fixed width is not a φ split and takes a rung for its width.
+@@
+
+@R FP-LAYOUT-02 | Equal content gets equal columns | FP-2 | N | S layout.equal-allowed | choice
+Content of equal weight (cards in a grid, bars in a chart, a host's column grid) MUST NOT be forced into a φ split. Equal columns are correct and are never flagged (FP-CONF-09).
+@@
+
+@R FP-LAYOUT-03 | Growth by Fibonacci pairs | FP-2 | I | S layout.pairs | conv
+A box that needs a fixed proportion SHOULD take a pair of adjacent rungs for its sides: 144 × 233, 233 × 377, 377 × 610. The ratio of such a pair is close to φ.
+@@
+
+@R FP-LAYOUT-04 | Focal convention | FP-2 | I | S layout.focal | choice
+A single main element MAY be placed at one of the four crossings of the lines at 38.2% and 61.8% of the frame. A point at 73.5% across and 61.8% down is also in use as a placement convention. Neither is the pole of a golden spiral (which lies near 72.4% across and 27.6% along the short side of a φ rectangle), and neither is supported by evidence of preference.
+@@
+
+@R FP-LAYOUT-05 | Container widths | FP-2 | N | M layout.container-widths | choice
+@applies mode: native
+In Native, a container's width limit MUST be 610, 987 or 1597 platform units (at every u), or a derived value of one of them (FP-SPACE-04). On the web it MUST be written as `max-inline-size` (or `max-width`), never as a fixed width, so that the container shrinks and the page still reflows at 320 (FP-A11Y-13).
+@@
+
+@R FP-LAYOUT-06 | Native breakpoints | FP-2 | I | S layout.breakpoints | choice
+@applies mode: native
+A Native system SHOULD use breakpoints at 610 (below it: one column) and 987 (from it: a φ split is available). Between 610 and 986 a layout uses one column or an equal grid; this band covers tablets in portrait. A Native system MAY instead keep its platform's breakpoints if it declares them. No breakpoint system in common use is derived from φ.
+@@
+
+@R FP-LAYOUT-07 | Hosts keep their breakpoints | FP-2 | N | S layout.host-breakpoints | choice
+@applies mode: overlay or snap
+@basis https://developer.android.com/develop/ui/compose/layouts/adaptive/window-size-classes
+In Overlay and Snap the host's breakpoints and window size classes MUST be kept. Breakpoint values are not tested in these modes. Platforms publish their own breakpoints, none of them derived from φ.
+@@
+
+Reflow at 320 CSS px is required in every mode by FP-A11Y-13.
+
+=== spec/05-ui/controls.md | 5.4 UI: controls and targets | 5
+Two numbers are in play. The **target floor** is the least a target may be. The **ladder target** is the smallest rung at or above that floor: it is what the protocol's own controls use.
+
+{{targets}}
+
+On the web the accessibility minimum is 24 CSS px (FP-A11Y-05). For coarse and unknown pointers the protocol sets its own floor at 44 CSS px, the figure WCAG gives as its enhanced target size (2.5.5, level AAA) and the same as the iOS value. That is a protocol choice, not a WCAG AA requirement.
+
+@R FP-CTRL-01 | Protocol targets are at least the ladder target | Guard | N | S ctrl.target-rung | choice
+@applies has: controls
+@basis https://developer.apple.com/design/human-interface-guidelines/accessibility
+The target size of a protocol-owned control (any control in Native; any `target` token in Snap) MUST be at least the ladder target for its platform and pointer: at u = 1, 55 for touch and for any coarse or unknown pointer, and 34 where the pointer is fine. A larger rung MAY be used. A host control that is not protocol-owned is governed by FP-CTRL-04.
+@@
+
+@R FP-CTRL-02 | Drawn height and hit area are separate | Guard | N | S ctrl.hit-area | choice
+@applies has: controls
+The drawn height of a control MAY be smaller than its target size, provided the hit area reaches the target size. For example a control drawn 34 high carries a hit area 55 high on touch. Hit areas of neighbouring targets MUST NOT overlap. Neighbours are targets in the same layer; a control in a layer above (a toast, a popover) is not a neighbour of what it covers, and is governed by FP-A11Y-17.
+@@
+
+@R FP-CTRL-03 | Small interactive parts | Guard | N | S ctrl.small-parts | choice
+@applies has: controls
+A mark, glyph or chip that acts as a control MUST have the full hit area of FP-CTRL-01, however small it is drawn.
+@@
+
+@R FP-CTRL-04 | Host controls keep their size if they meet the floor | Guard | N | S ctrl.host | choice
+@applies mode: overlay or snap
+A host control that is not given the `target` role is not tested against the ladder. It MUST meet the target minimum of its platform (FP-A11Y-05). A host target of 44 or 48 therefore passes as it is; it does not have to become 55.
+@@
+
+@R FP-CTRL-05 | Space between targets | Guard | I | S ctrl.spacing | choice
+@applies has: controls
+@basis https://support.google.com/accessibility/android/answer/7101858
+Adjacent hit areas SHOULD be separated by at least 8 platform units.
+@@
+
+## Dense interfaces
+
+A table of 34-high rows with a control in each row is the common hard case.
+
+- **Fine pointer.** Under `(pointer: fine) and (not (any-pointer: coarse))`, rows and their controls are 34. Nothing else is needed.
+- **Coarse or unknown pointer.** Either make the row itself the target (the whole 55-high row acts, with secondary actions in a menu), or keep rows at 55. Do not stack 55-high hit areas inside 34-high rows: they would overlap, which FP-CTRL-02 forbids.
+- **Form rows.** A text field is drawn 34 or 55 high; its label is not part of the target. Checkboxes and radios drawn at 21 carry a 55 hit area that includes their label.
+- **A control drawn smaller than its hit area.** A button drawn 40 high with a 48 hit area is common. In Overlay it passes as it is (FP-CTRL-04). In Snap, give the 40 the `drawn` role so that it is left alone; the 48 hit area stays, or takes the `target` role and becomes 55.
+- **Desktop-only products.** A product that supports no touch or coarse pointer MAY declare `pointer: fine` with a reason in `fp.config.json`. The ladder target is then 34 throughout.
+
+=== spec/05-ui/motion.md | 5.5 UI: motion | 5
+This page is informative in version 1.0. The accessibility rules for motion and time (FP-A11Y-09, FP-A11Y-10, FP-A11Y-11, FP-A11Y-18) are normative now.
+
+@R FP-MOTION-01 | Interaction durations | FP-3 | I | M motion.durations | choice
+@applies has: motion
+@basis https://www.nngroup.com/articles/animation-duration/
+A transition triggered by an interaction SHOULD last 89, 144, 233 or 377 ms. These Fibonacci values sit inside, or 11 ms under, the 100 to 500 ms band that usability guidance gives for interface animation.
+@@
+
+@R FP-MOTION-02 | Duration by role | FP-3 | I | S motion.roles | conv
+@applies has: motion
+89 ms: feedback (press, toggle). 144 ms: a small element entering or leaving (tooltip, fade). 233 ms: a standard change (menu, panel). 377 ms: a large surface (sheet, dialog, page). An exit SHOULD use the value one below its enter.
+@@
+
+@R FP-MOTION-03 | Ceiling | FP-3 | I | M motion.ceiling | choice
+@applies has: motion
+@basis https://m1.material.io/motion/duration-easing.html
+610 ms MAY be used only for a full-surface move, with a stated reason. Nothing triggered by an interaction SHOULD run longer.
+@@
+
+@R FP-MOTION-04 | Easing | FP-3 | I | M motion.easing | conv
+@applies has: motion
+Easing SHOULD be one of: standard `cubic-bezier(0.4, 0, 0.2, 1)`; enter `cubic-bezier(0, 0, 0.2, 1)`; exit `cubic-bezier(0.4, 0, 1, 1)`. Bounce and overshoot SHOULD NOT be used. An easing curve derived from φ has no evidence behind it and is not part of the protocol.
+@@
+
+@R FP-MOTION-05 | Ambient loops | FP-3 | I | M motion.loops | choice
+@applies has: motion
+The period of an ambient loop SHOULD be 2, 3, 5 or 8 seconds. Every loop is subject to FP-A11Y-09: it stops within 5 seconds of total running time (for example 2 s × 2) or it has a pause control.
+@@
+
+@R FP-MOTION-06 | What a loop may change | FP-3 | I | S motion.loop-properties | conv
+@applies has: motion
+A loop SHOULD change opacity, or a ring around a mark, and nothing else. Words SHOULD NOT move or blink. A loop SHOULD NOT cause layout to shift.
+@@
+
+@R FP-MOTION-07 | Undo window | FP-3 | I | S motion.grace | choice
+@applies has: time limits
+A notice that offers Undo and goes away by itself is a time limit and MUST meet FP-A11Y-18; it is a status message and MUST meet FP-A11Y-19. The simplest way to meet both: show the notice with `role="status"`, and keep Undo available somewhere else (a menu, a history list) after the notice has gone, so that the notice sets no limit on the action. The notice itself SHOULD stay for 8 seconds and SHOULD pause while it has pointer hover or keyboard focus. The 8 seconds are a convention.
+@@
+
+=== spec/05-ui/layers-colour-state.md | 5.6 UI: layers, colour, state | 5
+This page is informative in version 1.0. The contrast and colour-alone rules (FP-A11Y-01, FP-A11Y-14) are normative now.
+
+## Layers
+
+@R FP-LAYER-01 | Layer roles | FP-3 | I | S layer.roles | choice
+@applies mode: native
+A Native system SHOULD name five layers and give them these values: base 1, raised 2, overlay 3, popover 13, toast 21. The values 5 and 8 are left for the adopter. The rule is the order: a higher layer is never in the way of the one below, and never hides a focused element entirely (FP-A11Y-17). The numbers are a convention.
+@@
+
+@R FP-LAYER-02 | Hosts keep their layers | FP-3 | I | S layer.host | choice
+@applies mode: overlay or snap
+In Overlay and Snap the host's z-index scale is kept.
+@@
+
+## Colour
+
+@R FP-COLOR-01 | Colour is slots | FP-3 | I | M color.slots | choice
+@applies mode: native
+The protocol defines slots, not hues. Per theme: `ground`, `surface`, `raised`, `ink`, `muted`, `control`, `accent`, `on-accent`, `focus`, and one slot per state. The protocol ships no normative colour value.
+@@
+
+@R FP-COLOR-02 | Light and dark | FP-3 | I | M color.themes | choice
+@applies mode: native
+A Native system SHOULD provide a light and a dark theme. Each theme MUST pass the contrast floors on its own (FP-A11Y-01).
+@@
+
+@R FP-COLOR-03 | Hosts keep their colours | FP-3 | I | S color.host | choice
+@applies mode: overlay or snap
+In Overlay and Snap the protocol does not ask for any change to the host's colours beyond what the contrast floors require. Where a host colour fails a floor, the floor wins (FP-A11Y-01) and the change is reported (FP-AGENT-08).
+@@
+
+@R FP-COLOR-04 | Accent is not a state | FP-3 | I | S color.accent | choice
+The `accent` slot SHOULD NOT be reused as a state colour, and the `focus` slot MUST NOT be a state colour (FP-A11Y-12).
+@@
+
+## The eight-state grammar
+
+A state is shown by a form first, then a word, then (optionally) a colour.
+
+| Identifier | Meaning | Form |
+|---|---|---|
+| `open` | available, nothing happening | hollow ring |
+| `attention` | waiting on the person | solid disc inside a ring |
+| `active` | in progress | solid disc |
+| `waiting` | waiting on something else | ring broken into 4 arcs |
+| `review` | ready to be checked | horizontal bar |
+| `done` | finished and accepted | solid disc with a check, in ink |
+| `blocked` | cannot continue | ring with a bar struck through |
+| `quiet` | off or dormant | small centred dot, no ring |
+
+@R FP-STATE-01 | State identifiers | FP-3 | I | M state.identifiers | choice
+@applies has: states
+A system that uses the grammar SHOULD use the eight identifiers in the table. The words shown to people are the adopter's.
+@@
+
+@R FP-STATE-02 | State forms | FP-3 | I | S state.forms | choice
+@applies has: states
+Each state SHOULD have the form in the table. Forms differ by silhouette: by what is filled, what is open and how many separate parts there are. They do not differ only by dash length, line weight or opacity, so they can be told apart at small sizes and without colour. No two states may share a form.
+@@
+
+@R FP-STATE-03 | Mark size | FP-3 | I | M state.mark-size | choice
+@applies has: states
+A state mark SHOULD be at least 13 with a stroke of 2, in platform units at every u, wherever its form is meant to be read. Under 13, the word MUST be present.
+@@
+
+@R FP-STATE-04 | Chips grow with their text | FP-3 | I | M state.chip-height | choice
+@applies has: states
+@basis https://www.w3.org/TR/WCAG22/
+A chip SHOULD have a minimum height of 21 in platform units and MUST NOT have a fixed height (FP-A11Y-04).
+@@
+
+@R FP-STATE-05 | Animation keeps the mark readable | FP-3 | I | S state.animation-contrast | choice
+@applies has: states
+@basis https://www.w3.org/TR/WCAG22/
+An animated state MUST NOT take its mark under 3:1 at any point in the animation. The mark SHOULD stay solid while a ring or halo around it animates.
+@@
+
+@R FP-STATE-06 | Quiet is muted, not faded | FP-3 | I | S state.quiet | choice
+@applies has: states
+The `quiet` mark SHOULD use the `muted` slot at full opacity, not `ink` at a low opacity.
+@@
+
+@R FP-STATE-07 | Done has no hue | FP-3 | I | S state.done | choice
+@applies has: states
+The `done` state SHOULD be drawn in `ink` with a check and no state colour, so that `done` and `blocked` never differ only as green against red.
+@@
+
+@R FP-STATE-08 | Tint | FP-3 | I | M state.tint | choice
+@applies has: states
+A state chip's fill SHOULD be the state colour at 0.090 and its edge the state colour at 0.618. The state's word MUST still pass 4.5:1 on that fill.
+@@
+
+@R FP-STATE-09 | Disabled | FP-3 | I | S state.disabled | choice
+@applies has: controls
+A disabled control SHOULD be shown by a dashed `control` edge and a word that stays readable, not by lowered opacity alone.
+@@

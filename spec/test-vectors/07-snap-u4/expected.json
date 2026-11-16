@@ -1,0 +1,261 @@
+{
+  "vector": "07-snap-u4",
+  "spec": "1.0.0-rc.1",
+  "about": "The same scale at u = 4: 2 is a sub-unit value and is kept; 6 drifts 33% and is not snapped; 16 is a tie between 12 and 20 and goes up. The values that cannot be snapped are declared as accepted snap-drift exceptions, so the run passes.",
+  "result": "pass",
+  "mapping": [
+    {
+      "token": "--space-2",
+      "role": "space",
+      "original": 2,
+      "snapped": 2,
+      "drift": 0.0,
+      "note": "exempt by value"
+    },
+    {
+      "token": "--space-4",
+      "role": "space",
+      "original": 4,
+      "snapped": 4,
+      "drift": 0.0
+    },
+    {
+      "token": "--space-6",
+      "role": "space",
+      "original": 6,
+      "snapped": null,
+      "nearest": 8,
+      "drift": 33.3,
+      "note": "drift over 25%: kept unchanged as an exception (snap-drift)"
+    },
+    {
+      "token": "--space-8",
+      "role": "space",
+      "original": 8,
+      "snapped": 8,
+      "drift": 0.0
+    },
+    {
+      "token": "--space-12",
+      "role": "space",
+      "original": 12,
+      "snapped": 12,
+      "drift": 0.0
+    },
+    {
+      "token": "--space-16",
+      "role": "space",
+      "original": 16,
+      "snapped": 20,
+      "drift": 25.0
+    },
+    {
+      "token": "--space-20",
+      "role": "space",
+      "original": 20,
+      "snapped": 20,
+      "drift": 0.0
+    },
+    {
+      "token": "--space-24",
+      "role": "space",
+      "original": 24,
+      "snapped": 20,
+      "drift": 16.7
+    },
+    {
+      "token": "--space-28",
+      "role": "space",
+      "original": 28,
+      "snapped": 32,
+      "drift": 14.3
+    },
+    {
+      "token": "--space-32",
+      "role": "space",
+      "original": 32,
+      "snapped": 32,
+      "drift": 0.0
+    },
+    {
+      "token": "--space-36",
+      "role": "space",
+      "original": 36,
+      "snapped": 32,
+      "drift": 11.1
+    },
+    {
+      "token": "--space-40",
+      "role": "space",
+      "original": 40,
+      "snapped": 32,
+      "drift": 20.0
+    },
+    {
+      "token": "--space-44",
+      "role": "space",
+      "original": 44,
+      "snapped": 52,
+      "drift": 18.2
+    },
+    {
+      "token": "--space-48",
+      "role": "space",
+      "original": 48,
+      "snapped": 52,
+      "drift": 8.3
+    },
+    {
+      "token": "--space-64",
+      "role": "space",
+      "original": 64,
+      "snapped": 52,
+      "drift": 18.8
+    },
+    {
+      "token": "--space-80",
+      "role": "space",
+      "original": 80,
+      "snapped": 84,
+      "drift": 5.0
+    },
+    {
+      "token": "--space-96",
+      "role": "space",
+      "original": 96,
+      "snapped": 84,
+      "drift": 12.5
+    },
+    {
+      "token": "--space-112",
+      "role": "space",
+      "original": 112,
+      "snapped": 136,
+      "drift": 21.4
+    },
+    {
+      "token": "--space-128",
+      "role": "space",
+      "original": 128,
+      "snapped": 136,
+      "drift": 6.3
+    },
+    {
+      "token": "--radius-sm",
+      "role": "radius",
+      "original": 4,
+      "snapped": 5,
+      "drift": 25.0
+    },
+    {
+      "token": "--radius-md",
+      "role": "radius",
+      "original": 6,
+      "snapped": 5,
+      "drift": 16.7
+    },
+    {
+      "token": "--radius-lg",
+      "role": "radius",
+      "original": 12,
+      "snapped": 13,
+      "drift": 8.3
+    },
+    {
+      "token": "--radius-xl",
+      "role": "radius",
+      "original": 16,
+      "snapped": 13,
+      "drift": 18.8
+    },
+    {
+      "token": "--radius-2xl",
+      "role": "radius",
+      "original": 32,
+      "snapped": null,
+      "nearest": 21,
+      "drift": 34.4,
+      "note": "drift over 25%: kept unchanged as an exception (snap-drift)"
+    }
+  ],
+  "merges": [
+    {
+      "role": "space",
+      "rung": 20,
+      "tokens": [
+        "--space-16",
+        "--space-20",
+        "--space-24"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 32,
+      "tokens": [
+        "--space-28",
+        "--space-32",
+        "--space-36",
+        "--space-40"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 52,
+      "tokens": [
+        "--space-44",
+        "--space-48",
+        "--space-64"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 84,
+      "tokens": [
+        "--space-80",
+        "--space-96"
+      ]
+    },
+    {
+      "role": "space",
+      "rung": 136,
+      "tokens": [
+        "--space-112",
+        "--space-128"
+      ]
+    },
+    {
+      "role": "radius",
+      "rung": 5,
+      "tokens": [
+        "--radius-sm",
+        "--radius-md"
+      ]
+    },
+    {
+      "role": "radius",
+      "rung": 13,
+      "tokens": [
+        "--radius-lg",
+        "--radius-xl"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "token": "--space-6",
+      "value": "6px",
+      "check": "snap.unsnappable",
+      "rule": "FP-SNAP-10",
+      "result": "exception",
+      "message": "kept unchanged; declared as a snap-drift exception"
+    },
+    {
+      "token": "--radius-2xl",
+      "value": "32px",
+      "check": "snap.unsnappable",
+      "rule": "FP-SNAP-10",
+      "result": "exception",
+      "message": "kept unchanged; declared as a snap-drift exception"
+    }
+  ]
+}

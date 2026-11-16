@@ -1,0 +1,7 @@
+{
+  "vector": "15-na-consistent",
+  "spec": "1.0.0-rc.1",
+  "about": "The same input with has.motion and has.controls declared true. No contradiction.",
+  "result": "pass",
+  "findings": []
+}

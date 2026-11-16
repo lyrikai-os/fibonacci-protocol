@@ -1,0 +1,7 @@
+:root { --icon-md: 16px; --space-4: 16px; --space-2: 8px; --gap-legacy: 20px; --row: 44px; }
+.icon { width: var(--icon-md); height: var(--icon-md); }
+.a { padding: var(--space-2); }
+.b { padding: var(--space-4); }
+.c { gap: var(--gap-legacy); }
+.d { min-height: var(--row); }
+.vendor { margin: 10px; }

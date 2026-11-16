@@ -1,0 +1,59 @@
+{
+  "vector": "04-derived",
+  "spec": "1.0.0-rc.1",
+  "about": "The two derived patterns pass: a φ split of a container, and a container minus one ladder token. Rung arithmetic, chaining, a non-rung operand, a non-φ factor, and a literal 987px in place of the container token fail.",
+  "result": "fail",
+  "checkedValues": 9,
+  "findings": [
+    {
+      "file": "input.css",
+      "selector": ".e",
+      "property": "width",
+      "value": "calc(21px + 13px)",
+      "resolved": "calc(21px + 13px)",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    },
+    {
+      "file": "input.css",
+      "selector": ".f",
+      "property": "width",
+      "value": "calc(100% - 21px - 8px)",
+      "resolved": "calc(100% - 21px - 8px)",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    },
+    {
+      "file": "input.css",
+      "selector": ".g",
+      "property": "width",
+      "value": "calc(100% - 20px)",
+      "resolved": "calc(100% - 20px)",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    },
+    {
+      "file": "input.css",
+      "selector": ".h",
+      "property": "width",
+      "value": "calc(100% * 0.5)",
+      "resolved": "calc(100% * 0.5)",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    },
+    {
+      "file": "input.css",
+      "selector": ".i",
+      "property": "max-width",
+      "value": "calc(987px - 21px)",
+      "resolved": "calc(987px - 21px)",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    }
+  ]
+}

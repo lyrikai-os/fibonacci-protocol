@@ -1,0 +1,8 @@
+{
+  "ignorePaths": [],
+  "requireLinkIn": ["**/*.md", "**/*.mdx"],
+  "requireLicense": false,
+  "allow": [
+    { "path": "", "string": "", "lineSha256": "", "note": "Placeholder, ignored while empty. Add one entry per accepted exception, for example the Lineage note: path of the file, the exact string, and optionally the sha256 of the whole line." }
+  ]
+}

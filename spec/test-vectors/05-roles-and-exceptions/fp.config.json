@@ -1,0 +1,54 @@
+{
+  "fp": "1.0.0-rc.1",
+  "mode": "overlay",
+  "level": "FP-1",
+  "platform": "web",
+  "unit": 1,
+  "has": {
+    "motion": false,
+    "timeLimits": false,
+    "controls": false,
+    "charts": false,
+    "generatedArt": false,
+    "states": false
+  },
+  "source": [
+    "input.css"
+  ],
+  "pairs": [
+    {
+      "fg": "#1a1a1a",
+      "bg": "#ffffff",
+      "kind": "text"
+    }
+  ],
+  "roles": [
+    {
+      "match": "--icon-*",
+      "role": "icon"
+    }
+  ],
+  "exceptions": [
+    {
+      "value": "20px",
+      "where": "--gap-legacy",
+      "reason": "host-token",
+      "rule": "FP-SPACE-01",
+      "status": "accepted"
+    },
+    {
+      "value": "44px",
+      "where": "--row",
+      "reason": "host-token",
+      "rule": "FP-SPACE-01",
+      "status": "pending"
+    },
+    {
+      "value": "10px",
+      "where": ".vendor",
+      "reason": "platform",
+      "rule": "FP-SPACE-01",
+      "status": "accepted"
+    }
+  ]
+}

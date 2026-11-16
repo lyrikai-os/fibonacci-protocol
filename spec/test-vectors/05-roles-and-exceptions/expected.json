@@ -1,0 +1,49 @@
+{
+  "vector": "05-roles-and-exceptions",
+  "spec": "1.0.0-rc.1",
+  "about": "Overlay tests resolved values. A host token that resolves to a rung passes; an icon-role token is not tested; a host token that is not a rung fails unless it is a declared exception (addressed by token or by selector). A pending exception makes the run pending when nothing else fails; here .b fails outright.",
+  "result": "fail",
+  "checkedValues": 17,
+  "findings": [
+    {
+      "file": "input.css",
+      "selector": ".b",
+      "property": "padding",
+      "value": "var(--space-4)",
+      "resolved": "16px",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    },
+    {
+      "file": "input.css",
+      "selector": ".c",
+      "property": "gap",
+      "value": "var(--gap-legacy)",
+      "resolved": "20px",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "exception"
+    },
+    {
+      "file": "input.css",
+      "selector": ".d",
+      "property": "min-height",
+      "value": "var(--row)",
+      "resolved": "44px",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "pending"
+    },
+    {
+      "file": "input.css",
+      "selector": ".vendor",
+      "property": "margin",
+      "value": "10px",
+      "resolved": "10px",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "exception"
+    }
+  ]
+}

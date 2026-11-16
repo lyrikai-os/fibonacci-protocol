@@ -1,0 +1,88 @@
+{
+  "vector": "11-type-scale-formula",
+  "spec": "1.0.0-rc.1",
+  "about": "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, and the unused odd step 5 (53) fail.",
+  "result": "fail",
+  "findings": [
+    {
+      "file": "input.css",
+      "selector": ".h3-fib",
+      "property": "font-size",
+      "value": "1.3125rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "21 is not a step of the scale"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-size",
+      "property": "font-size",
+      "value": "0.875rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "14 is not a step of the scale"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-unit",
+      "property": "font-size",
+      "value": "16px",
+      "check": "type.units",
+      "rule": "FP-TYPE-04",
+      "result": "fail",
+      "message": "a type size is written in rem"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-bare-micro",
+      "property": "font-size",
+      "value": "0.6875rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "11 is not a step of the scale"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-leading",
+      "property": "line-height",
+      "value": "1.618",
+      "check": "type.leading",
+      "rule": "FP-TYPE-07",
+      "result": "fail",
+      "message": "line height 1.618 is not allowed at step 1"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-fixed",
+      "property": "line-height",
+      "value": "24px",
+      "check": "type.leading-unitless",
+      "rule": "FP-TYPE-08",
+      "result": "fail",
+      "message": "line height is not a unitless ratio"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-missing",
+      "property": "line-height",
+      "value": null,
+      "check": "type.leading-declared",
+      "rule": "FP-TYPE-13",
+      "result": "fail",
+      "message": "no line-height in the rule that sets font-size"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-odd-step",
+      "property": "font-size",
+      "value": "3.3125rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "53 is not a step of the scale"
+    }
+  ]
+}

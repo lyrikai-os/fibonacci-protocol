@@ -1,0 +1,10 @@
+:root { --fp-space-21: 21px; --fp-container-987: 987px; }
+.a { width: calc(100% * 0.618); }
+.b { width: calc(100% - 21px); }
+.c { max-width: calc(var(--fp-container-987) - var(--fp-space-21)); }
+.d { height: calc(100vh - 55px); }
+.e { width: calc(21px + 13px); }
+.f { width: calc(100% - 21px - 8px); }
+.g { width: calc(100% - 20px); }
+.h { width: calc(100% * 0.5); }
+.i { max-width: calc(987px - 21px); }

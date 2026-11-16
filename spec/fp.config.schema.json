@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:lyrikai:fibonacci-protocol:fp-config:1.0.0-rc.1",
+  "title": "fp.config.json",
+  "description": "Configuration for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.1. MIT License. https://www.lyrikai.com . Defined by rule FP-MODE-02 in spec/02-integration-modes.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fp", "mode", "level", "platform", "has", "source", "pairs"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "fp": {
+      "description": "The version string of the specification the system was checked against, in full.",
+      "type": "string",
+      "pattern": "^1\\.0\\.\\d+(-[0-9A-Za-z.-]+)?$"
+    },
+    "mode": { "enum": ["overlay", "snap", "native"] },
+    "level": {
+      "description": "Version 1.0 allows FP-1 and FP-2 only (FP-CONF-05).",
+      "enum": ["FP-1", "FP-2"]
+    },
+    "platform": {
+      "description": "Version 1.0 allows web only (FP-CONF-05). ios, macos and android are reserved for 1.1.",
+      "enum": ["web"]
+    },
+    "unit": { "description": "The base unit u (FP-MATH-05, FP-MATH-06).", "enum": [1, 4, 8], "default": 1 },
+    "pointer": { "enum": ["fine", "coarse", "both"], "default": "both" },
+    "pointerReason": {
+      "description": "Required when pointer is fine: why no touch or coarse pointer is supported.",
+      "type": "string",
+      "minLength": 1
+    },
+    "has": {
+      "description": "What is inside the scope. Decides which rules are n/a (FP-CONF-11). A checker fails a false value for motion or controls that the source contradicts.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["motion", "timeLimits", "controls", "charts", "generatedArt", "states"],
+      "properties": {
+        "motion": { "description": "Anything moves, blinks, scrolls or transitions.", "type": "boolean" },
+        "timeLimits": { "description": "Anything is removed or changed after a set time without the user asking.", "type": "boolean" },
+        "controls": { "description": "There are interactive elements.", "type": "boolean" },
+        "charts": { "description": "Data graphics are shown.", "type": "boolean" },
+        "generatedArt": { "description": "Art made by a generator is shipped.", "type": "boolean" },
+        "states": { "description": "Status or state indicators are shown.", "type": "boolean" }
+      }
+    },
+    "type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "body": { "description": "Body size in platform units. Default: the platform anchor (16 on the web).", "type": "number", "minimum": 16, "default": 16 },
+        "align": { "enum": ["formula", "fibonacci"], "default": "formula" }
+      }
+    },
+    "source": {
+      "description": "File globs for everything the product ships that holds lengths.",
+      "$ref": "#/$defs/globs"
+    },
+    "scope": {
+      "description": "File globs the claim covers. Default: the same as source.",
+      "$ref": "#/$defs/globs"
+    },
+    "themes": {
+      "description": "Every theme the product ships. Every pair is tested in every theme. Default: one unnamed theme read from :root.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "selector": { "description": "The selector under which this theme's colour values are set, for example [data-theme=\"dark\"].", "type": "string", "minLength": 1 },
+          "media": { "description": "The media query under which this theme's colour values are set, for example (prefers-color-scheme: dark).", "type": "string", "minLength": 1 },
+          "files": { "description": "The files that hold this theme's colour values.", "$ref": "#/$defs/globs" }
+        },
+        "anyOf": [{ "required": ["selector"] }, { "required": ["media"] }, { "required": ["files"] }]
+      }
+    },
+    "pairs": {
+      "description": "Every foreground and background pair in use in the scope (FP-A11Y-01, FP-A11Y-20).",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fg", "bg", "kind"],
+        "properties": {
+          "fg": { "$ref": "#/$defs/colourRef" },
+          "bg": { "$ref": "#/$defs/colourRef" },
+          "kind": {
+            "description": "text: 4.5:1. large-text and mark: 3:1.",
+            "enum": ["text", "large-text", "mark"]
+          }
+        }
+      }
+    },
+    "roles": {
+      "description": "Roles given to tokens, in every mode (FP-MODE-10).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["match", "role"],
+        "properties": {
+          "match": { "$ref": "#/$defs/tokenMatch" },
+          "role": { "enum": ["icon", "type", "breakpoint", "target", "drawn", "micro"] }
+        }
+      }
+    },
+    "snap": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": { "description": "File globs for the files that hold the host's tokens now. Required in Snap.", "$ref": "#/$defs/globs" },
+        "table": { "description": "Path of the published Snap table (FP-SNAP-08).", "type": "string", "default": "fp-snap.md" },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["token", "to", "reason"],
+            "properties": {
+              "token": { "$ref": "#/$defs/tokenAddress" },
+              "to": { "description": "A rung of the declared unit, or a value of the radius set. Checked per unit below.", "type": "integer", "minimum": 1 },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "exceptions": {
+      "description": "Declared off-ladder values (FP-SPACE-05).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "where", "reason", "rule", "status"],
+        "properties": {
+          "value": { "description": "The value as written, with its unit.", "type": "string", "minLength": 1 },
+          "where": { "description": "A file and line, a selector, or a token address. A token address covers every use of that token.", "type": "string", "minLength": 1 },
+          "reason": { "enum": ["floor", "host-token", "data", "content", "platform", "snap-drift"] },
+          "rule": { "description": "The rule the value departs from.", "type": "string", "pattern": "^FP-[A-Z0-9]+-\\d\\d$" },
+          "status": { "enum": ["accepted", "pending"] },
+          "source": { "description": "Where the data comes from. Required when reason is data.", "type": "string", "minLength": 1 },
+          "note": { "type": "string" }
+        },
+        "if": { "properties": { "reason": { "const": "data" } }, "required": ["reason"] },
+        "then": { "required": ["source"] }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mode": { "const": "snap" } }, "required": ["mode"] },
+      "then": { "required": ["snap"], "properties": { "snap": { "required": ["source"] } } }
+    },
+    {
+      "if": { "properties": { "pointer": { "const": "fine" } }, "required": ["pointer"] },
+      "then": { "required": ["pointerReason"] }
+    },
+    {
+      "if": { "anyOf": [{ "not": { "required": ["unit"] } }, { "properties": { "unit": { "const": 1 } } }] },
+      "then": { "properties": { "snap": { "properties": { "overrides": { "items": { "properties": { "to": { "$ref": "#/$defs/rungsU1" } } } } } } } }
+    },
+    {
+      "if": { "properties": { "unit": { "const": 4 } }, "required": ["unit"] },
+      "then": { "properties": { "snap": { "properties": { "overrides": { "items": { "properties": { "to": { "$ref": "#/$defs/rungsU4" } } } } } } } }
+    },
+    {
+      "if": { "properties": { "unit": { "const": 8 } }, "required": ["unit"] },
+      "then": { "properties": { "snap": { "properties": { "overrides": { "items": { "properties": { "to": { "$ref": "#/$defs/rungsU8" } } } } } } } }
+    }
+  ],
+  "$defs": {
+    "globs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "tokenAddress": {
+      "description": "A CSS custom property name starting with --, or a dotted path in a tokens file.",
+      "type": "string",
+      "pattern": "^(--[A-Za-z0-9_-]+|[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*)$"
+    },
+    "tokenMatch": {
+      "description": "A token address in which * matches any run of characters.",
+      "type": "string",
+      "pattern": "^(--[A-Za-z0-9_*-]+|[A-Za-z0-9_*-]+(\\.[A-Za-z0-9_*-]+)*)$"
+    },
+    "colourRef": {
+      "description": "A token address, or a hex colour.",
+      "type": "string",
+      "pattern": "^(--[A-Za-z0-9_-]+|[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*|#[0-9A-Fa-f]{3,8})$"
+    },
+    "rungsU1": {
+      "description": "The ladder at u = 1 (which contains the radius set).",
+      "enum": [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597]
+    },
+    "rungsU4": {
+      "description": "The ladder at u = 4, the sub-unit values, the fixed container widths and the radius set.",
+      "enum": [1, 2, 3, 4, 5, 8, 12, 13, 20, 21, 32, 52, 84, 136, 220, 356, 576, 610, 932, 987, 1508, 1597]
+    },
+    "rungsU8": {
+      "description": "The ladder at u = 8, the sub-unit values, the fixed container widths and the radius set.",
+      "enum": [1, 2, 3, 5, 8, 13, 16, 21, 24, 40, 64, 104, 168, 272, 440, 610, 712, 987, 1136, 1597, 1864, 3016]
+    }
+  }
+}

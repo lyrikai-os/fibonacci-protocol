@@ -1,0 +1,2 @@
+.card { padding: 21px; transition: opacity 144ms; }
+button:focus-visible { outline-width: 3px; outline-offset: 2px; }

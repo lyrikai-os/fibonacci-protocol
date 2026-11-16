@@ -1,0 +1,46 @@
+{
+  "fp": "1.0.0-rc.1",
+  "mode": "snap",
+  "level": "FP-1",
+  "platform": "web",
+  "unit": 4,
+  "has": {
+    "motion": false,
+    "timeLimits": false,
+    "controls": false,
+    "charts": false,
+    "generatedArt": false,
+    "states": false
+  },
+  "source": [
+    "input.css"
+  ],
+  "pairs": [
+    {
+      "fg": "#1a1a1a",
+      "bg": "#ffffff",
+      "kind": "text"
+    }
+  ],
+  "snap": {
+    "source": [
+      "input.css"
+    ]
+  },
+  "exceptions": [
+    {
+      "value": "6px",
+      "where": "--space-6",
+      "reason": "snap-drift",
+      "rule": "FP-SNAP-03",
+      "status": "accepted"
+    },
+    {
+      "value": "32px",
+      "where": "--radius-2xl",
+      "reason": "snap-drift",
+      "rule": "FP-SNAP-03",
+      "status": "accepted"
+    }
+  ]
+}

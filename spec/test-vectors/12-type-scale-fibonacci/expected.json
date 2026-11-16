@@ -1,0 +1,88 @@
+{
+  "vector": "12-type-scale-fibonacci",
+  "spec": "1.0.0-rc.1",
+  "about": "The same input with type.align: fibonacci. Now 21 is the step and 20 is not.",
+  "result": "fail",
+  "findings": [
+    {
+      "file": "input.css",
+      "selector": ".h3",
+      "property": "font-size",
+      "value": "1.25rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "20 is not a step of the scale"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-size",
+      "property": "font-size",
+      "value": "0.875rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "14 is not a step of the scale"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-unit",
+      "property": "font-size",
+      "value": "16px",
+      "check": "type.units",
+      "rule": "FP-TYPE-04",
+      "result": "fail",
+      "message": "a type size is written in rem"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-bare-micro",
+      "property": "font-size",
+      "value": "0.6875rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "11 is not a step of the scale"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-leading",
+      "property": "font-size",
+      "value": "1.25rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "20 is not a step of the scale"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-fixed",
+      "property": "line-height",
+      "value": "24px",
+      "check": "type.leading-unitless",
+      "rule": "FP-TYPE-08",
+      "result": "fail",
+      "message": "line height is not a unitless ratio"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-missing",
+      "property": "line-height",
+      "value": null,
+      "check": "type.leading-declared",
+      "rule": "FP-TYPE-13",
+      "result": "fail",
+      "message": "no line-height in the rule that sets font-size"
+    },
+    {
+      "file": "input.css",
+      "selector": ".bad-odd-step",
+      "property": "font-size",
+      "value": "3.3125rem",
+      "check": "type.scale",
+      "rule": "FP-TYPE-01",
+      "result": "fail",
+      "message": "53 is not a step of the scale"
+    }
+  ]
+}

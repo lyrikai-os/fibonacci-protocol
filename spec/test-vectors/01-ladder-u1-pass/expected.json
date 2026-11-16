@@ -1,0 +1,8 @@
+{
+  "vector": "01-ladder-u1-pass",
+  "spec": "1.0.0-rc.1",
+  "about": "Every checked length is a rung, 0, intrinsic, or in its fixed set. Negative rungs pass.",
+  "result": "pass",
+  "checkedValues": 24,
+  "findings": []
+}

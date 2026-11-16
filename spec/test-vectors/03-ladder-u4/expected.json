@@ -1,0 +1,39 @@
+{
+  "vector": "03-ladder-u4",
+  "spec": "1.0.0-rc.1",
+  "about": "At u = 4 the rungs are F × 4 plus the sub-unit values 1 and 2. Radius, stroke and container widths stay in platform units. 13 and 16 are not rungs; 2440 (610 × 4) is not a rung.",
+  "result": "fail",
+  "checkedValues": 26,
+  "findings": [
+    {
+      "file": "input.css",
+      "selector": ".b",
+      "property": "padding",
+      "value": "13px",
+      "resolved": "13px",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    },
+    {
+      "file": "input.css",
+      "selector": ".d",
+      "property": "width",
+      "value": "2440px",
+      "resolved": "2440px",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    },
+    {
+      "file": "input.css",
+      "selector": ".e",
+      "property": "gap",
+      "value": "16px",
+      "resolved": "16px",
+      "check": "space.on-ladder",
+      "rule": "FP-SPACE-01",
+      "result": "fail"
+    }
+  ]
+}

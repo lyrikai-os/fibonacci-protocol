@@ -1,0 +1,47 @@
+{
+  "fp": "1.0.0-rc.1",
+  "mode": "snap",
+  "level": "FP-1",
+  "platform": "web",
+  "unit": 1,
+  "has": {
+    "motion": false,
+    "timeLimits": false,
+    "controls": false,
+    "charts": false,
+    "generatedArt": false,
+    "states": false
+  },
+  "source": [
+    "input.css"
+  ],
+  "pairs": [
+    {
+      "fg": "#1a1a1a",
+      "bg": "#ffffff",
+      "kind": "text"
+    }
+  ],
+  "snap": {
+    "source": [
+      "input.css"
+    ],
+    "overrides": [
+      {
+        "token": "--space-16",
+        "to": 21,
+        "reason": "Card padding must stay larger than the 12 gap."
+      },
+      {
+        "token": "--space-24",
+        "to": 34,
+        "reason": "Section padding must stay larger than card padding."
+      },
+      {
+        "token": "--space-20",
+        "to": 13,
+        "reason": "Deliberately breaks order, for the test."
+      }
+    ]
+  }
+}

@@ -1,0 +1,497 @@
+=== spec/06-art.md | 6. Art and illustration (FP-4a) | 6
+This section is informative in version 1.0. It covers art that is grown by the sequence: dot fields, spirals, branching forms.
+
+The golden angle and Fibonacci counts are the one place where these numbers are measured in nature, and even there they are not universal. In a study of 657 sunflowers, 74% of spiral counts were plain Fibonacci numbers and about 18% were not Fibonacci at all ([Swinton and Ochu, 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4892450)).
+
+## Growth rules
+
+@R FP-ART-01 | Golden-angle placement | FP-4a | I | M art.golden-angle | cited https://en.wikipedia.org/wiki/Golden_angle
+@applies has: generated art
+Elements placed around a centre or along a stem SHOULD be turned by the golden angle from one to the next: the n-th element sits at angle n × 137.50776°, computed from the closed form (FP-MATH-02).
+@@
+
+@R FP-ART-02 | Vogel spiral | FP-4a | I | M art.vogel | cited https://mathworld.wolfram.com/VogelSpiral.html
+@applies has: generated art
+A filled disc of elements SHOULD use Vogel's model: the n-th element at radius c × √n and angle n × the golden angle, where c sets the spacing.
+@@
+
+@R FP-ART-03 | Fibonacci counts | FP-4a | I | S art.counts | conv
+@applies has: generated art
+Counts SHOULD be Fibonacci numbers where the form allows: 89, 144, 233 or 377 elements in a spiral field (so that the visible spiral arms come in adjacent Fibonacci numbers without being drawn); 1, 1, 2, 3, 5, 8, 13 branches per order in a branching form.
+@@
+
+@R FP-ART-04 | Captions state the rule and the real count | FP-4a | I | S art.captions | choice
+@applies has: generated art
+A caption or description of generated art MUST state the rule used and the real numbers ("89 placed", not "about 90"), MUST say when a count was reduced ("89 seeds, 73 placed"), and MUST NOT claim that the form is how nature always works (FP-HONEST-03).
+@@
+
+## Determinism
+
+@R FP-ART-05 | Same inputs, same output | FP-4a | I | M art.determinism | choice
+@applies has: generated art
+A generator MUST produce byte-identical output from the same inputs on the same implementation. Across implementations, outputs SHOULD match when coordinates are compared with a tolerance of 0.01 unit. Byte identity across implementations is not promised, because `sin`, `cos` and `sqrt` may differ in the last bit between engines.
+@@
+
+@R FP-ART-06 | Variation comes from an integer hash | FP-4a | I | M art.hash | choice
+@applies has: generated art
+A generator MUST NOT use a system random source, the clock, or a hash built on floating-point `sin`. Variation MUST come from the 32-bit integer hash below, which uses only integer operations that every engine computes identically.
+@@
+
+```js
+// fpHash(seed, i, k) -> a number in [0, 1). All arithmetic is 32-bit unsigned.
+function fpHash(seed, i, k) {
+  let h = (seed ^ Math.imul(i, 0x9E3779B9) ^ Math.imul(k, 0x85EBCA6B)) >>> 0;
+  h ^= h >>> 16; h = Math.imul(h, 0x85EBCA6B);
+  h ^= h >>> 13; h = Math.imul(h, 0xC2B2AE35);
+  h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+```
+
+0x9E3779B9 is 2654435769, the whole part of 2³² / φ. The three mixing lines are the 32-bit finalizer of MurmurHash3. Test vectors:
+
+{{hash}}
+
+@R FP-ART-07 | Output format | FP-4a | I | M art.output-format | choice
+@applies has: generated art
+Generated SVG MUST write coordinates with exactly 2 decimal places, attributes in a fixed order and elements in generation order, with no timestamps and no locale-dependent number formatting.
+@@
+
+## SVG rules
+
+@R FP-ART-08 | Structure | FP-4a | I | M art.svg-structure | choice
+@applies has: generated art
+An SVG MUST have a `viewBox`, padded so that no stroke is clipped, and MUST NOT fix its width or height. It MUST NOT contain scripts, embedded raster images or references to external files.
+@@
+
+@R FP-ART-09 | Paint | FP-4a | I | M art.svg-paint | choice
+@applies has: generated art
+Art SHOULD be inline SVG painted with `currentColor`, with tone set by opacity on groups, so that it follows the theme and survives forced colours. Art SHOULD NOT be delivered as a CSS mask. Stroked art SHOULD use round caps and joins. `vector-effect: non-scaling-stroke` SHOULD be used only for glyphs drawn at 55 or smaller.
+@@
+
+@R FP-ART-10 | Accessible name | FP-4a | I | M art.svg-name | choice
+@applies has: generated art
+@basis https://www.w3.org/TR/WCAG22/
+An SVG that carries meaning MUST have `role="img"` and a `<title>` or an accessible label. A decorative SVG MUST be hidden from assistive technology. A meaningful mark MUST have at least 3:1 contrast (FP-A11Y-01).
+@@
+
+@R FP-ART-11 | Art that moves | FP-4a | I | S art.motion | choice
+@applies has: generated art
+Animated art is subject to FP-A11Y-09, FP-A11Y-10 and FP-A11Y-11. Under reduced motion it MUST show its finished state.
+@@
+
+=== spec/07-data-viz.md | 7. Data visualisation (FP-4b) | 7
+In a chart, the data decides. φ and the ladder may shape the frame around the data. They never shape the data.
+
+Rules marked Guard are normative in version 1.0, apply to any system that shows charts, and are tested by self-report with evidence. The rest of this section is informative.
+
+## The data-honesty guard
+
+@R FP-VIZ-01 | φ frames, never data | Guard | N | S viz.frames-not-data | choice
+@applies has: charts
+φ, Fibonacci numbers and the ladder MAY set a chart's container ratio, margins, gaps and legend spacing. They MUST NOT set a scale, a tick position, a bar's length or thickness, an area that encodes a value, or a baseline.
+@@
+
+@R FP-VIZ-04 | Bars start at zero and are equally wide | Guard | N | S viz.bars | cited https://ar5iv.arxiv.org/html/1907.02035
+@applies has: charts
+A bar's length encodes its value, so a bar chart's value axis MUST start at zero, and bars in one series MUST have equal thickness. A line chart MAY start its axis elsewhere, with the axis labelled.
+@@
+
+@R FP-VIZ-05 | No bent scales, no blended measures | Guard | N | S viz.scales | choice
+@applies has: charts
+A scale MUST NOT be broken, bent or truncated for appearance. Different measures MUST NOT be summed or blended into one mark.
+@@
+
+@R FP-VIZ-06 | Not measured is not zero | Guard | N | S viz.not-measured | choice
+@applies has: charts
+A value that has not been measured MUST be shown as not measured (an empty mark and words), never as 0 or 0%. Sample or placeholder data MUST be labelled as such (FP-HONEST-05).
+@@
+
+## Frames, ticks and aspect
+
+@R FP-VIZ-02 | The data sets the aspect | FP-4b | I | S viz.aspect | contested https://www.tableau.com/research/publications/empirical-model-slope-ratio-comparisons
+@applies has: charts
+A chart container MAY use 1.618 : 1 or a pair of rungs such as 34 : 21. Where the data calls for another aspect (for example to keep line slopes readable), the data's aspect MUST win. The research on the best aspect for slope reading does not agree, so no single aspect is prescribed.
+@@
+
+@R FP-VIZ-03 | Nice-number ticks | FP-4b | I | M viz.ticks | cited https://www.ri.cmu.edu/publications/nice-numbers-for-graph-labels
+@applies has: charts
+Axis ticks SHOULD fall on 1, 2 or 5 times a power of ten. Ticks MUST NOT be placed on Fibonacci numbers for the sake of the protocol.
+@@
+
+## Colour
+
+@R FP-VIZ-07 | Sequential colour | FP-4b | I | S viz.sequential | cited https://bids.github.io/colormap/
+@applies has: charts
+A sequential colour ramp SHOULD rise or fall in lightness without reversing and SHOULD be perceptually uniform: use an established map such as viridis, or build the ramp in OKLCH.
+@@
+
+@R FP-VIZ-08 | Categorical colour | FP-4b | I | S viz.categorical | conv
+@applies has: charts
+Categorical hues MAY be generated by stepping the hue by the golden angle in OKLCH at fixed lightness and chroma. This is a convention for spreading hues, not a perceptual guarantee: the result MUST be checked for colour-vision deficiency, and every category MUST also carry a label or a shape (FP-A11Y-14).
+@@
+
+## Marks and small charts
+
+@R FP-VIZ-09 | Bar gaps and ends | FP-4b | I | S viz.bar-gaps | choice
+@applies has: charts
+The gap between bars or bands SHOULD be a rung in platform units. Bar thickness comes from the band scale (plot size divided among the bars) and is never a ladder value. A corner radius of 2 MAY be used only on the end away from the baseline.
+@@
+
+@R FP-VIZ-10 | Stat tiles | FP-4b | I | S viz.stat-tile | choice
+@applies has: charts
+A stat tile SHOULD show its value at a display step and its label at step −1 or larger, with the unit and the period stated.
+@@
+
+@R FP-VIZ-11 | Sparklines | FP-4b | I | S viz.sparkline | choice
+@applies has: charts
+A sparkline SHOULD have no axes, SHOULD label its last value, and MUST share one scale with every sparkline it is meant to be compared with.
+@@
+
+@R FP-VIZ-12 | Dot fields | FP-4b | I | S viz.dot-field | choice
+@applies has: charts
+@basis https://mathworld.wolfram.com/VogelSpiral.html
+A unit chart (one dot per item) MAY arrange its dots by the Vogel spiral (FP-ART-02). The count of dots MUST be the real count.
+@@
+
+=== spec/08-platforms/web.md | 8.1 Platforms: web | 8
+@R FP-PLAT-01 | Web units | FP-1 | N | M plat.web-units | choice
+@applies platform: web
+@basis https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
+On the web, 1 u is 1 CSS px. Protocol space tokens are written in px by default and MAY be written in rem (value ÷ 16). Protocol type is written in rem with 16 px equal to 1rem (FP-TYPE-04).
+@@
+
+@R FP-PLAT-02 | Web custom properties | FP-1 | N | M plat.web-tokens | choice
+@applies platform: web
+The protocol's CSS custom properties MUST use the `--fp-` prefix and these names. A host's own properties are never renamed.
+@@
+
+| Group | Names | Named for | Scales with u |
+|---|---|---|---|
+| Space | `--fp-space-1` … `--fp-space-377` | the Fibonacci number F; the value is F × u | yes |
+| Container | `--fp-container-610`, `-987`, `-1597` | the value | no |
+| Radius | `--fp-radius-2`, `-3`, `-5`, `-8`, `-13`, `-21`, `--fp-radius-pill` | the value | no |
+| Focus | `--fp-focus-gap` (2), `--fp-focus-ring` (3) | the role | no |
+| Target | `--fp-target` | the role; the ladder target for the pointer | yes |
+| Type | `--fp-type-n1`, `--fp-type-0` … `--fp-type-8`, `--fp-type-micro` | the step k (`n1` is −1) | no |
+| Leading | `--fp-leading-body`, `-dense`, `-small`, `-heading`, `-display` | the role | no |
+| Duration | `--fp-duration-89`, `-144`, `-233`, `-377` | the value in ms | no |
+| Tone | `--fp-tone-1` … `--fp-tone-5` | the power of 1/φ | no |
+
+@R FP-PLAT-03 | Web pointer queries | Guard | N | M plat.web-pointer | choice
+@applies platform: web
+The fine-pointer ladder target (34 at u = 1; see the table in [controls](../05-ui/controls.md)) MUST be written inside `@media (pointer: fine) and (not (any-pointer: coarse))`, unless the configuration declares `pointer: fine`. Outside that query `--fp-target` is the coarse value (55 at u = 1).
+@@
+
+@R FP-PLAT-04 | Tailwind preset | FP-1 | I | M plat.web-tailwind | choice
+@applies platform: web
+The Tailwind preset SHOULD expose the ladder as the spacing scale, the radius set, the type scale with its leading, and the duration ladder, under the same names as the tokens.
+@@
+
+Web values in one place, at u = 1: body 16 px (1rem); micro 11 px; ladder target 55, or 34 under a fine pointer; target minimum 24 CSS px; reflow at 320 CSS px; containers 610, 987, 1597 as maximum widths.
+
+=== spec/08-platforms/apple.md | 8.2 Platforms: iOS and macOS | 8
+This page is published as guidance in version 1.0; claims for these platforms begin with version 1.1 (FP-CONF-05). The numbers are cited from Apple's Human Interface Guidelines. No Apple text or table is reproduced.
+
+@R FP-PLAT-05 | iOS anchors | Guard | N | S plat.ios-anchors | choice
+@applies platform: ios
+@basis https://developer.apple.com/design/human-interface-guidelines/typography
+On iOS and iPadOS: 1 u is 1 pt; body is 17 pt at the default Dynamic Type size; no text under 11 pt; text MUST follow Dynamic Type; a target is at least 44 pt and the ladder target is 55 pt.
+@@
+
+@R FP-PLAT-06 | macOS anchors | Guard | N | S plat.macos-anchors | choice
+@applies platform: macos
+@basis https://developer.apple.com/design/human-interface-guidelines/accessibility
+On macOS: 1 u is 1 pt; body is 13 pt; no text under 10 pt; a target is at least 28 pt and the ladder target is 34 pt.
+@@
+
+@R FP-PLAT-07 | SwiftUI mapping | FP-2 | I | S plat.swiftui | choice
+@applies platform: ios or macos
+In SwiftUI a type step SHOULD use a system text style where that style's default size equals the step's size, and otherwise a custom size with scaled metrics, so that the size is the step's and still follows Dynamic Type. Space SHOULD use constants named for their rung. Safe areas and system margins belong to the platform and are not ladder values.
+@@
+
+=== spec/08-platforms/android.md | 8.3 Platforms: Android | 8
+This page is published as guidance in version 1.0; claims for this platform begin with version 1.1 (FP-CONF-05).
+
+@R FP-PLAT-08 | Android anchors | Guard | N | S plat.android-anchors | choice
+@applies platform: android
+@basis https://support.google.com/accessibility/android/answer/7101858
+On Android: 1 u is 1 dp; type is in sp; body is 16 sp (the Material body-large size); no text under 11 sp; a target is at least 48 dp and the ladder target is 55 dp, with at least 8 dp between targets.
+@@
+
+@R FP-PLAT-09 | Compose mapping | FP-2 | I | S plat.compose | choice
+@applies platform: android
+In Compose the ladder SHOULD be exposed as `Dp` constants named for their rung and the type scale as a `Typography` whose sizes are in sp. A host that follows an 8 dp grid adopts the protocol by Overlay, or by Snap with the result shown in [appendix-snap-tables.md](../appendix-snap-tables.md).
+@@
+
+=== spec/08-platforms/print-slides-email.md | 8.4 Platforms: print, slides, email | 8
+This page is informative. Print, slides and email are not `platform` values and cannot be named in a claim. The numbers here are protocol choices and arithmetic, not findings.
+
+@R FP-PLAT-10 | Print | FP-2 | I | S plat.print | choice
+In print, 1 u is 1 pt (0.3528 mm). φ SHOULD set the type area and the margins, not the sheet: standard sheets have their own ratios (the A series is 1 : 1.414; US Letter is 1 : 1.294) and are not changed.
+@@
+
+@R FP-PLAT-11 | Slides | FP-2 | I | S plat.slides | choice
+A 16 : 9 slide has a ratio of 1.778, which is not φ. φ SHOULD set the split of the content: on a 1920-wide slide, 1187 and 733. Margins and gaps SHOULD be rungs.
+@@
+
+@R FP-PLAT-12 | Email | FP-2 | I | S plat.email | choice
+Email SHOULD use one column about 610 wide, body text of 16 px, targets of 55 and no looping animation. Sizes are written in px, because many mail clients do not support rem or custom properties; this is why email is outside the web rules and cannot be claimed.
+@@
+
+=== spec/09-agent-protocol.md | 9. Agent protocol | 9
+This section is written for a design agent: any model or tool that makes or edits a design on a person's behalf. It is the source from which the agent pack and the `/lyrikai-fibonacci` skill are generated.
+
+The rules here have the level **Agent**. They describe the agent, not the design system, and are not part of a system's claim (FP-CONF-12).
+
+## Start
+
+@R FP-AGENT-01 | Read the configuration, or ask once | Agent | N | S agent.config | choice
+Before designing, an agent MUST read `fp.config.json`. If there is none, it MUST ask the user once for mode, level, platform and unit, and proceed with the answer. If it cannot ask, it uses what the request states and these defaults for the rest: unit 1, pointer `both`, platform `web`, `type.align` `formula`. Mode and level have no default: without them the agent runs the checks, changes nothing and reports. An agent MAY suggest another unit (for example u = 4 for a 4-based grid) but MUST NOT apply a unit the user did not state or accept. A request to apply the protocol is consent to write a configuration that records exactly the values used; the report MUST list which were defaults.
+@@
+
+## Decision order
+
+@R FP-AGENT-02 | Decision order | Agent | N | S agent.order | choice
+When rules pull in different directions, an agent MUST decide in this order, and the first that applies wins:
+
+1. Accessibility floors ([section 4](04-accessibility.md)).
+2. Data honesty (FP-VIZ-01, FP-VIZ-04, FP-VIZ-05, FP-VIZ-06).
+3. The platform anchor (body size, units, target floor).
+4. The host's mode and its tokens.
+5. The ladder or the type scale, chosen by role.
+6. φ, for proportion.
+7. Report what could not be kept.
+@@
+
+@R FP-AGENT-03 | Consent | Agent | N | S agent.consent | choice
+A declared `snap` mode, in the configuration or in the user's request, is the user's consent to build and apply the Snap table. An agent MUST ask before: adding or changing a Snap override; adding an exception whose reason is not `floor` or `data`; and changing the value of any host token in Overlay, including a colour that fails a contrast floor.
+@@
+
+@R FP-AGENT-12 | Exemptions an agent declares are listed | Agent | N | S agent.exemptions-listed | choice
+An agent MAY add `roles` entries for tokens whose role is plain from their name and use. Because an exemption reduces what is tested, the report MUST list every exemption the agent added, with the token and the role, under its own heading.
+@@
+
+@R FP-AGENT-04 | Non-interactive runs do not stall | Agent | N | S agent.non-interactive | choice
+When no one is available to answer, an agent MUST NOT wait. It applies what it has consent for, leaves anything that needs a yes unchanged, records each such item as an `FP-OFF` or `FP-CHANGE` line with `status=pending`, and continues to the end. The result of such a run is `pending` (FP-CONF-07).
+@@
+
+## Before saying "done"
+
+@R FP-AGENT-05 | Done-checks | Agent | N | S agent.done-checks | choice
+Before reporting that work is done, an agent MUST: run the machine tests with the reference checker if it is installed, and otherwise with its own script or by hand, saying which; answer the self-report items that apply, with evidence; state mode, level, unit and platform; list every exception and every `n/a` with its reason; put anything it would recommend but may not apply without consent (another unit, an override) under a heading "Suggestions"; and state the result as `pass`, `fail`, `pending` or `not-run`. A result obtained without the reference checker is reported as self-assessed (FP-CONF-14).
+@@
+
+@R FP-AGENT-06 | Name the rules used | Agent | N | S agent.rule-ids | choice
+An agent MUST name the rule IDs it applied, so that a person can look each one up.
+@@
+
+@R FP-AGENT-07 | Report every off-ladder value | Agent | N | M agent.fp-off | choice
+Each length or type size an agent could not keep on the ladder or the scale MUST be reported on one line in this form:
+
+`FP-OFF <where> value=<v> nearest=<lower>/<upper> reason=<floor|host-token|data|content|platform|snap-drift> rule=<ID> status=<accepted|pending>`
+
+A reason of `floor` is `accepted` at once. A reason of `data` is `accepted` at once only if the line also carries `source=<where the data comes from>`. Any other reason is `pending` until the user accepts it; accepted records are written to `exceptions` in `fp.config.json`.
+@@
+
+Example: `FP-OFF src/card.css:14 value=44px nearest=34/55 reason=host-token rule=FP-SPACE-01 status=pending`
+
+@R FP-AGENT-08 | Report every change to a host value | Agent | N | M agent.fp-change | choice
+An agent MUST NOT change a value without saying so, and MUST NOT present a snapped design as identical to the original. Snapped lengths are reported in the Snap table (FP-SNAP-08). Every other change to something the host had (a body size raised to the anchor, a colour changed to meet a contrast floor, a type size replaced by a step) MUST be reported on one line in this form:
+
+`FP-CHANGE <where> from=<old> to=<new> reason=<floor|scale|snap> rule=<ID> status=<accepted|pending>`
+
+`<where>` is a file and line, a selector or a token address. One line MAY cover several places when `from`, `to`, `reason` and `rule` are the same for all of them: the places are listed, separated by commas.
+@@
+
+Example: `FP-CHANGE tokens.css:8 from=14px to=1rem reason=floor rule=FP-A11Y-07 status=accepted`
+
+@R FP-AGENT-09 | No aesthetic claims | Agent | N | S agent.no-aesthetic-claims | choice
+@basis https://pmc.ncbi.nlm.nih.gov/articles/PMC4937063
+An agent MUST NOT say that a design is more beautiful, more natural, more harmonious or better because it uses φ or Fibonacci numbers. It MAY say that the design is consistent and which rules it meets. Evidence: the agent's report, read by a person or swept for the banned words (FP-HONEST-02).
+@@
+
+## The skill
+
+@R FP-AGENT-10 | Skill verbs | Agent | N | S agent.skill-verbs | choice
+The `/lyrikai-fibonacci` skill MUST provide exactly these verbs:
+
+- `on [FP-1|FP-2|FP-3|FP-4a|FP-4b] [overlay|snap|native]`: turn the protocol on for the conversation. With no arguments it prints the current state. If there is no `fp.config.json`, it asks once for mode, level, platform and unit (FP-AGENT-01). The phrase "use Fibonacci design principles" is the same activation.
+- `off`: turn it off.
+- `init`: show a starter `fp.config.json` and write it only on a yes.
+- `check`: run the checks and report rule IDs, `FP-OFF` and `FP-CHANGE` lines and the result.
+- `explain <rule-ID>`: print the rule's text, level, status, applies-when, test and evidence, from the copy of `rules.json` the skill carries.
+- `map`: print the Snap table for the user's tokens, with merges, drift and the "what breaks" block. It changes nothing.
+
+A request for a level that is informative in this version MUST be answered with that fact.
+@@
+
+@R FP-AGENT-11 | About line | Agent | N | S agent.about-line | choice
+The skill's output MUST end with a line that names the protocol, the spec version it was built from and https://www.lyrikai.com. The skill MUST carry a copy of the agent rules and of `rules.json` so that it works offline.
+@@
+
+=== spec/10-evidence-honesty.md | 10. Evidence and honesty | 10
+## Labels
+
+@R FP-HONEST-01 | Every rule carries an evidence label | Guard | N | M honest.labels | choice
+@applies the specification
+Every rule in this specification MUST carry exactly one label: `cited`, with a source whose requirement the rule restates; `convention`; `convention (protocol choice)`; or `contested`. A convention MAY add a basis: a cited source for the fact it rests on. A basis MUST NOT be presented as if the source required the rule. The reason for a rule MUST NOT be "because it is φ".
+@@
+
+@R FP-HONEST-02 | Banned words | Guard | N | M honest.banned-words | choice
+@applies the report
+A conformance claim or report, and the protocol's own text, MUST NOT describe φ, Fibonacci numbers or a design that uses them as: sacred, divine, perfect, magic, nature's code, a universal law, the most beautiful, or scientifically proven. The names of the musical intervals used for type ratios ("perfect fourth", "perfect fifth") and this list itself are excepted.
+@@
+
+@R FP-HONEST-03 | Claims that are never made | Guard | N | S honest.banned-claims | cited https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf
+The following MUST NOT be claimed: that the Parthenon, the Great Pyramid, the Mona Lisa, or any company logo was designed on φ; that φ is the ratio people find most pleasing; that people are "wired" for φ; that Fibonacci numbers are universal in nature.
+@@
+
+@R FP-HONEST-04 | A claim says what was tested | Guard | N | M honest.claim-wording | choice
+@applies the report
+A conformance claim MUST state the level, mode, unit, platform and version (FP-CONF-04) and nothing about quality or beauty.
+@@
+
+@R FP-HONEST-05 | Invent nothing | Guard | N | S honest.invent-nothing | choice
+A design or a document made under the protocol MUST NOT present invented numbers, names or results as real. An unknown in real content is written as a marked placeholder, such as `[name]`. Made-up sample content (sample people, sample figures) is allowed when it is labelled as below. Demonstration content MUST be labelled in visible text, either beside the content or once at the top of the view, with the words "Demonstration content" or "Sample data" or their translation.
+@@
+
+@R FP-HONEST-06 | Null results are stated | Guard | N | S honest.null-results | choice
+@applies the specification
+@basis https://pmc.ncbi.nlm.nih.gov/articles/PMC4937063
+Where this specification discusses preference for φ, it MUST state the null and mixed results beside the positive ones.
+@@
+
+## What the evidence shows
+
+**Preference for φ: contested.** Fechner's 1876 study found choices clustered near 1.62 among ten rectangles. Later work questioned the method; a 1997 replication did not find the golden section preferred; studies by McManus and colleagues found only a weak group preference with large, stable differences between individuals. A 2016 review concludes that a universal preference is weak and may vanish under bias-free methods ([review](https://pmc.ncbi.nlm.nih.gov/articles/PMC4937063); [Green 1995](https://journals.sagepub.com/doi/10.1068/p240937); [Höge 1997](https://doi.org/10.2190/2PNH-8TT0-EMC5-FTW5)). This protocol's summary, which is a reading and not a measured result: people tend to prefer moderately elongated rectangles, somewhere around 1.4 to 1.8, over squares and slivers, and nothing isolates φ within that range.
+
+**Famous examples: not supported.** The usual golden rectangle does not fit the Parthenon, whose measured ratio is nearer 1.72 ([Markowsky 1992](https://webarchive.lib.cuhk.edu.hk/20210329125916mp_/http://www.math.cuhk.edu.hk/~pschan/uged1533/markowsky.pdf)). There is no documentary evidence that the Mona Lisa was composed on golden rectangles. Overlays of circles on logos are fitted after the fact.
+
+**Plants: measured, not universal.** The golden angle and Fibonacci spiral counts are well documented in plant growth and have a physical explanation ([Douady and Couder 1992](https://dx.doi.org/10.1103/PhysRevLett.68.2098)). In a study of 657 sunflowers, 74% of counts were Fibonacci and about 18% were not ([Swinton and Ochu 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4892450)).
+
+**A system may choose φ.** Le Corbusier's Modulor deliberately combined φ, the Fibonacci series and human height. Choosing φ on purpose is legitimate. It is not evidence that φ is best.
+
+**What this protocol claims for itself.** One set of numbers used everywhere makes a system easier to keep consistent and easier for an agent to follow. That is the whole claim.
+
+## Sources
+
+- WCAG 2.2: https://www.w3.org/TR/WCAG22/
+- Apple Human Interface Guidelines, typography and accessibility: https://developer.apple.com/design/human-interface-guidelines/typography , https://developer.apple.com/design/human-interface-guidelines/accessibility
+- Material metrics and keylines: https://m1.material.io/layout/metrics-keylines.html ; Android target size: https://support.google.com/accessibility/android/answer/7101858
+- Animation duration guidance: https://www.nngroup.com/articles/animation-duration/
+- Modular scales: https://alistapart.com/article/more-meaningful-typography/
+- Nice numbers for graph labels: https://www.ri.cmu.edu/publications/nice-numbers-for-graph-labels
+- Truncating the y-axis: https://ar5iv.arxiv.org/html/1907.02035
+- Perceptually uniform colour maps: https://bids.github.io/colormap/ ; OKLab: https://bottosson.github.io/posts/oklab/
+- Design Tokens Format Module 2025.10: https://www.designtokens.org/tr/2025.10/
+
+=== spec/tokens.md | Tokens | deliverable
+These rules apply to token files written in the protocol's format: the protocol's own published tokens, and the tokens of a Native system. A host in Overlay or Snap keeps whatever token pipeline it has and is not asked to adopt this one; for such a host these rules are `n/a` unless it ships protocol-format files.
+
+@R FP-TOKEN-01 | Token format | FP-1 | N | M token.dtcg | cited https://www.designtokens.org/tr/2025.10/
+@applies protocol token files
+A protocol token file MUST follow the Design Tokens Format Module 2025.10: a token is an object with `$value`; `$type` is set on the token or inherited from its group; files end in `.tokens.json`.
+@@
+
+@R FP-TOKEN-02 | Types and units | FP-1 | N | M token.types | cited https://www.designtokens.org/tr/2025.10/
+@applies protocol token files
+A length is a `dimension` with the value `{ "value": <number>, "unit": "px" }` or `"rem"`. A time is a `duration` with `{ "value": <number>, "unit": "ms" }` or `"s"`. A colour is a colour object with `colorSpace` and `components`. Ratios, opacities and layer values are `number`. Easing is `cubicBezier`.
+@@
+
+@R FP-TOKEN-03 | Names | FP-1 | N | M token.names | cited https://www.designtokens.org/tr/2025.10/
+@applies protocol token files
+A token or group name MUST NOT begin with `$` and MUST NOT contain `{`, `}` or `.`. A space token is named for its Fibonacci number, not its value: group `space`, token `13`, is 13 × u (13 px at u = 1, 52 px at u = 4). Radius and container tokens are named for their value, which does not change with u.
+@@
+
+@R FP-TOKEN-04 | The master is in platform units | FP-1 | N | M token.master-unit | choice
+@applies protocol token files
+The master stores each value as a px number already multiplied by the declared u, and records u in the file metadata (FP-TOKEN-07). Values in pt, dp and mm are produced by the generators, because the format has no such units.
+@@
+
+@R FP-TOKEN-05 | Themes | FP-1 | N | M token.themes | choice
+@applies protocol token files
+In version 1.0, light and dark colour values are two files (`color.light.tokens.json`, `color.dark.tokens.json`).
+@@
+
+@R FP-TOKEN-06 | Rule metadata | FP-1 | N | M token.extensions | choice
+@applies protocol token files
+@basis https://www.designtokens.org/tr/2025.10/
+Each protocol token MUST carry `$extensions["com.lyrikai.fp"]` with `rule`, the ID of the rule that defines it. It MAY also carry `formula` (for example `"F(7) × u"`), `level`, `status` and `evidence`. A token that holds an accessibility floor (body size, micro, target) MUST carry `"pinnedFloor": true`; a generator or theme MUST NOT emit a smaller value for such a token.
+@@
+
+@R FP-TOKEN-07 | File metadata | FP-1 | N | M token.root-metadata | choice
+@applies protocol token files
+The homepage (`https://www.lyrikai.com`), the spec version and the unit u MUST be recorded in a root-level `$extensions["com.lyrikai.fp"]` object. They MUST NOT be bare root keys, which the format would read as groups.
+@@
+
+@R FP-TOKEN-08 | Generated outputs | FP-1 | N | M token.outputs | choice
+@applies the specification
+From the master, the protocol's generators MUST produce: CSS custom properties (FP-PLAT-02), SCSS variables, a Tailwind preset, and a list-shaped `tokens.json` for design-system tools. Each output is covered by a snapshot test. This rule binds the protocol's own repository; an adopter generates only what it uses.
+@@
+
+@R FP-TOKEN-09 | Type in rem | FP-1 | N | M token.type-rem | choice
+@applies protocol token files
+Generated web type sizes MUST be in rem (FP-TYPE-04). Generated space is in px by default and MAY be in rem.
+@@
+
+@R FP-TOKEN-10 | Style Dictionary compatibility | FP-1 | I | M token.style-dictionary | choice
+@applies protocol token files
+@basis https://styledictionary.com/info/dtcg/
+The master SHOULD build under Style Dictionary 4 and 5. Known gaps (object-form dimensions, partial 2025.10 support) are listed with the tokens, and the protocol's own generators do not depend on it.
+@@
+
+```json
+{
+  "$extensions": { "com.lyrikai.fp": { "homepage": "https://www.lyrikai.com", "spec": "{{ver}}", "unit": 1 } },
+  "space": {
+    "$type": "dimension",
+    "13": {
+      "$value": { "value": 13, "unit": "px" },
+      "$description": "Gap, small padding.",
+      "$extensions": { "com.lyrikai.fp": { "rule": "FP-MATH-03", "formula": "F(7) × u" } }
+    }
+  },
+  "target": {
+    "$type": "dimension",
+    "coarse": {
+      "$value": { "value": 55, "unit": "px" },
+      "$extensions": { "com.lyrikai.fp": { "rule": "FP-CTRL-01", "pinnedFloor": true } }
+    }
+  }
+}
+```
+
+=== spec/appendix-snap-tables.md | Appendix: worked Snap tables | 2
+These tables are generated by the rules in [02-integration-modes.md](02-integration-modes.md) (FP-SNAP-02, FP-SNAP-03, FP-SNAP-10). They show spacing values only. Tokens with the `icon`, `type`, `breakpoint`, `drawn` or `micro` role are left alone, and `target` tokens follow FP-SNAP-04 (FP-MODE-10, FP-SNAP-01).
+
+## A 4-based grid
+
+Host values: the base sizes of `@primer/primitives` 11.10.0 (MIT License, Copyright (c) 2018 GitHub Inc.; https://primer.style/product/primitives/size/). The name is used only to identify the source; no endorsement is implied.
+
+{{snap4}}
+
+- At u = 1: {{merge4_1}}
+- At u = 4: {{merge4_4}}
+- u = 4 is the recommended profile for this grid: five of its values do not move at all. It has no 16 and no 24; both go to 20.
+- u = 8 is not suitable for this grid: 4 and 12 cannot be snapped (FP-MATH-06).
+
+## An 8-based grid
+
+Host values: the spacing steps in `labs/gb/styles/space/md-space-tokens.css` of `@material/web` 2.5.0 (Apache License 2.0, Copyright Google LLC). That file is experimental ("labs") and is not part of the package's stable tokens; a Material-based system that has no spacing tokens of its own writes a token file before it can Snap (see "How Snap is written"). The name is used only to identify the source; no endorsement is implied.
+
+{{snap8}}
+
+- At u = 1: {{merge8_1}}
+- At u = 8: {{merge8_8}}
+
+## What breaks, and what to do
+
+| What breaks | Why | What to do |
+|---|---|---|
+| Additive spacing | On a 4 or 8 grid, 8 + 8 = 16 is a token. On the ladder at u = 1 it is not: the nearest rung is 13. Halving and doubling do not stay on the ladder. | Use the rule that does hold: adjacent rungs add up to the next (5 + 8 = 13, 8 + 13 = 21). Replace "two of these" with "the next rung". Where a sum must be exact, use `gap` rather than adding paddings. |
+| Baseline rhythm | A 4-unit baseline grid is not kept at u = 1. | Use the u = 4 profile, or let unitless leading set the rhythm. |
+| Device pixels | At 1.5× density, odd rungs at u = 1 (1, 3, 5, 13, 21, 55, 89 and so on) land on half device pixels. | Use u = 4 or u = 8, or accept the browser's rounding; borders and hairlines are not affected. |
+| Icons | A 16 or 24 icon no longer fills a 13 or 21 box exactly. | Keep icon tokens exempt by role and centre the icon in a 21 or 34 box. |
+| Hierarchy | Tokens that merge lose the difference between them; see the merge lists above. A 4-based scale loses the most between 28 and 44 at u = 1. | Add overrides (FP-SNAP-07) to move tokens of a merged group to neighbouring rungs, keeping order; or use u = 4, which merges less; or keep the area in Overlay. |
+| Snapshots | Visual-regression baselines change everywhere a token moves. | Re-baseline once, in the same change as the Snap table. |

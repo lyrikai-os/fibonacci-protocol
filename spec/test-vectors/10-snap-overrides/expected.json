@@ -1,0 +1,63 @@
+{
+  "vector": "10-snap-overrides",
+  "spec": "1.0.0-rc.1",
+  "about": "Overrides: 16 → 21 (31.3%) passes; 24 → 34 (41.7%) is over 38.2% and fails, so 24 stays at its nearest rung; 20 → 13 (35%) is within the limit but breaks order against 16 → 21, which fails FP-SNAP-05.",
+  "result": "fail",
+  "overrides": [
+    {
+      "token": "--space-16",
+      "original": 16,
+      "to": 21,
+      "drift": 31.3,
+      "check": "snap.override",
+      "rule": "FP-SNAP-07",
+      "result": "pass",
+      "message": ""
+    },
+    {
+      "token": "--space-24",
+      "original": 24,
+      "to": 34,
+      "drift": 41.7,
+      "check": "snap.override",
+      "rule": "FP-SNAP-07",
+      "result": "fail",
+      "message": "drift 41.7% is over 38.2%"
+    },
+    {
+      "token": "--space-20",
+      "original": 20,
+      "to": 13,
+      "drift": 35.0,
+      "check": "snap.override",
+      "rule": "FP-SNAP-07",
+      "result": "pass",
+      "message": ""
+    }
+  ],
+  "orderBreaches": [
+    {
+      "tokens": [
+        "--space-16",
+        "--space-20"
+      ],
+      "original": [
+        16,
+        20
+      ],
+      "final": [
+        21,
+        13
+      ],
+      "check": "snap.monotonic",
+      "rule": "FP-SNAP-05",
+      "result": "fail"
+    }
+  ],
+  "final": {
+    "--space-12": 13,
+    "--space-16": 21,
+    "--space-20": 13,
+    "--space-24": 21
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "vector": "13-contrast",
+  "spec": "1.0.0-rc.1",
+  "about": "Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals.",
+  "result": "fail",
+  "pairs": [
+    {
+      "fg": "--ink",
+      "bg": "--ground",
+      "kind": "text",
+      "ratio": 17.404,
+      "required": 4.5,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "pass"
+    },
+    {
+      "fg": "--muted-ok",
+      "bg": "--ground",
+      "kind": "text",
+      "ratio": 4.542,
+      "required": 4.5,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "pass"
+    },
+    {
+      "fg": "--muted-bad",
+      "bg": "--ground",
+      "kind": "text",
+      "ratio": 4.478,
+      "required": 4.5,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "fail"
+    },
+    {
+      "fg": "--edge-ok",
+      "bg": "--ground",
+      "kind": "mark",
+      "ratio": 3.033,
+      "required": 3.0,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "pass"
+    },
+    {
+      "fg": "--edge-bad",
+      "bg": "--ground",
+      "kind": "mark",
+      "ratio": 2.995,
+      "required": 3.0,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "fail"
+    },
+    {
+      "fg": "--large",
+      "bg": "--ground",
+      "kind": "large-text",
+      "ratio": 3.033,
+      "required": 3.0,
+      "check": "a11y.contrast",
+      "rule": "FP-A11Y-01",
+      "result": "pass"
+    }
+  ]
+}

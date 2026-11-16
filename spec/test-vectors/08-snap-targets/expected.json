@@ -1,0 +1,73 @@
+{
+  "vector": "08-snap-targets",
+  "spec": "1.0.0-rc.1",
+  "about": "Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach.",
+  "result": "pass",
+  "mapping": [
+    {
+      "token": "--control-sm",
+      "role": "target",
+      "original": 32,
+      "snapped": 55,
+      "minimum": 55,
+      "keepAllowed": false,
+      "drift": null,
+      "note": "target: never below max(original, ladder target); no drift limit"
+    },
+    {
+      "token": "--control-md",
+      "role": "target",
+      "original": 40,
+      "snapped": 55,
+      "minimum": 55,
+      "keepAllowed": false,
+      "drift": null,
+      "note": "target: never below max(original, ladder target); no drift limit"
+    },
+    {
+      "token": "--control-lg",
+      "role": "target",
+      "original": 44,
+      "snapped": 55,
+      "minimum": 55,
+      "keepAllowed": false,
+      "drift": null,
+      "note": "target: never below max(original, ladder target); no drift limit"
+    },
+    {
+      "token": "--control-xl",
+      "role": "target",
+      "original": 64,
+      "snapped": 89,
+      "minimum": 64,
+      "keepAllowed": true,
+      "drift": null,
+      "note": "target: never below max(original, ladder target); no drift limit"
+    },
+    {
+      "token": "--button-drawn",
+      "role": "drawn",
+      "original": 40,
+      "snapped": 40,
+      "drift": 0.0,
+      "note": "exempt by role, unchanged"
+    },
+    {
+      "token": "--space-36",
+      "role": "space",
+      "original": 36,
+      "snapped": 34,
+      "drift": 5.6
+    },
+    {
+      "token": "--icon-md",
+      "role": "icon",
+      "original": 16,
+      "snapped": 16,
+      "drift": 0.0,
+      "note": "exempt by role, unchanged"
+    }
+  ],
+  "merges": [],
+  "orderBreaches": []
+}

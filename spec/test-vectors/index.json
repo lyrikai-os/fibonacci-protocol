@@ -1,0 +1,189 @@
+{
+  "name": "Lyrikai: Fibonacci Protocol for UI/UX Design Agents",
+  "version": "1.0.0-rc.1",
+  "license": "MIT",
+  "homepage": "https://www.lyrikai.com",
+  "vectors": [
+    {
+      "vector": "01-ladder-u1-pass",
+      "about": "Every checked length is a rung, 0, intrinsic, or in its fixed set. Negative rungs pass.",
+      "result": "pass",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "02-ladder-u1-fail",
+      "about": "Off-ladder lengths, an off-set radius and an off-set stroke each fail. In a shorthand each value is tested.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "03-ladder-u4",
+      "about": "At u = 4 the rungs are F × 4 plus the sub-unit values 1 and 2. Radius, stroke and container widths stay in platform units. 13 and 16 are not rungs; 2440 (610 × 4) is not a rung.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "04-derived",
+      "about": "The two derived patterns pass: a φ split of a container, and a container minus one ladder token. Rung arithmetic, chaining, a non-rung operand, a non-φ factor, and a literal 987px in place of the container token fail.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "05-roles-and-exceptions",
+      "about": "Overlay tests resolved values. A host token that resolves to a rung passes; an icon-role token is not tested; a host token that is not a rung fails unless it is a declared exception (addressed by token or by selector). A pending exception makes the run pending when nothing else fails; here .b fails outright.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "06-snap-u1",
+      "about": "A 4-based scale at u = 1: nearest rung, ties go up (4 → 5), drift at most 25%, merges listed. Radii map to the radius set; 32 is over 25% from 21 and is not snapped. The values that cannot be snapped are declared as accepted snap-drift exceptions, so the run passes.",
+      "result": "pass",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "07-snap-u4",
+      "about": "The same scale at u = 4: 2 is a sub-unit value and is kept; 6 drifts 33% and is not snapped; 16 is a tie between 12 and 20 and goes up. The values that cannot be snapped are declared as accepted snap-drift exceptions, so the run passes.",
+      "result": "pass",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "08-snap-targets",
+      "about": "Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach.",
+      "result": "pass",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "09-snap-targets-fine",
+      "about": "The same tokens with pointer: fine declared. The ladder target is 34, so 32 becomes 34, 40 and 44 become 55 (the smallest rung at or above the original), and 64 may stay.",
+      "result": "pass",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "10-snap-overrides",
+      "about": "Overrides: 16 → 21 (31.3%) passes; 24 → 34 (41.7%) is over 38.2% and fails, so 24 stays at its nearest rung; 20 → 13 (35%) is within the limit but breaks order against 16 → 21, which fails FP-SNAP-05.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "11-type-scale-formula",
+      "about": "Type sizes by formula from body 16. 20 is a step and 21 is not. Micro passes only through its token. A px size, a fixed or missing line height, 1.618 on a heading, and the unused odd step 5 (53) fail.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "12-type-scale-fibonacci",
+      "about": "The same input with type.align: fibonacci. Now 21 is the step and 20 is not.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "13-contrast",
+      "about": "Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "14-na-contradiction",
+      "about": "has.motion and has.controls are declared false, but the scope has a transition and a button selector. FP-CONF-11 fails twice: a rule may not be marked n/a when its condition is true.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "15-na-consistent",
+      "about": "The same input with has.motion and has.controls declared true. No contradiction.",
+      "result": "pass",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "16-overlay-coverage",
+      "about": "Overlay: only the scope is tested. Coverage is the checked values in the scope divided by those in the whole source, counted after shorthand expansion (padding: 21px is four values, gap: 8px is two). The legacy file is outside the scope and is not flagged.",
+      "result": "pass",
+      "inputs": [
+        "src/card.css",
+        "src/legacy.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "17-snap-u1-undeclared",
+      "about": "The twin of 06-snap-u1 with no exceptions declared. The values that cannot be snapped are kept without a snap-drift exception, which fails FP-SNAP-10.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    },
+    {
+      "vector": "18-snap-u4-undeclared",
+      "about": "The twin of 07-snap-u4 with no exceptions declared. The values that cannot be snapped are kept without a snap-drift exception, which fails FP-SNAP-10.",
+      "result": "fail",
+      "inputs": [
+        "input.css"
+      ],
+      "config": "fp.config.json",
+      "expected": "expected.json"
+    }
+  ]
+}

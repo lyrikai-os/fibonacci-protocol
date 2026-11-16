@@ -1,0 +1,4 @@
+.card { padding: 21px; gap: 8px; margin-block-end: 34px; border-radius: 13px; border-width: 1px; }
+.page { padding-inline: 55px; max-inline-size: 987px; inset: 0; width: 100%; }
+.pull { margin-top: -13px; }
+.chip { border-radius: 9999px; min-height: 21px; }
