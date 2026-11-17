@@ -1,6 +1,6 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: FP-AGENT, the protocol in one file
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 This file is the whole protocol for a design agent, for any LLM or tool. It is generated from `spec/rules.json`, so it matches the specification exactly. Normative rules are binding and tested: their ID, title and text are given in full. Informative rules are guidance that binds no claim in this version: they are listed at the end.
 
@@ -507,7 +507,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 
 #### FP-MODE-02 · Configuration fields
 
-The file MUST validate against fp.config.schema.json. The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.5`).
+The file MUST validate against fp.config.schema.json. The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0`).
 
 | Field | Type | Required | Values and default |
 |---|---|---|---|
@@ -953,4 +953,4 @@ Published as guidance. They bind no claim in this version. A request for a level
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

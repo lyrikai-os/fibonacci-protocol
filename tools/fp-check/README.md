@@ -1,11 +1,11 @@
 # fp-check
 
-The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0-rc.5.
+The reference conformance checker for **Lyrikai: Fibonacci Protocol for UI/UX Design Agents**, version 1.0.0.
 MIT License. [www.lyrikai.com](https://www.lyrikai.com)
 
 `fp-check` reads an `fp.config.json` and the CSS it names, runs the protocol's machine tests locally (no network, no dependencies, Node 20), and reports one result per rule ID: `pass`, `fail`, `pending`, `n/a`, `not-run`, or `self-report` for the rules only people can answer.
 
-It was written from the specification text (`spec/`) and checked against the published test vectors in `spec/test-vectors/`. It did not read the script that made the vectors. Where it and a vector disagree, the test is left failing and the disagreement is listed below. All 24 vectors pass against spec 1.0.0-rc.5.
+It was written from the specification text (`spec/`) and checked against the published test vectors in `spec/test-vectors/`. It did not read the script that made the vectors. Where it and a vector disagree, the test is left failing and the disagreement is listed below. All 24 vectors pass against spec 1.0.0.
 
 ## Use
 
@@ -69,7 +69,7 @@ Machine tests implemented (63 of the 96 machine rules in `rules.json`; the other
 
 Type tests run when `level` is `FP-2`, in every mode (the host's type in an Overlay or Snap scope is replaced by the protocol's, FP-MODE-09). At FP-1 type is not read.
 
-### Declarations and readings the checker relies on (spec 1.0.0-rc.5)
+### Declarations and readings the checker relies on (spec 1.0.0)
 
 - `var()` is tested against every definition of the variable in the source (`:root`, local rules, `@media`), not only the `:root` one. A `var()` with no definition uses its fallback, which is tested; only a bare `var(--fp-*)` with no fallback falls back to the protocol's published value.
 - A phi split (FP-LAYOUT-01) is tested only when `--fp-layout: phi-split` is in the same rule (or the rule it is nested in) as `grid-template-columns`; it needs two tracks at 61.8 to 38.2 within 0.1 (`1.618fr 1fr`, `61.8% 38.2%`, or `--fp-split-major --fp-split-minor`).
@@ -110,7 +110,7 @@ Rules are `not-run`, and so is the run, when the machine tests cannot run:
 Inline `style` attributes are not read; a note says so. 
 ## Disagreements and deliberate passes
 
-All 24 vectors pass against spec 1.0.0-rc.5. `test/probes/` holds the adversary's probes as regression tests (`expected.json` is the answer for each). Probes that are deliberately not failed: `l-media` (the phi marker and the grid are in different rules; FP-LAYOUT-01 says the same rule), `sn-localvar`-style locals are mapped, listed and fail where off the ladder, and `th-ld` (reported `not-run`, not a pass). `#12345` and other 5- or 7-digit hex colours are refused by the schema.
+All 24 vectors pass against spec 1.0.0. `test/probes/` holds the adversary's probes as regression tests (`expected.json` is the answer for each). Probes that are deliberately not failed: `l-media` (the phi marker and the grid are in different rules; FP-LAYOUT-01 says the same rule), `sn-localvar`-style locals are mapped, listed and fail where off the ladder, and `th-ld` (reported `not-run`, not a pass). `#12345` and other 5- or 7-digit hex colours are refused by the schema.
 
 ## Pair colours, evidence and HTML (rc.5)
 

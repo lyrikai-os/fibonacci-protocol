@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:lyrikai:fibonacci-protocol:fp-config:1.0.0-rc.5",
+  "$id": "urn:lyrikai:fibonacci-protocol:fp-config:1.0.0",
   "title": "fp.config.json",
-  "description": "Configuration for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0-rc.5. MIT License. https://www.lyrikai.com . Defined by rule FP-MODE-02 in spec/02-integration-modes.md.",
+  "description": "Configuration for a system that adopts the Lyrikai Fibonacci Protocol for UI/UX Design Agents, version 1.0.0. MIT License. https://www.lyrikai.com . Defined by rule FP-MODE-02 in spec/02-integration-modes.md.",
   "type": "object",
   "additionalProperties": false,
   "required": ["fp", "mode", "level", "platform", "has", "source", "pairs"],

@@ -1,10 +1,10 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Version 1.0.0-rc.5 · release candidate · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 One small set of numbers and one ratio, used the same way everywhere in a design system, so that a person or an agent reaching for a value always reaches for the same few. This repository holds the specification, the design tokens, a checker, and a skill that makes a design agent follow the protocol.
 
-**Status: release candidate.** The text is proposed for release as 1.0.0 and is published for final review. It is not yet a release. See [CHANGELOG.md](CHANGELOG.md).
+**Status: released, version 1.0.0.** Version 1.0 binds FP-1 (space and radius) and FP-2 (type, layout and grids); the other areas are published as guidance. See [CHANGELOG.md](CHANGELOG.md).
 
 See it working: [showcase/index.html](showcase/index.html) is a static page built on `dist/fp.css` (a candidate, not a claim: its machine tests pass and a few judgement items are open), in light and dark, with sample content labelled as sample. Open the file in a browser; it needs no server and loads no external scripts.
 
@@ -68,7 +68,7 @@ You need Node.js 20 or later. There are no packages to install.
 
 ```json
 {
-  "fp": "1.0.0-rc.5",
+  "fp": "1.0.0",
   "mode": "native",
   "level": "FP-1",
   "platform": "web",
@@ -95,14 +95,14 @@ It runs the machine tests locally, with no network, and prints one result per ru
 
 ```text
 MACHINE TESTS: PASS
-CANDIDATE (not a claim): candidate · FP-1 · Native · u=1 · web · spec 1.0.0-rc.5 · self-assessed · open 22
+CANDIDATE (not a claim): candidate · FP-1 · Native · u=1 · web · spec 1.0.0 · self-assessed · open 22
 ```
 
 **5. Answer the self-report items.** Some rules only people can decide (target sizes, reflow, colour-only states and the like). The run lists the ones that apply. Write your answers in `fp-evidence.json`, beside `fp.config.json` ([schema](spec/fp-evidence.schema.json)):
 
 ```json
 {
-  "fp": "1.0.0-rc.5",
+  "fp": "1.0.0",
   "adopter": "Your team or name",
   "items": {
     "FP-A11Y-13": { "result": "pass", "evidence": "Measured at 320 px: no horizontal scroll outside the data table.", "by": "Your name" }
@@ -164,8 +164,8 @@ This runs `node --test tools/ fixtures/` (Node 20, no dependencies). It covers t
 4. Run `fp-check` again. A **valid claim** is printed only when the machine tests pass and no item is open:
 
 ```text
-FP-2 · Native · u=1 · web · spec 1.0.0-rc.5 · self-assessed
-FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.5 · self-assessed
+FP-2 · Native · u=1 · web · spec 1.0.0 · self-assessed
+FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0 · self-assessed
 ```
 
 If items are open the checker prints `candidate · <claim string> · open <n>` and lists the open rule IDs. A candidate line is not a claim: do not publish it or quote it as one.
@@ -191,4 +191,4 @@ The protocol grew out of design systems built in-house at Lyrikai during 2026; s
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

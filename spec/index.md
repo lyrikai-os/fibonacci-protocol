@@ -1,8 +1,8 @@
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-**Status:** release candidate 1.0.0-rc.5. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
+**Status:** released, version 1.0.0. Version 1.0 binds FP-1 and FP-2 (normative); the other areas are published as guidance (informative). Changes are listed in CHANGELOG.md. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
 
 ## What this is
 
@@ -29,7 +29,7 @@ This is the smallest adoption. It changes nothing your system already has.
 **1. Add the tokens.** Copy this block into your CSS.
 
 ```css
-/* Fibonacci Protocol 1.0.0-rc.5 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
+/* Fibonacci Protocol 1.0.0 · FP-1 tokens at u = 1 · MIT · https://www.lyrikai.com */
 :root {
   --fp-space-1: 1px;
   --fp-space-2: 2px;
@@ -67,7 +67,7 @@ This is the smallest adoption. It changes nothing your system already has.
 
 ```json
 {
-  "fp": "1.0.0-rc.5",
+  "fp": "1.0.0",
   "mode": "overlay",
   "level": "FP-1",
   "platform": "web",
@@ -167,7 +167,7 @@ If you later go on to FP-2, note one rule that catches people out: every CSS rul
 
 **5. State the claim.** It exists only when the machine tests pass and every self-report item in the list has an entry with evidence. Until then the checker prints a candidate line and the number of items still open, which is not a claim. The claim has exactly this form:
 
-`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0-rc.5 · self-assessed`
+`FP-1 · Overlay · u=1 · web · scope src/components/card/** · coverage 12% · exceptions 0 · spec 1.0.0 · self-assessed`
 
 ### Running the checker
 
@@ -207,7 +207,7 @@ In version 1.0 a claim names FP-1 or FP-2 and the platform `web` (FP-CONF-05). O
 1. Write an `fp.config.json` (FP-MODE-01, FP-MODE-02; schema in [fp.config.schema.json](fp.config.schema.json)).
 2. Run the machine tests for the level and answer the self-report items with evidence, in `fp-evidence.json` (FP-CONF-06; schema in [fp-evidence.schema.json](fp-evidence.schema.json)).
 3. Resolve every pending exception; a result with pending exceptions is not a pass (FP-CONF-07).
-4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0-rc.5 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
+4. State the claim in the fixed form (FP-CONF-04): `FP-2 · Snap · u=1 · web · spec 1.0.0 · self-assessed`. The last part stays unless the self-report items were assessed by someone other than the adopter (FP-CONF-14).
 
 A claim says what was tested. It never says that a design is more beautiful, more natural or better (FP-HONEST-04). A passing run is not a statement that a product is accessible (FP-CONF-10).
 
@@ -487,4 +487,4 @@ MIT License. Third-party values used as test fixtures keep their own licences an
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

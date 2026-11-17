@@ -1,6 +1,6 @@
 {
   "vector": "13-contrast",
-  "spec": "1.0.0-rc.5",
+  "spec": "1.0.0",
   "about": "Contrast on declared pairs, never rounded: #767676 on white passes for text and #777777 does not; #949494 passes at 3:1 and #959595 does not. Ratios are shown truncated to three decimals. A large-text pair states its size: 24 px qualifies and is tested at 3:1; 20 px at weight 400 does not and is tested as text at 4.5:1, so it fails.",
   "result": "fail",
   "pairs": [

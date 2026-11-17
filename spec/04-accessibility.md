@@ -1,6 +1,6 @@
 # 4. Accessibility guardrails
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 These rules are floors. They sit outside the ladder and the type scale, and they always win. Each says when it applies; where it does not, its result is `n/a` (FP-CONF-11).
 
@@ -155,4 +155,4 @@ An interface SHOULD stay usable when the platform forces its own colours. Marks 
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

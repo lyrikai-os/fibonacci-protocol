@@ -1,6 +1,6 @@
 {
   "vector": "08-snap-targets",
-  "spec": "1.0.0-rc.5",
+  "spec": "1.0.0",
   "about": "Target tokens end at no less than max(original, ladder target) and have no drift limit: 32, 40 and 44 become 55; 64 may stay or become 89. A drawn-role token and an icon-role token are unchanged. The three targets that end at 55 are listed as a merged group (FP-SNAP-06). Order is kept within a role group only: target 32 → 55 beside spacing 36 → 34 is not a breach.",
   "result": "pass",
   "mapping": [

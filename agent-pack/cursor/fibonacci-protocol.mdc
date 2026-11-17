@@ -1,12 +1,12 @@
 ---
-description: Apply the Lyrikai Fibonacci Protocol (spec 1.0.0-rc.5) when the user asks to "use Fibonacci design principles", types /lyrikai-fibonacci, or asks for a golden ratio or Fibonacci spacing system. Covers fp.config.json, the length ladder, consent, FP-OFF and FP-CHANGE reports.
+description: Apply the Lyrikai Fibonacci Protocol (spec 1.0.0) when the user asks to "use Fibonacci design principles", types /lyrikai-fibonacci, or asks for a golden ratio or Fibonacci spacing system. Covers fp.config.json, the length ladder, consent, FP-OFF and FP-CHANGE reports.
 globs: "**/fp.config.json,**/*.css,**/*.scss"
 alwaysApply: false
 ---
 
 # Lyrikai: Fibonacci Protocol for UI/UX Design Agents: Cursor rule
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 Apply this rule only when the user asks for the Fibonacci Protocol ("use Fibonacci design principles", `/lyrikai-fibonacci`, a golden ratio or Fibonacci spacing system) or the project has an `fp.config.json`. Stay in it until the user says `off`. The full rules are in `FP-AGENT.md` (the single-file protocol; see the pack README for where to put it) or in the `lyrikai-fibonacci` skill (folder `skills/lyrikai-fibonacci/`) if installed. `fp.config.json` must validate against `fp.config.schema.json` (bundled with the skill and the pack); its field table is rule FP-MODE-02 in `FP-AGENT.md`.
 
@@ -28,6 +28,6 @@ Apply this rule only when the user asks for the Fibonacci Protocol ("use Fibonac
 - Before "done": run fp-check from the protocol repository (`node <repo>/tools/fp-check/fp-check.mjs <folder>`; the adopter's folder has no `tools/`) and print its claim or candidate line exactly as it prints it; otherwise say what ran; list exceptions and n/a; "Suggestions" heading; rule IDs; result pass, fail, pending or not-run; end the claim in `self-assessed` without the reference checker; never claim a pass without evidence (FP-AGENT-05, FP-CONF-14).
 - Never call a design better or more beautiful because it uses phi (FP-AGENT-09).
 
-End protocol output with: Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0-rc.5 · MIT License · https://www.lyrikai.com
+End protocol output with: Lyrikai: Fibonacci Protocol for UI/UX Design Agents · spec 1.0.0 · MIT License · https://www.lyrikai.com
 
-MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0-rc.5. https://www.lyrikai.com
+MIT License. Lyrikai: Fibonacci Protocol for UI/UX Design Agents, spec 1.0.0. https://www.lyrikai.com

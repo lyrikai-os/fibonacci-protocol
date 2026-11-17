@@ -1,6 +1,6 @@
 # 9. Agent protocol
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 This section is written for a design agent: any model or tool that makes or edits a design on a person's behalf. It is the source from which the agent pack and the `/lyrikai-fibonacci` skill are generated.
 
@@ -155,4 +155,4 @@ The skill's output MUST end with a line that names the protocol, the spec versio
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

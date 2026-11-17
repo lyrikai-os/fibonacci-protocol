@@ -1,6 +1,6 @@
 {
   "$schema": "../../spec/fp-evidence.schema.json",
-  "fp": "1.0.0-rc.5",
+  "fp": "1.0.0",
   "adopter": "fixture author",
   "items": {
     "FP-MATH-04": {

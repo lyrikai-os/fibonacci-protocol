@@ -1,6 +1,6 @@
 # 2. Integration modes
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)* · [Index](index.md)
 
 A system that already exists adopts the protocol in one of three modes. The mode is declared in a file, so that a person, an agent and a checker all read the same thing.
 
@@ -15,7 +15,7 @@ A system that claims conformance MUST have an `fp.config.json` at its root. A ch
 
 ### FP-MODE-02 · Configuration fields
 
-The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0-rc.5`).
+The file MUST validate against [fp.config.schema.json](fp.config.schema.json). The field table and the token-address rule below are part of this rule. `fp` MUST equal the version string of the specification the system was checked against, written in full (for example `1.0.0`).
 
 | Field | Type | Required | Values and default |
 |---|---|---|---|
@@ -47,7 +47,7 @@ The file MUST validate against [fp.config.schema.json](fp.config.schema.json). T
 
 ```json
 {
-  "fp": "1.0.0-rc.5",
+  "fp": "1.0.0",
   "mode": "snap",
   "level": "FP-1",
   "platform": "web",
@@ -244,4 +244,4 @@ An adopter MAY change: colour slot values, typefaces and weights, the words show
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

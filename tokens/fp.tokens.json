@@ -3,7 +3,7 @@
   "$extensions": {
     "com.lyrikai.fp": {
       "homepage": "https://www.lyrikai.com",
-      "spec": "1.0.0-rc.5",
+      "spec": "1.0.0",
       "unit": 1
     }
   },

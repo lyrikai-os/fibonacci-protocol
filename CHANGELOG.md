@@ -2,7 +2,11 @@
 
 *Lyrikai: Fibonacci Protocol for UI/UX Design Agents · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
-This file lists what changed between release candidates of the specification, the tokens and the tools. The specification is proposed for release as 1.0.0 and is published for final review; none of the entries below is a release. Rule IDs are never reused, and a change to what a rule means is listed here.
+This file lists what changed in the specification, the tokens and the tools. Version 1.0.0 is the first release; the entries after it are the release candidates that led to it. Rule IDs are never reused, and a change to what a rule means is listed here.
+
+## 1.0.0
+
+The first release. The text, tokens and tools are those of 1.0.0-rc.5 with the version string set to `1.0.0` everywhere (`fp` in `fp.config.json`, claims, headers and footers) and the status lines changed from "release candidate" to "released". No rule changed.
 
 ## 1.0.0-rc.4
 

@@ -1,5 +1,5 @@
 === spec/index.md | Lyrikai: Fibonacci Protocol for UI/UX Design Agents | —
-**Status:** release candidate {{ver}}. This text is proposed for release as version 1.0.0 and is published for final review. It is not yet a release. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
+**Status:** released, version {{ver}}. Version 1.0 binds FP-1 and FP-2 (normative); the other areas are published as guidance (informative). Changes are listed in CHANGELOG.md. The reference checker, `fp-check`, ships in this repository (see "Running the checker" below).
 
 ## What this is
 

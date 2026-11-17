@@ -1,6 +1,6 @@
 {
   "vector": "23-na-contradiction-html",
-  "spec": "1.0.0-rc.5",
+  "spec": "1.0.0",
   "about": "has.motion and has.controls are declared false, but the HTML file holds a button and an animated SVG, and its style block has :focus selectors: FP-CONF-11 fails for both. Separately, a :focus rule removes the outline with no replacement, which is a machine finding under FP-A11Y-12; the :focus-visible rule beside it sets a box-shadow and is not flagged.",
   "result": "fail",
   "findings": [

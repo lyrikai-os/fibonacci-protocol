@@ -1,10 +1,10 @@
 # Contributing
 
-*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
+*Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)*
 
 Thank you for reading the protocol closely. This guide is about changing a rule, because that is where care is needed: the specification is generated, other files are generated from it, and the protocol's honesty rules are part of what it promises. Fixes to a tool, a typo in a README or a clearer sentence follow the same path in a smaller form: change the source, regenerate, run the tests.
 
-Status: the text is a release candidate. Changes during a release candidate are errata (something the text says that is wrong, unclear or untestable); a new rule or a change in what a rule requires is a bigger step and is discussed first.
+Status: version 1.0.0 is released. Changes within 1.0 are errata (patch releases, 1.0.x) (something the text says that is wrong, unclear or untestable); a new rule or a change in what a rule requires is a bigger step and is discussed first.
 
 ## What is generated, and what is not
 
@@ -77,4 +77,4 @@ By contributing you agree that your contribution is offered under the MIT Licens
 
 ---
 
-Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0-rc.5 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
+Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)

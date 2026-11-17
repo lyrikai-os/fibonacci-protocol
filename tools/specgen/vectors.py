@@ -14,7 +14,7 @@ def hu1(fr):
     return math.floor(Fraction(fr) * 10 + Fraction(1, 2)) / 10
 
 OUT = sys.argv[1]
-VER = "1.0.0-rc.5"
+VER = "1.0.0"
 NAME = "Lyrikai: Fibonacci Protocol for UI/UX Design Agents"
 HOME = "https://www.lyrikai.com"
 PHI = (1 + 5 ** 0.5) / 2

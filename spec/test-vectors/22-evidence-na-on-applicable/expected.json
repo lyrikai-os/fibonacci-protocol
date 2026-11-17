@@ -1,6 +1,6 @@
 {
   "vector": "22-evidence-na-on-applicable",
-  "spec": "1.0.0-rc.5",
+  "spec": "1.0.0",
   "about": "The same as 19, but one applicable self-report rule is answered n/a. Applicability comes from the configuration alone, so this fails conf.evidence (FP-CONF-06); the machine result is fail and there is no claim and no candidate.",
   "result": "fail",
   "findings": [
