@@ -189,6 +189,10 @@ This repository is MIT licensed; see [LICENSE](LICENSE) (`package.json` says `MI
 
 The protocol grew out of design systems built in-house at Lyrikai during 2026; see [Lineage in spec/index.md](spec/index.md#lineage).
 
+## Credits
+
+Created by Lyrikai ([www.lyrikai.com](https://www.lyrikai.com)). Co-authored by Claude (Anthropic): Claude Fable drafted the specification; Claude Opus and Claude Sonnet built the tools and reviewed the work.
+
 ---
 
 Lyrikai: Fibonacci Protocol for UI/UX Design Agents · version 1.0.0 · MIT License · [www.lyrikai.com](https://www.lyrikai.com)
